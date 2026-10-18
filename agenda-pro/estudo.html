@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>Estudo da Reforma Tributária · Agenda Pro</title>
+<link rel="icon" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!--
+  ESTUDO DA REFORMA TRIBUTÁRIA — arquivo separado do Agenda (pode ser apagado depois sem afetar o app).
+  Usa o mesmo login do Agenda (agenda_token) e as tabelas agenda_estudo_* (sql/agenda_estudo.sql).
+  Áudios (audio/*.mp3), conteúdo e trilhas (dados.json) e análises ficam no armazenamento privado "estudo" do Supabase:
+  só abrem com login ativo no Estudo (sql/agenda_estudo_arquivos.sql). Para trocar um arquivo: função estudo-carga.
+-->
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#F5F4F0;--surface:#FFFFFF;--border:#E2E0DA;--border-strong:#C8C5BC;--text:#1A1916;--text-2:#6B6860;--text-3:#9E9C96;
+--accent:#2B5CE6;--accent-lt:#EEF2FD;--green:#1A8C5B;--green-lt:#EDFAF3;--amber:#C27B00;--amber-lt:#FFF8E6;--red:#C0392B;--red-lt:#FDECEB;
+--purple:#6B3FA0;--purple-lt:#F3EDFB;--radius:14px;--shadow:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.05);
+--font:'DM Sans',sans-serif;--mono:'DM Mono',monospace}
+html{overflow-x:hidden}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;min-height:100vh;overflow-x:hidden}
+body.com-player{padding-bottom:178px}
+button{font-family:var(--font);cursor:pointer}
+a{color:var(--accent)}
+[hidden]{display:none !important}
+.centro{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.gira{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:gira .7s linear infinite}
+@keyframes gira{to{transform:rotate(360deg)}}
+.login{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:32px 24px;width:100%;max-width:400px;box-shadow:var(--shadow)}
+.logo{font-size:22px;font-weight:700;letter-spacing:-.4px}.logo span{color:var(--accent)}
+.campo{margin-top:14px}.campo label{display:block;font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.campo input,.campo select,.campo textarea{width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:10px;font:16px var(--font);background:var(--bg);color:var(--text);outline:none}
+.campo textarea{min-height:96px;resize:vertical;font-size:15px}
+.campo input:focus,.campo select:focus,.campo textarea:focus{border-color:var(--accent);background:var(--surface);box-shadow:0 0 0 3px rgba(43,92,230,.1)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:600 14px var(--font)}
+.btn.prim{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.peq{padding:6px 10px;font-size:12px;border-radius:8px}
+.btn.inteiro{width:100%;margin-top:18px}
+.btn:disabled{opacity:.6;cursor:default}
+.erro{color:var(--red);font-size:13px;margin-top:10px;text-align:center}
+/* topo */
+.topo{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:calc(8px + env(safe-area-inset-top)) 16px 0}
+.topo-l1{display:flex;align-items:center;gap:10px;min-height:40px}
+.voltar{display:inline-flex;align-items:center;gap:4px;text-decoration:none;font-weight:600;font-size:13px;color:var(--text-2);padding:6px 10px;border:1px solid var(--border);border-radius:20px;white-space:nowrap;background:var(--surface)}
+.titulo{flex:1;min-width:0;font-weight:700;font-size:16px;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.titulo small{display:block;font-weight:500;font-size:12px;color:var(--text-3);letter-spacing:0}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+.abas{display:flex;gap:4px;margin-top:6px;overflow-x:auto}
+.aba{border:none;background:none;padding:10px 12px;font:600 14px var(--font);color:var(--text-3);border-bottom:2px solid transparent;white-space:nowrap}
+.aba.ativa{color:var(--accent);border-bottom-color:var(--accent)}
+main{max-width:860px;margin:0 auto;padding:16px 16px 32px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:14px}
+.card h2{font-size:16px;font-weight:700;letter-spacing:-.2px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.card h2 .cont{font:600 12px var(--font);color:var(--text-3);margin-left:auto}
+.sec-tit{font-size:12px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;margin:4px 0 8px}
+.muted{color:var(--text-3);font-size:12.5px}
+.aviso{background:var(--amber-lt);color:#7a4f00;border-radius:10px;padding:10px 12px;font-size:12.5px;margin:10px 0}
+/* seletor de trilha */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.chip{padding:8px 13px;border-radius:20px;border:1px solid var(--border);background:var(--surface);font:600 13px var(--font);color:var(--text-2)}
+.chip.ativo{background:var(--accent);border-color:var(--accent);color:#fff}
+.grade-trilhas{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-top:8px}
+.op-trilha{text-align:left;border:1px solid var(--border);border-radius:14px;background:var(--bg);padding:14px;color:var(--text)}
+.op-trilha b{display:block;font-size:15px}.op-trilha span{display:block;font-size:12.5px;color:var(--text-2);margin-top:2px}
+.op-trilha .tag{display:inline-block;margin-top:8px;font:600 11px var(--font);color:var(--accent);background:var(--accent-lt);padding:2px 8px;border-radius:20px}
+/* resumo e gráfico */
+.resumo{display:grid;grid-template-columns:132px 1fr;gap:16px;align-items:center}
+.anel{position:relative;width:132px;height:132px}
+.anel svg{width:132px;height:132px;transform:rotate(-90deg)}
+.anel-txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.anel-txt b{font-size:30px;letter-spacing:-1px;line-height:1}.anel-txt span{font-size:11.5px;color:var(--text-3)}
+.barras{display:flex;flex-direction:column;gap:9px}
+.barra-l{display:grid;grid-template-columns:78px 1fr 54px;gap:8px;align-items:center;font-size:12.5px}
+.barra-l span:first-child{color:var(--text-2);font-weight:600}
+.trilho{height:8px;background:var(--bg);border-radius:4px;overflow:hidden;border:1px solid var(--border)}
+.enche{height:100%;border-radius:4px;transition:width .5s ease}
+.barra-l span:last-child{font:500 12px var(--mono);color:var(--text-2);text-align:right}
+.continuar{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.continuar .btn.prim{flex:1 1 auto}
+.mods{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px;margin-top:14px}
+.mod{border:1px solid var(--border);border-radius:10px;padding:6px;text-align:center;font-size:11px;color:var(--text-2);background:var(--bg)}
+.mod b{display:block;font:600 13px var(--mono);color:var(--text)}
+.mod .mini{height:4px;border-radius:2px;background:var(--border);margin-top:4px;overflow:hidden}.mod .mini i{display:block;height:100%;background:var(--green)}
+/* listas */
+.grupo{font-size:12.5px;font-weight:700;color:var(--text-2);margin:16px 0 6px}
+.grupo small{display:block;font-weight:500;color:var(--text-3);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--border)}
+.item:first-of-type{border-top:none}
+.play{width:40px;height:40px;border-radius:50%;border:none;background:var(--accent-lt);color:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.play svg{width:18px;height:18px}
+.item.tocando .play{background:var(--accent);color:#fff}
+.item-info{flex:1;min-width:0}
+.item-info b{display:block;font-size:14px;font-weight:600;line-height:1.3}
+.item-info .meta{font-size:12px;color:var(--text-3);margin-top:2px}
+.item-info .prog{height:4px;background:var(--bg);border-radius:2px;margin-top:6px;overflow:hidden}
+.item-info .prog i{display:block;height:100%;background:var(--accent)}
+.item.feito .item-info b{color:var(--text-2)}
+.item.feito .play{background:var(--green-lt);color:var(--green)}
+.marca{width:30px;height:30px;border-radius:9px;border:2px solid var(--border-strong);background:var(--surface);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff}
+.marca svg{width:16px;height:16px;opacity:0}
+.marca.sim{background:var(--green);border-color:var(--green)}.marca.sim svg{opacity:1}
+.ler{border:none;background:none;color:var(--accent);font:600 12px var(--font);padding:6px 4px;flex-shrink:0}
+.item-info a{color:var(--text);text-decoration:none}
+.item-info a:hover{color:var(--accent);text-decoration:underline}
+details.opc{margin-top:10px}
+details.opc summary{cursor:pointer;font-weight:600;color:var(--accent);padding:8px 0;font-size:13.5px}
+/* anotações */
+.onde{background:var(--accent-lt);border-radius:12px;padding:12px 14px;font-size:13.5px;color:#1d3a8f}
+.onde b{display:block;margin-bottom:2px}
+.nota{border-top:1px solid var(--border);padding:12px 0}
+.nota:first-child{border-top:none}
+.nota-topo{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-3);margin-bottom:4px;flex-wrap:wrap}
+.nota-topo .rm{margin-left:auto;border:none;background:none;color:var(--red);font:600 12px var(--font)}
+.nota p{white-space:pre-wrap;word-break:break-word;font-size:14px}
+.pend{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.pend button{text-align:left;border:1px solid var(--border);background:var(--bg);border-radius:10px;padding:8px 10px;font:500 13px var(--font);color:var(--text)}
+/* equipe */
+.eq-l{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 1.4fr;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--border);font-size:13px}
+.eq-l:first-child{border-top:none}
+.eq-l .nome{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.eq-l .tr{color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.eq-barra{display:grid;grid-template-columns:1fr 42px;gap:6px;align-items:center}
+.eq-barra span{font:500 12px var(--mono);text-align:right}
+.tag-so{display:inline-block;font:600 10.5px var(--font);color:var(--purple);background:var(--purple-lt);padding:1px 7px;border-radius:20px;margin-left:4px;vertical-align:1px}
+.eq-l .nome .tag-so{display:block;width:max-content;margin:3px 0 0}
+.tag-off{display:inline-block;font:600 10.5px var(--font);color:var(--text-2);background:var(--bg);border:1px solid var(--border);padding:0 7px;border-radius:20px;margin-left:4px}
+/* pessoas só do Estudo */
+.grade-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0 12px}
+.so-l{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--border);flex-wrap:wrap}
+.so-l:first-child{border-top:none}
+.so-l.inativo .so-info{opacity:.6}
+.so-info{flex:1 1 220px;min-width:0}
+.so-info b{display:block;font-size:14px;font-weight:600}
+.so-info span.muted{display:block;word-break:break-all}
+.so-acoes{display:flex;gap:6px;flex-wrap:wrap}
+.acesso{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px;margin:10px 0 14px;display:flex;flex-direction:column;gap:8px}
+.acesso b{display:block;font-size:14.5px;word-break:break-all}
+.acesso b.senha{font:500 20px var(--mono);letter-spacing:1px}
+.acesso-botoes{display:flex;gap:8px;flex-wrap:wrap}
+.acesso-botoes .btn{flex:1 1 auto;text-decoration:none}
+/* senha provisória: criar a própria senha */
+.trava{position:fixed;inset:0;z-index:250;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px}
+.trava h2{font-size:19px;letter-spacing:-.3px}
+/* player */
+.player{position:fixed;left:0;right:0;bottom:0;z-index:120;background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-top:1px solid var(--border);box-shadow:0 -6px 24px rgba(0,0,0,.08);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+.pl-in{max-width:860px;margin:0 auto}
+.pl-topo{display:flex;align-items:center;gap:8px}
+.pl-tit{flex:1;min-width:0}
+.pl-tit b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-tit span{display:block;font-size:12px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-x{border:none;background:var(--bg);width:32px;height:32px;border-radius:8px;color:var(--text-2);font-size:16px;flex-shrink:0}
+.pl-barra{width:100%;margin:8px 0 0;accent-color:var(--accent)}
+.pl-tempo{display:flex;justify-content:space-between;font:500 11px var(--mono);color:var(--text-3)}
+.pl-ctrl{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:2px}
+.pl-b{border:none;background:none;color:var(--text);width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 12px var(--font)}
+.pl-b svg{width:22px;height:22px}
+.pl-b.grande{width:54px;height:54px;background:var(--accent);color:#fff;box-shadow:0 6px 18px rgba(43,92,230,.35)}
+.pl-b.grande svg{width:26px;height:26px}
+.pl-vel{border:1px solid var(--border);background:var(--surface);border-radius:20px;padding:5px 10px;font:600 12px var(--mono);color:var(--text-2)}
+/* leitor de texto */
+.leitor{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.4);display:flex;align-items:flex-end;justify-content:center}
+.leitor-caixa{background:var(--surface);width:100%;max-width:860px;max-height:92vh;border-radius:20px 20px 0 0;display:flex;flex-direction:column}
+.leitor-topo{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.leitor-topo b{flex:1;font-size:15px}
+.leitor-corpo{overflow-y:auto;padding:16px 18px calc(24px + env(safe-area-inset-bottom));font-size:15px;line-height:1.6}
+.leitor-corpo h2{font-size:18px;margin:4px 0 10px}
+.leitor-corpo h3{font-size:15px;margin:14px 0 6px}
+.analise{font-size:12.5px;color:var(--text-2);margin-top:5px}
+.item-info .analise b{display:inline;font-size:12.5px;font-weight:600;color:var(--text);white-space:nowrap;line-height:1.5}
+.selo{display:inline-block;font:600 11px var(--font);color:var(--green);background:var(--green-lt);padding:1px 7px;border-radius:20px;margin-right:4px}
+.leitor-corpo p{margin:0 0 10px}
+.leitor-corpo ul,.leitor-corpo ol{margin:0 0 10px 22px}
+.leitor-corpo li{margin-bottom:4px}
+.leitor-corpo table{border-collapse:collapse;font-size:13px;margin:6px 0 14px;min-width:100%}
+.leitor-corpo th,.leitor-corpo td{border:1px solid var(--border);padding:6px 8px;text-align:left;vertical-align:top}
+.leitor-corpo th{background:var(--bg)}
+.tab-rola{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.toasts{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:300;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
+body.com-player .toasts{bottom:calc(190px + env(safe-area-inset-bottom))}
+.toast{background:var(--text);color:#fff;padding:10px 16px;border-radius:12px;font-size:13px;font-weight:500;box-shadow:var(--shadow);max-width:420px}
+.toast.ok{background:var(--green)}.toast.err{background:var(--red)}
+@media (max-width:560px){
+  .resumo{grid-template-columns:1fr;justify-items:center}
+  .barras{width:100%}
+  .eq-l{grid-template-columns:1fr 1fr}
+  .eq-l .eq-barra{grid-column:1 / -1}
+}
+</style>
+</head>
+<body>
+<div id="tela-carregando" class="centro"><div class="gira" aria-label="Carregando"></div></div>
+
+<div id="tela-login" class="centro" hidden>
+  <form class="login" id="form-login">
+    <div class="logo">Agenda<span>Pro</span></div>
+    <div class="muted" style="margin-top:4px">Estudo da Reforma Tributária. Entre com o seu e-mail e senha (quem usa o Agenda entra com o mesmo login).</div>
+    <div class="campo"><label for="lg-email">E-mail</label><input type="email" id="lg-email" autocomplete="username" required></div>
+    <div class="campo"><label for="lg-senha">Senha</label><input type="password" id="lg-senha" autocomplete="current-password" required></div>
+    <button class="btn prim inteiro" type="submit" id="lg-btn">Entrar</button>
+    <div class="erro" id="lg-erro" hidden></div>
+    <div style="text-align:center;margin-top:14px"><a href="app.html">Voltar para o Agenda</a></div>
+  </form>
+</div>
+
+<div id="app" hidden>
+  <header class="topo">
+    <div class="topo-l1">
+      <a class="voltar" id="voltar-agenda" href="app.html" aria-label="Voltar para o Agenda">← Agenda</a>
+      <button class="voltar" id="btn-sair" type="button" onclick="sair()" hidden>Sair</button>
+      <div class="titulo">Estudo da Reforma<small id="sub-trilha">Reforma Tributária</small></div>
+      <div class="avatar" id="avatar" title=""></div>
+    </div>
+    <nav class="abas" aria-label="Seções do estudo">
+      <button class="aba ativa" data-pg="trilha">Minha trilha</button>
+      <button class="aba" data-pg="notas">Anotações</button>
+      <button class="aba" data-pg="equipe" id="aba-equipe" hidden>Equipe</button>
+    </nav>
+  </header>
+  <main>
+    <section id="pg-trilha"></section>
+    <section id="pg-notas" hidden></section>
+    <section id="pg-equipe" hidden></section>
+  </main>
+</div>
+
+<div class="player" id="player" hidden>
+  <div class="pl-in">
+    <div class="pl-topo">
+      <div class="pl-tit"><b id="pl-tit"></b><span id="pl-sub"></span></div>
+      <button class="ler" id="pl-texto">Ler texto</button>
+      <button class="pl-vel" id="pl-vel" aria-label="Velocidade">1×</button>
+      <button class="pl-x" id="pl-fechar" aria-label="Fechar o player">✕</button>
+    </div>
+    <input class="pl-barra" type="range" id="pl-barra" min="0" max="1000" value="0" aria-label="Posição do áudio">
+    <div class="pl-tempo"><span id="pl-atual">0:00</span><span id="pl-total">0:00</span></div>
+    <div class="pl-ctrl">
+      <button class="pl-b" id="pl-ant" aria-label="Faixa anterior"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg></button>
+      <button class="pl-b" id="pl-menos" aria-label="Voltar 15 segundos">−15</button>
+      <button class="pl-b grande" id="pl-play" aria-label="Tocar ou pausar"></button>
+      <button class="pl-b" id="pl-mais" aria-label="Avançar 30 segundos">+30</button>
+      <button class="pl-b" id="pl-prox" aria-label="Próxima faixa"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
+    </div>
+  </div>
+</div>
+<audio id="som" preload="none"></audio>
+
+<div class="leitor" id="leitor" hidden>
+  <div class="leitor-caixa" role="dialog" aria-modal="true" aria-labelledby="leitor-tit">
+    <div class="leitor-topo"><b id="leitor-tit"></b><button class="pl-x" id="leitor-fechar" aria-label="Fechar o texto">✕</button></div>
+    <div class="leitor-corpo" id="leitor-corpo"></div>
+  </div>
+</div>
+<div class="trava" id="troca-senha" hidden>
+  <form class="login" id="form-troca" role="dialog" aria-modal="true" aria-labelledby="ts-tit">
+    <h2 id="ts-tit">Crie a sua senha</h2>
+    <div class="muted" style="margin-top:4px">Você entrou com uma senha provisória. Escolha a sua senha, com pelo menos 8 caracteres, para continuar.</div>
+    <div class="campo"><label for="ts-s1">Nova senha</label><input type="password" id="ts-s1" autocomplete="new-password" required></div>
+    <div class="campo"><label for="ts-s2">Repita a nova senha</label><input type="password" id="ts-s2" autocomplete="new-password" required></div>
+    <button class="btn prim inteiro" type="submit" id="ts-ok">Salvar senha</button>
+    <div class="erro" id="ts-erro" hidden></div>
+    <div style="text-align:center;margin-top:14px"><button type="button" class="ler" onclick="sair()">Sair</button></div>
+  </form>
+</div>
+<div class="toasts" id="toasts"></div>
+
+<script>
+const ESTUDO_VERSAO = '1.4.0';
+const SUPA_URL = 'https://vuwgxndahrzinfdlapxz.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1d2d4bmRhaHJ6aW5mZGxhcHh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3NTA0ODgsImV4cCI6MjA5MDMyNjQ4OH0.9DaPGHIxt0CO-pjYPBwsHaoSqDN35CwVU0lJUyTXQIQ';
+const $ = id => document.getElementById(id);
+function whatsEsc(v) {
+  return String(v ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]))
+}
+const ICO = {
+  play: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>',
+  pausa: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>',
+  ok: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>',
+};
+const PERFIS = { admin: 'Administrador', gerente: 'Gerente', colaborador: 'Colaborador', visualizador: 'Visualizador', estudo: 'Só Estudo' };
+const VELOCIDADES = [1, 1.25, 1.5, 1.75, 2, 0.85];
+
+// Estado
+const E = {
+  token: null, authId: null, usuario: null, dados: null,
+  trilha: null, prog: {}, notas: [], perfil: null,
+  atual: null, pagina: 'trilha', fila: new Map(), timerFila: null, ultimoSalvo: 0,
+  soEstudo: [], acessoTexto: '', urls: {}, urlsEm: 0,
+};
+let D = null; // atalho para E.dados
+
+// ── utilidades ───────────────────────────────────────────
+function toast(msg, tipo) {
+  const t = document.createElement('div');
+  t.className = 'toast' + (tipo ? ' ' + tipo : '');
+  t.textContent = msg;
+  $('toasts').appendChild(t);
+  setTimeout(() => t.remove(), 3200)
+}
+function mmss(seg) {
+  seg = Math.max(0, Math.round(seg || 0));
+  const h = Math.floor(seg / 3600), m = Math.floor((seg % 3600) / 60), s = seg % 60;
+  return h ? `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}` : `${m}:${String(s).padStart(2, '0')}`
+}
+function horas(seg) {
+  const min = Math.round((seg || 0) / 60);
+  if (min < 60) return `${min} min`;
+  const h = Math.floor(min / 60), m = min % 60;
+  return m ? `${h} h ${m} min` : `${h} h`
+}
+function dataHora(iso) {
+  try { return new Date(iso).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) } catch (e) { return '' }
+}
+function guardar(chave, valor) { try { localStorage.setItem(chave, valor) } catch (e) {} }
+function ler(chave) { try { return localStorage.getItem(chave) } catch (e) { return null } }
+function apagar(chave) { try { localStorage.removeItem(chave) } catch (e) {} }
+
+async function fetchT(url, opts = {}, ms = 15000) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), ms);
+  try { return await fetch(url, { ...opts, signal: ctrl.signal }) }
+  finally { clearTimeout(t) }
+}
+
+// ── sessão (mesmo login do Agenda) ───────────────────────
+function salvarSessao(j) {
+  E.token = j.access_token;
+  guardar('agenda_token', j.access_token);
+  // a renovação é a mesma do Agenda (agenda_refresh): o servidor troca o código a cada uso, então os dois guardam no mesmo lugar
+  if (j.refresh_token) { guardar('agenda_refresh', j.refresh_token); apagar('estudo_refresh'); }
+  if (j.user && j.user.email) guardar('agenda_user_email', j.user.email);
+}
+async function entrar(email, senha) {
+  const r = await fetchT(`${SUPA_URL}/auth/v1/token?grant_type=password`, {
+    method: 'POST', headers: { apikey: SUPA_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password: senha })
+  });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok || !j.access_token) {
+    const cod = String(j.error_code || j.error || '');
+    throw new Error(/rate_limit|too_many/i.test(cod) ? 'Muitas tentativas seguidas. Aguarde alguns minutos e tente de novo.'
+      : 'E-mail ou senha incorretos. Confira se o e-mail está escrito igual ao do cadastro.')
+  }
+  salvarSessao(j);
+  return j
+}
+async function renovarSessao() {
+  const rt = ler('agenda_refresh') || ler('estudo_refresh');
+  if (rt) {
+    try {
+      const r = await fetchT(`${SUPA_URL}/auth/v1/token?grant_type=refresh_token`, {
+        method: 'POST', headers: { apikey: SUPA_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ refresh_token: rt })
+      });
+      if (r.ok) { salvarSessao(await r.json()); return true }
+    } catch (e) {}
+  }
+  return false   // a senha nunca fica guardada no aparelho (Agenda v2.8.0)
+}
+async function api(method, caminho, { body, prefer, keepalive } = {}) {
+  for (let tentativa = 0; tentativa < 2; tentativa++) {
+    const res = await fetchT(`${SUPA_URL}${caminho}`, {
+      method, keepalive: !!keepalive,
+      headers: { apikey: SUPA_KEY, Authorization: `Bearer ${E.token}`, 'Content-Type': 'application/json', Prefer: prefer || 'return=minimal' },
+      body: body ? JSON.stringify(body) : undefined
+    });
+    if (res.status === 401 && tentativa === 0 && await renovarSessao()) continue;
+    if (res.status === 401) { sessaoExpirada(); throw new Error('Sessão expirada') }
+    if (!res.ok) throw new Error(await res.text());
+    const txt = await res.text();
+    return txt ? JSON.parse(txt) : null
+  }
+}
+function sessaoExpirada() {
+  if (!$('tela-login').hidden) return;
+  toast('Sua sessão expirou. Entre de novo para continuar salvando.', 'err');
+  mostrarLogin()
+}
+function mostrarLogin() {
+  $('tela-carregando').hidden = true;
+  $('app').hidden = true;
+  $('tela-login').hidden = false;
+  $('lg-email').value = ler('agenda_saved_email') || ler('agenda_user_email') || '';
+  apagar('agenda_saved_pass');   // versões antigas guardavam a senha aqui
+}
+$('form-login').addEventListener('submit', async ev => {
+  ev.preventDefault();
+  const btn = $('lg-btn'), err = $('lg-erro');
+  err.hidden = true; btn.disabled = true; btn.textContent = 'Entrando...';
+  try {
+    const j = await entrar($('lg-email').value.trim(), $('lg-senha').value);
+    $('tela-login').hidden = true;
+    await abrirApp(j.user)
+  } catch (e) {
+    err.textContent = e.message || 'Não foi possível entrar.'; err.hidden = false
+  } finally { btn.disabled = false; btn.textContent = 'Entrar' }
+});
+
+async function iniciar() {
+  E.token = ler('agenda_token');
+  if (!E.token) { apagar('agenda_refresh'); apagar('estudo_refresh'); mostrarLogin(); return }   // saiu do Agenda: sai do estudo também
+  let user = null;
+  try {
+    let r = await fetchT(`${SUPA_URL}/auth/v1/user`, { headers: { apikey: SUPA_KEY, Authorization: `Bearer ${E.token}` } });
+    if (r.status === 401 && await renovarSessao())
+      r = await fetchT(`${SUPA_URL}/auth/v1/user`, { headers: { apikey: SUPA_KEY, Authorization: `Bearer ${E.token}` } });
+    if (r.ok) { const j = await r.json(); user = j.user || j }
+  } catch (e) {}
+  if (!user || !user.id) { mostrarLogin(); return }
+  await abrirApp(user)
+}
+
+async function abrirApp(user) {
+  if (!user || !user.id) { mostrarLogin(); return }
+  const authId = user.id;
+  $('tela-carregando').hidden = false;
+  try {
+    E.authId = authId;
+    let us = await api('GET', `/rest/v1/agenda_usuarios?auth_id=eq.${authId}&ativo=eq.true&select=id,nome,perfil,tenant_id`);
+    if (!us || !us.length) {
+      // v1.2.0: pessoa cadastrada só para o Estudo (agenda_estudo_usuarios), sem acesso à agenda
+      const so = await api('GET', `/rest/v1/agenda_estudo_usuarios?auth_id=eq.${authId}&ativo=eq.true&select=id,nome,tenant_id`);
+      if (so && so.length) us = [{ ...so[0], perfil: 'estudo', soEstudo: true }];
+    }
+    if (!us || !us.length) throw new Error('Seu acesso ao Estudo não está ativo. Fale com o administrador do escritório.');
+    E.usuario = us[0];
+    await carregarConteudo();
+    const [perfis, progresso, notas] = await Promise.all([
+      api('GET', `/rest/v1/agenda_estudo_perfil?auth_id=eq.${authId}&select=*`),
+      api('GET', `/rest/v1/agenda_estudo_progresso?auth_id=eq.${authId}&select=item,concluido,posicao_seg,atualizado_em`),
+      api('GET', `/rest/v1/agenda_estudo_notas?auth_id=eq.${authId}&select=*&order=criado_em.desc&limit=200`),
+    ]);
+    E.perfil = perfis && perfis[0] || null;
+    E.prog = {};
+    (progresso || []).forEach(p => { E.prog[p.item] = { concluido: p.concluido, pos: Number(p.posicao_seg) || 0, em: p.atualizado_em } });
+    restaurarPendentes();
+    E.notas = notas || [];
+    E.trilha = (E.perfil && E.perfil.trilha && D.trilhas.find(t => t.id === E.perfil.trilha)) ? E.perfil.trilha : null;
+  } catch (e) {
+    $('tela-carregando').innerHTML = `<div style="text-align:center;max-width:360px">${whatsEsc(e.message)}<br><br>
+<button class="btn" onclick="location.reload()">Tentar de novo</button> <button class="btn" onclick="sair()">Sair</button></div>`;
+    return
+  }
+  $('tela-carregando').hidden = true;
+  $('app').hidden = false;
+  $('avatar').textContent = (E.usuario.nome || '?')[0].toUpperCase();
+  $('avatar').title = `${E.usuario.nome} · ${PERFIS[E.usuario.perfil] || ''}`;
+  $('aba-equipe').hidden = !ehGestor();
+  $('voltar-agenda').hidden = !!E.usuario.soEstudo;   // quem é só do Estudo não tem o Agenda: no lugar, o botão Sair
+  $('btn-sair').hidden = !E.usuario.soEstudo;
+  // senha provisória (convite, Portal Artecon ou cadastro do Estudo): a pessoa cria a própria senha antes de usar
+  if (user.user_metadata && user.user_metadata.trocar_senha) { $('troca-senha').hidden = false; setTimeout(() => $('ts-s1').focus(), 50) }
+  const vel = Number(ler('estudo_vel')) || 1;
+  $('som').playbackRate = vel; $('pl-vel').textContent = vel.toString().replace('.', ',') + '×';
+  render()
+}
+function ehGestor() { return ['admin', 'gerente'].includes(E.usuario && E.usuario.perfil) }
+
+// ── conteúdo protegido (v1.3.0): armazenamento privado "estudo", só com login ativo ──
+const HORAS_URL = 12;   // validade dos endereços assinados dos áudios
+async function storage(method, caminho, body) {
+  for (let tentativa = 0; tentativa < 2; tentativa++) {
+    const r = await fetchT(`${SUPA_URL}/storage/v1${caminho}`, {
+      method, cache: 'no-cache',
+      headers: { apikey: SUPA_KEY, Authorization: `Bearer ${E.token}`, ...(body ? { 'Content-Type': 'application/json' } : {}) },
+      body: body ? JSON.stringify(body) : undefined
+    }, 30000);
+    if (!r.ok) {
+      const txt = await r.text().catch(() => '');   // sessão vencida: o armazenamento responde 400 com "jwt expired"
+      if (tentativa === 0 && (r.status === 401 || r.status === 403 || /jwt|expired|unauthorized/i.test(txt)) && await renovarSessao()) continue;
+      throw new Error('Não foi possível carregar o conteúdo do estudo (' + r.status + '). Verifique a conexão e tente de novo.')
+    }
+    return r.json()
+  }
+}
+async function carregarConteudo() {
+  E.dados = D = await storage('GET', '/object/authenticated/estudo/dados.json');
+  await assinarAudios()
+}
+// o player toca por endereço assinado (vale HORAS_URL); renova antes de vencer
+async function assinarAudios() {
+  const caminhos = Object.values(D.faixas).map(f => f.arq);
+  const r = await storage('POST', '/object/sign/estudo', { expiresIn: HORAS_URL * 3600, paths: caminhos });
+  const urls = {};
+  (r || []).forEach(x => { if (x.signedURL) urls[x.path] = `${SUPA_URL}/storage/v1${x.signedURL}` });
+  if (!Object.keys(urls).length) throw new Error('Seu acesso aos áudios do estudo não está ativo.');
+  E.urls = urls; E.urlsEm = Date.now()
+}
+function audiosVencendo() { return Date.now() - E.urlsEm > (HORAS_URL - 2) * 3600 * 1000 }
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && D && E.usuario && audiosVencendo()) assinarAudios().catch(() => {})
+});
+
+async function sair() {
+  try { salvarPosicaoAtual(); som.pause(); await enviarFila() } catch (e) {}
+  try { if (E.token) await fetchT(`${SUPA_URL}/auth/v1/logout`, { method: 'POST', headers: { apikey: SUPA_KEY, Authorization: `Bearer ${E.token}` } }, 5000) } catch (e) {}
+  apagar('agenda_token'); apagar('agenda_refresh'); apagar('estudo_refresh');
+  location.reload()
+}
+$('form-troca').addEventListener('submit', async ev => {
+  ev.preventDefault();
+  const s1 = $('ts-s1').value, s2 = $('ts-s2').value, erro = $('ts-erro'), btn = $('ts-ok');
+  const falha = m => { erro.textContent = m; erro.hidden = false };
+  if (s1.length < 8) return falha('A senha precisa de pelo menos 8 caracteres.');
+  if (s1 !== s2) return falha('As duas senhas não são iguais.');
+  erro.hidden = true; btn.disabled = true; btn.textContent = 'Salvando...';
+  try {
+    const r = await fetchT(`${SUPA_URL}/auth/v1/user`, {
+      method: 'PUT', headers: { apikey: SUPA_KEY, Authorization: `Bearer ${E.token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: s1, data: { trocar_senha: false } })
+    });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) {
+      const det = j.msg || j.error_description || j.message || ('erro ' + r.status);
+      return falha(/different from the old/i.test(det) ? 'Escolha uma senha diferente da provisória.' : 'Não foi possível salvar: ' + det)
+    }
+    $('troca-senha').hidden = true;
+    toast('Senha criada. Use-a nas próximas entradas.', 'ok')
+  } catch (e) {
+    falha('Erro de conexão. Tente de novo.')
+  } finally { btn.disabled = false; btn.textContent = 'Salvar senha' }
+});
+
+// ── progresso: salvar no banco (em lote) ─────────────────
+function marcar(item, campos, urgente) {
+  const p = E.prog[item] || { concluido: false, pos: 0 };
+  Object.assign(p, campos, { em: new Date().toISOString() });
+  E.prog[item] = p;
+  E.fila.set(item, p);
+  guardarPendentes();
+  clearTimeout(E.timerFila);
+  E.timerFila = setTimeout(enviarFila, urgente ? 200 : 4000)
+}
+async function enviarFila(keepalive) {
+  clearTimeout(E.timerFila);
+  if (!E.fila.size || !E.token || !E.usuario) return;
+  // tenant_id vai junto: para quem é só do Estudo o banco não sabe o escritório sozinho (sql/agenda_estudo_usuarios.sql)
+  const corpo = [...E.fila].map(([item, p]) => ({ item, concluido: !!p.concluido, posicao_seg: Math.round(p.pos || 0), tenant_id: E.usuario.tenant_id }));
+  E.fila.clear();
+  try {
+    await api('POST', '/rest/v1/agenda_estudo_progresso?on_conflict=auth_id,item', { body: corpo, prefer: 'resolution=merge-duplicates,return=minimal', keepalive });
+    E.ultimoSalvo = Date.now();
+    guardarPendentes()
+  } catch (e) {
+    corpo.forEach(c => { if (!E.fila.has(c.item)) E.fila.set(c.item, { concluido: c.concluido, pos: c.posicao_seg }) });
+    guardarPendentes()
+  }
+}
+function guardarPendentes() {
+  if (!E.authId) return;
+  const obj = {};
+  E.fila.forEach((p, item) => { obj[item] = { concluido: !!p.concluido, pos: p.pos || 0 } });
+  if (Object.keys(obj).length) guardar('estudo_pendente_' + E.authId, JSON.stringify(obj)); else apagar('estudo_pendente_' + E.authId)
+}
+function restaurarPendentes() {
+  try {
+    const obj = JSON.parse(ler('estudo_pendente_' + E.authId) || '{}');
+    Object.entries(obj).forEach(([item, p]) => { E.prog[item] = { ...(E.prog[item] || {}), ...p }; E.fila.set(item, p) });
+    if (E.fila.size) setTimeout(enviarFila, 1500)
+  } catch (e) {}
+}
+window.addEventListener('online', () => enviarFila());
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') { salvarPosicaoAtual(); enviarFila(true) } });
+window.addEventListener('pagehide', () => { salvarPosicaoAtual(); enviarFila(true) });
+
+let timerPerfil = null;
+function salvarPerfil(campos) {
+  E.perfil = { ...(E.perfil || {}), ...campos };
+  clearTimeout(timerPerfil);
+  timerPerfil = setTimeout(async () => {
+    try {
+      await api('POST', '/rest/v1/agenda_estudo_perfil?on_conflict=auth_id', {
+        body: { trilha: E.perfil.trilha || null, ultimo_item: E.perfil.ultimo_item || null, tenant_id: E.usuario.tenant_id }, prefer: 'resolution=merge-duplicates,return=minimal'
+      })
+    } catch (e) {}
+  }, 800)
+}
+
+// ── trilha e números ─────────────────────────────────────
+function trilhaAtual() { return D.trilhas.find(t => t.id === E.trilha) || null }
+const feito = id => !!(E.prog[id] && E.prog[id].concluido);
+function numeros(t, prog) {
+  const f = id => !!(prog[id] && prog[id].concluido);
+  const fa = t.faixas.filter(f).length, vi = t.videos.filter(f).length, ta = t.tarefas.filter(x => f(x.id)).length;
+  const total = t.faixas.length + t.videos.length + t.tarefas.length;
+  const resto = t.faixas.filter(i => !f(i)).reduce((s, i) => s + Math.max(0, D.faixas[i].seg - ((prog[i] && prog[i].pos) || 0)), 0)
+    + t.videos.filter(i => !f(i)).reduce((s, i) => s + (D.videos[i].min || 0) * 60, 0);
+  return { fa, vi, ta, total, feitos: fa + vi + ta, pct: total ? Math.round(100 * (fa + vi + ta) / total) : 0, resto,
+           opc: t.opcionais.filter(f).length }
+}
+function proximaFaixa(t) {
+  const ult = E.perfil && E.perfil.ultimo_item;
+  if (ult && t.faixas.includes(ult) && !feito(ult)) return ult;
+  return t.faixas.find(i => !feito(i)) || null
+}
+function rotuloFaixa(id) {
+  const f = D.faixas[id];
+  if (!f) return id;
+  return f.grupo.startsWith('Módulo') ? `${f.grupo} · ${f.titulo}` : f.titulo
+}
+function rotuloItem(id) {
+  if (!id) return '';
+  if (D.faixas[id]) return 'Áudio: ' + rotuloFaixa(id);
+  if (D.videos[id]) return 'Vídeo: ' + D.videos[id].titulo;
+  for (const t of D.trilhas) { const k = t.tarefas.find(x => x.id === id); if (k) return 'Tarefa: ' + k.texto }
+  return id
+}
+function duracaoVideo(v) {
+  if (v.aulas) return `${v.aulas} aulas · ${horas((v.min || 0) * 60)}`;
+  if (!v.min) return 'duração não informada';
+  if (v.estimado && v.faixa_min) return v.faixa_min[0] ? `≈ ${v.min} min (${v.faixa_min[0]} a ${v.faixa_min[1]}, estimado)` : `até ${v.faixa_min[1]} min (estimado)`;
+  return `${v.min} min`
+}
+
+// ── telas ────────────────────────────────────────────────
+document.querySelectorAll('.aba').forEach(b => b.addEventListener('click', () => irPara(b.dataset.pg)));
+function irPara(pg) {
+  E.pagina = pg;
+  document.querySelectorAll('.aba').forEach(b => b.classList.toggle('ativa', b.dataset.pg === pg));
+  ['trilha', 'notas', 'equipe'].forEach(p => { $('pg-' + p).hidden = p !== pg });
+  render();
+  window.scrollTo(0, 0)
+}
+function render() {
+  const t = trilhaAtual();
+  $('sub-trilha').textContent = t ? t.nome : 'Escolha a sua trilha';
+  if (E.pagina === 'trilha') renderTrilha();
+  else if (E.pagina === 'notas') renderNotas();
+  else if (E.pagina === 'equipe') renderEquipe()
+}
+
+function htmlSeletor() {
+  const chip = t => `<button class="chip${t.id === E.trilha ? ' ativo' : ''}" onclick="escolherTrilha('${t.id}')">${whatsEsc(t.curto)}</button>`;
+  return `<div class="sec-tit">Planos</div><div class="chips">${D.trilhas.filter(t => t.tipo === 'plano').map(chip).join('')}</div>
+<div class="sec-tit">Departamentos</div><div class="chips">${D.trilhas.filter(t => t.tipo === 'departamento').map(chip).join('')}</div>`
+}
+function escolherTrilha(id) {
+  E.trilha = id;
+  salvarPerfil({ trilha: id });
+  render()
+}
+
+function renderTrilha() {
+  const el = $('pg-trilha');
+  const t = trilhaAtual();
+  if (!t) {
+    el.innerHTML = `<div class="card"><h2>Escolha a sua trilha</h2>
+<p class="muted" style="margin-top:4px">Cada trilha tem áudios, vídeos dos cursos e tarefas práticas. Você pode trocar quando quiser; o que já concluiu continua valendo nas outras trilhas.</p>
+<div class="grade-trilhas">${D.trilhas.map(x => `<button class="op-trilha" onclick="escolherTrilha('${x.id}')"><b>${whatsEsc(x.nome)}</b><span>${whatsEsc(x.para)}</span><span>${whatsEsc(x.tempo)}</span><span class="tag">${x.tipo === 'plano' ? 'Plano' : 'Departamento'}</span></button>`).join('')}</div></div>`;
+    return
+  }
+  const n = numeros(t, E.prog);
+  const prox = proximaFaixa(t);
+  const r = 54, circ = 2 * Math.PI * r;
+  const cor = n.pct >= 100 ? 'var(--green)' : 'var(--accent)';
+  const barra = (rot, a, b, c) => `<div class="barra-l"><span>${rot}</span><div class="trilho"><div class="enche" style="width:${b ? Math.round(100 * a / b) : 0}%;background:${c}"></div></div><span>${a}/${b}</span></div>`;
+  let continuar = '';
+  if (prox) {
+    const pos = (E.prog[prox] && E.prog[prox].pos) || 0;
+    continuar = `<button class="btn prim" onclick="tocar('${prox}')">${pos > 5 ? '▶ Continuar' : '▶ Começar'}: ${whatsEsc(rotuloFaixa(prox))}${pos > 5 ? ` (${mmss(pos)})` : ''}</button>`;
+  } else if (n.fa === t.faixas.length) {
+    continuar = `<span class="muted">Todos os áudios desta trilha foram ouvidos. ${n.pct < 100 ? 'Faltam vídeos ou tarefas.' : 'Trilha concluída!'}</span>`;
+  }
+  // mapa por módulo (áudios)
+  const grupos = [];
+  t.faixas.forEach(i => { const g = D.faixas[i].grupo; let x = grupos.find(y => y.g === g); if (!x) grupos.push(x = { g, tot: 0, ok: 0 }); x.tot++; if (feito(i)) x.ok++ });
+  const mods = grupos.filter(x => x.g.startsWith('Módulo')).map(x => `<div class="mod" title="${whatsEsc(x.g)}"><b>M${x.g.slice(7)}</b>${x.ok}/${x.tot}<div class="mini"><i style="width:${Math.round(100 * x.ok / x.tot)}%"></i></div></div>`).join('');
+
+  let html = `<div class="card">${htmlSeletor()}
+<p style="font-size:13.5px;margin-top:2px"><b>${whatsEsc(t.nome)}</b> · ${whatsEsc(t.para)} · ${whatsEsc(t.tempo)}</p>
+<p class="muted" style="margin-top:2px">${whatsEsc(t.objetivo)}</p></div>
+
+<div class="card"><h2>Conclusão <span class="cont">${n.feitos} de ${n.total} itens</span></h2>
+<div class="resumo" style="margin-top:12px">
+  <div class="anel" role="img" aria-label="${n.pct}% concluído"><svg viewBox="0 0 132 132"><circle cx="66" cy="66" r="${r}" fill="none" stroke="var(--bg)" stroke-width="14"/><circle cx="66" cy="66" r="${r}" fill="none" stroke="${cor}" stroke-width="14" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${circ * (1 - n.pct / 100)}"/></svg>
+  <div class="anel-txt"><b>${n.pct}%</b><span>concluído</span></div></div>
+  <div class="barras">
+    ${barra('Áudios', n.fa, t.faixas.length, 'var(--accent)')}
+    ${t.videos.length ? barra('Vídeos', n.vi, t.videos.length, 'var(--purple)') : ''}
+    ${barra('Tarefas', n.ta, t.tarefas.length, 'var(--amber)')}
+    <div class="muted">${n.resto > 0 ? `Faltam cerca de ${horas(n.resto)} de áudio${t.videos.length ? ' e vídeo' : ''}.` : 'Nada de áudio ou vídeo pendente.'}${t.opcionais.length ? ` Opcionais: ${n.opc} de ${t.opcionais.length}.` : ''}</div>
+  </div>
+</div>
+${mods ? `<div class="mods">${mods}</div>` : ''}
+<div class="continuar">${continuar}</div></div>`;
+
+  // áudios
+  html += `<div class="card"><h2>🎧 Áudios <span class="cont">${horas(t.faixas.reduce((s, i) => s + D.faixas[i].seg, 0))}</span></h2>`;
+  let grupo = '';
+  t.faixas.forEach(i => {
+    const f = D.faixas[i];
+    if (f.grupo !== grupo) {
+      grupo = f.grupo;
+      html += `<div class="grupo">${whatsEsc(grupo)}${f.tema ? `<small>${whatsEsc(f.tema)}</small>` : ''}</div>`;
+    }
+    html += htmlFaixa(i)
+  });
+  html += `</div>`;
+
+  // vídeos
+  const aviso = `<div class="aviso">Os vídeos abrem na plataforma do curso (Fellipe Guerra: Nutror; Caio Melo: Hotmart) com a conta do escritório. Os marcados como <b>analisado</b> foram vistos pela tela (sem o áudio) e mostram os minutos que valem a pena; os demais foram indicados pelo título.</div>`;
+  html += `<div class="card"><h2>🎬 Vídeos para complementar <span class="cont">${t.videos.length ? `${n.vi}/${t.videos.length}` : 'opcionais'}</span></h2>${aviso}`;
+  if (t.videos.length) html += `<div class="sec-tit" style="margin-top:6px">Assistir</div>` + t.videos.map(htmlVideo).join('');
+  if (t.opcionais.length) html += t.videos.length
+    ? `<details class="opc"><summary>Vídeos opcionais (${t.opcionais.length})</summary>${t.opcionais.map(htmlVideo).join('')}</details>`
+    : `<div class="sec-tit" style="margin-top:6px">Opcionais</div>` + t.opcionais.map(htmlVideo).join('');
+  html += `</div>`;
+
+  // tarefas
+  html += `<div class="card"><h2>✍️ Tarefas práticas <span class="cont">${n.ta}/${t.tarefas.length}</span></h2>${t.tarefas.map(k => `<div class="item${feito(k.id) ? ' feito' : ''}">
+<button class="marca${feito(k.id) ? ' sim' : ''}" onclick="alternar('${k.id}')" aria-label="Marcar tarefa como feita">${ICO.ok}</button>
+<div class="item-info"><b>${whatsEsc(k.texto)}</b></div></div>`).join('')}</div>`;
+
+  el.innerHTML = html;
+  marcarTocando()
+}
+function htmlFaixa(i) {
+  const f = D.faixas[i];
+  const p = E.prog[i] || {};
+  const ok = !!p.concluido;
+  const pct = !ok && p.pos ? Math.min(100, Math.round(100 * p.pos / f.seg)) : 0;
+  return `<div class="item${ok ? ' feito' : ''}" data-faixa="${i}">
+<button class="play" onclick="tocar('${i}')" aria-label="Ouvir ${whatsEsc(f.titulo)}">${ICO.play}</button>
+<div class="item-info"><b>${whatsEsc(f.titulo)}</b><div class="meta">${mmss(f.seg)}${ok ? ' · ouvido' : pct ? ` · parou em ${mmss(p.pos)}` : ''}</div>${pct ? `<div class="prog"><i style="width:${pct}%"></i></div>` : ''}</div>
+<button class="ler" onclick="abrirTexto('${i}')">Texto</button>
+<button class="marca${ok ? ' sim' : ''}" onclick="alternar('${i}')" aria-label="Marcar como ouvido">${ICO.ok}</button></div>`
+}
+function htmlVideo(id) {
+  const v = D.videos[id];
+  const ok = feito(id);
+  return `<div class="item${ok ? ' feito' : ''}">
+<button class="marca${ok ? ' sim' : ''}" onclick="alternar('${id}')" aria-label="Marcar vídeo como assistido">${ICO.ok}</button>
+<div class="item-info"><b><a href="${whatsEsc(v.link)}" target="_blank" rel="noopener">${whatsEsc(v.titulo)} ↗</a></b>
+<div class="meta">${whatsEsc(v.curso)} · ${whatsEsc(v.bloco)} · ${whatsEsc(duracaoVideo(v))}</div>${v.analise ? `
+<div class="analise"><span class="selo">✓ analisado</span> ${v.analise.assistir.length
+  ? 'assistir ' + v.analise.assistir.map(t => `<b>${whatsEsc(t[0])}–${whatsEsc(t[1])}</b>`).join(', ')
+  : whatsEsc(v.analise.curta || 'veja a análise')}</div>` : ''}</div>
+${v.analise ? `<button class="ler" onclick="abrirAnalise('${id}')">Análise</button>` : ''}</div>`
+}
+function abrirAnalise(id) {
+  const v = D.videos[id], a = v && v.analise;
+  if (!a) return;
+  $('leitor-tit').textContent = 'Análise: ' + v.titulo;
+  // análise fixa do programa (dados.json do armazenamento do estudo), não vem do banco
+  $('leitor-corpo').innerHTML = `<p class="muted">Analisado em ${whatsEsc(a.data)}, só pelo que aparece na tela (sem o áudio).</p>
+<h3>Em resumo</h3><p>${whatsEsc(a.resumo)}</p>
+<h3>Onde vale a pena assistir</h3>${a.assistir.length
+  ? `<ul>${a.assistir.map(t => `<li><b>${whatsEsc(t[0])} a ${whatsEsc(t[1])}</b>: ${whatsEsc(t[2])}</li>`).join('')}</ul>`
+  : `<p>${whatsEsc(a.curta || 'Nenhum trecho em especial.')}</p>`}
+<h3>Pode pular</h3><p>${whatsEsc(a.pular)}</p>
+<h3>Relação com o programa</h3><p>${whatsEsc(a.programa)}</p>
+<p><a class="btn" href="${whatsEsc(v.link)}" target="_blank" rel="noopener">Abrir a aula ↗</a></p>
+<hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
+<h2>Análise completa</h2>${a.html}`;
+  $('leitor-corpo').querySelectorAll('table').forEach(tb => { const w = document.createElement('div'); w.className = 'tab-rola'; tb.parentNode.insertBefore(w, tb); w.appendChild(tb) });
+  $('leitor-corpo').querySelectorAll('a[href^="http"]').forEach(l => { l.target = '_blank'; l.rel = 'noopener' });   // aulas abrem fora do app
+  $('leitor').hidden = false;
+  $('leitor-corpo').scrollTop = 0
+}
+function alternar(id) {
+  const ok = !feito(id);
+  marcar(id, { concluido: ok }, true);
+  if (ok) toast('Concluído ✓', 'ok');
+  render()
+}
+
+// ── player ───────────────────────────────────────────────
+const som = $('som');
+let ultimoTick = 0;
+function tocar(id) {
+  const f = D.faixas[id];
+  if (!f) return;
+  if (E.atual === id) { som.paused ? som.play().catch(() => {}) : som.pause(); return }
+  salvarPosicaoAtual();
+  E.atual = id;
+  ultimoTick = Date.now();
+  const p = E.prog[id] || {};
+  const inicio = (!p.concluido && p.pos && p.pos < f.seg - 5) ? p.pos : 0;
+  if (!E.urls[f.arq]) { toast('Áudio indisponível. Atualize a página.', 'err'); return }
+  if (audiosVencendo()) assinarAudios().catch(() => {});   // renova em segundo plano; o endereço atual ainda vale
+  som.src = E.urls[f.arq];
+  som.playbackRate = Number(ler('estudo_vel')) || 1;
+  const posicionar = () => { try { if (inicio) som.currentTime = inicio } catch (e) {} };
+  som.addEventListener('loadedmetadata', posicionar, { once: true });
+  som.play().catch(() => {});
+  $('player').hidden = false;
+  document.body.classList.add('com-player');
+  $('pl-tit').textContent = f.titulo;
+  $('pl-sub').textContent = f.grupo.startsWith('Módulo') ? `${f.grupo} · ${f.tema}` : (trilhaAtual() || {}).nome || '';
+  $('pl-total').textContent = mmss(f.seg);
+  salvarPerfil({ ultimo_item: id });
+  if ('mediaSession' in navigator) {
+    try {
+      navigator.mediaSession.metadata = new MediaMetadata({ title: f.titulo, artist: f.grupo.startsWith('Módulo') ? `${f.grupo} · ${f.tema}` : 'Estudo da Reforma Tributária', album: 'Estudo da Reforma Tributária · Artecon',
+        artwork: [{ src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' }] });
+    } catch (e) {}
+  }
+  marcarTocando()
+}
+function salvarPosicaoAtual() {
+  if (!E.atual || !som.src) return;
+  const f = D.faixas[E.atual];
+  const t = som.currentTime || 0;
+  if (t > 1 && f) marcar(E.atual, { pos: t, concluido: !!(E.prog[E.atual] && E.prog[E.atual].concluido) || t >= f.seg * 0.95 })
+}
+function marcarTocando() {
+  document.querySelectorAll('.item[data-faixa]').forEach(el => {
+    const sim = el.dataset.faixa === E.atual;
+    el.classList.toggle('tocando', sim);
+    const b = el.querySelector('.play');
+    if (b) b.innerHTML = sim && !som.paused ? ICO.pausa : ICO.play
+  });
+  $('pl-play').innerHTML = som.paused ? ICO.play : ICO.pausa
+}
+function vizinha(delta) {
+  const t = trilhaAtual();
+  const lista = t ? t.faixas : Object.keys(D.faixas);
+  const k = lista.indexOf(E.atual);
+  return k >= 0 ? lista[k + delta] : null
+}
+som.addEventListener('play', marcarTocando);
+som.addEventListener('pause', () => { marcarTocando(); salvarPosicaoAtual(); enviarFila() });
+som.addEventListener('timeupdate', () => {
+  const f = D.faixas[E.atual];
+  if (!f) return;
+  const t = som.currentTime, dur = som.duration || f.seg;
+  if (!arrastando) $('pl-barra').value = Math.round(1000 * t / dur);
+  $('pl-atual').textContent = mmss(t);
+  const agora = Date.now();
+  if (agora - ultimoTick > 15000) {   // guarda a posição a cada 15 s
+    ultimoTick = agora;
+    salvarPosicaoAtual();
+    const el = document.querySelector(`.item[data-faixa="${E.atual}"] .meta`);
+    if (el && !feito(E.atual) && t > 5) el.textContent = `${mmss(f.seg)} · parou em ${mmss(t)}`;
+  }
+  if (!feito(E.atual) && dur && t >= dur * 0.95) { marcar(E.atual, { concluido: true, pos: t }, true); render() }
+});
+som.addEventListener('ended', () => {
+  marcar(E.atual, { concluido: true, pos: D.faixas[E.atual].seg }, true);
+  const prox = vizinha(1);
+  render();
+  if (prox && ler('estudo_continuo') !== '0') { toast('Próxima faixa: ' + D.faixas[prox].titulo); tocar(prox) }
+});
+let tentouRenovar = false;
+som.addEventListener('error', async () => {
+  if (!E.atual || !som.getAttribute('src')) return;
+  if (!tentouRenovar) {   // endereço vencido? assina de novo e retoma do mesmo ponto
+    tentouRenovar = true;
+    const id = E.atual, pos = som.currentTime || 0;
+    try {
+      await assinarAudios();
+      if (E.atual !== id) return;
+      som.src = E.urls[D.faixas[id].arq];
+      som.addEventListener('loadedmetadata', () => { try { if (pos) som.currentTime = pos } catch (e) {} }, { once: true });
+      som.play().catch(() => toast('Toque no play para continuar.'));
+      return
+    } catch (e) {}
+  }
+  toast('Não foi possível tocar o áudio. Verifique a conexão.', 'err')
+});
+som.addEventListener('playing', () => { tentouRenovar = false });
+let arrastando = false;
+$('pl-barra').addEventListener('input', () => { arrastando = true; const dur = som.duration || (D.faixas[E.atual] || {}).seg || 0; $('pl-atual').textContent = mmss(dur * $('pl-barra').value / 1000) });
+$('pl-barra').addEventListener('change', () => { const dur = som.duration || (D.faixas[E.atual] || {}).seg || 0; try { som.currentTime = dur * $('pl-barra').value / 1000 } catch (e) {} arrastando = false; salvarPosicaoAtual() });
+$('pl-play').addEventListener('click', () => { if (!E.atual) return; som.paused ? som.play().catch(() => {}) : som.pause() });
+$('pl-menos').addEventListener('click', () => { som.currentTime = Math.max(0, som.currentTime - 15) });
+$('pl-mais').addEventListener('click', () => { som.currentTime = Math.min((som.duration || 0) - 1, som.currentTime + 30) });
+$('pl-ant').addEventListener('click', () => { if (som.currentTime > 5) { som.currentTime = 0; return } const v = vizinha(-1); if (v) tocar(v) });
+$('pl-prox').addEventListener('click', () => { const v = vizinha(1); if (v) tocar(v) });
+$('pl-vel').addEventListener('click', () => {
+  const atual = Number(ler('estudo_vel')) || 1;
+  const nova = VELOCIDADES[(VELOCIDADES.indexOf(atual) + 1) % VELOCIDADES.length];
+  guardar('estudo_vel', String(nova));
+  som.playbackRate = nova;
+  $('pl-vel').textContent = nova.toString().replace('.', ',') + '×'
+});
+$('pl-texto').addEventListener('click', () => { if (E.atual) abrirTexto(E.atual) });
+$('pl-fechar').addEventListener('click', () => {
+  salvarPosicaoAtual(); som.pause(); enviarFila();
+  som.removeAttribute('src'); som.load();
+  E.atual = null;
+  $('player').hidden = true;
+  document.body.classList.remove('com-player');
+  marcarTocando()
+});
+if ('mediaSession' in navigator) {
+  try {
+    navigator.mediaSession.setActionHandler('play', () => som.play());
+    navigator.mediaSession.setActionHandler('pause', () => som.pause());
+    navigator.mediaSession.setActionHandler('seekbackward', () => { som.currentTime = Math.max(0, som.currentTime - 15) });
+    navigator.mediaSession.setActionHandler('seekforward', () => { som.currentTime = som.currentTime + 30 });
+    navigator.mediaSession.setActionHandler('previoustrack', () => { const v = vizinha(-1); if (v) tocar(v) });
+    navigator.mediaSession.setActionHandler('nexttrack', () => { const v = vizinha(1); if (v) tocar(v) });
+  } catch (e) {}
+}
+
+// ── texto da faixa ───────────────────────────────────────
+function abrirTexto(id) {
+  const f = D.faixas[id];
+  $('leitor-tit').textContent = rotuloFaixa(id);
+  $('leitor-corpo').innerHTML = f.html;   // conteúdo fixo do programa (dados.json do armazenamento do estudo), não vem do banco
+  $('leitor-corpo').querySelectorAll('table').forEach(tb => { const w = document.createElement('div'); w.className = 'tab-rola'; tb.parentNode.insertBefore(w, tb); w.appendChild(tb) });
+  $('leitor').hidden = false;
+  $('leitor-corpo').scrollTop = 0
+}
+$('leitor-fechar').addEventListener('click', () => { $('leitor').hidden = true });
+$('leitor').addEventListener('click', e => { if (e.target === $('leitor')) $('leitor').hidden = true });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') $('leitor').hidden = true });
+
+// ── anotações ────────────────────────────────────────────
+function renderNotas() {
+  const el = $('pg-notas');
+  const t = trilhaAtual();
+  let onde = '<div class="onde">Escolha uma trilha na aba "Minha trilha" para ver o que falta.</div>';
+  let pend = '';
+  if (t) {
+    const n = numeros(t, E.prog);
+    const ult = E.perfil && E.perfil.ultimo_item;
+    const pos = ult && E.prog[ult] ? E.prog[ult].pos : 0;
+    const faltaF = t.faixas.filter(i => !feito(i)), faltaV = t.videos.filter(i => !feito(i)), faltaT = t.tarefas.filter(x => !feito(x.id));
+    onde = `<div class="onde"><b>${ult && D.faixas[ult] ? `Você parou em: ${whatsEsc(rotuloFaixa(ult))}${pos ? ` (${mmss(pos)})` : ''}` : 'Você ainda não começou os áudios.'}</b>
+${whatsEsc(t.nome)}: ${n.pct}% concluído. Faltam ${faltaF.length} áudio(s), ${faltaV.length} vídeo(s) e ${faltaT.length} tarefa(s)${n.resto ? `, cerca de ${horas(n.resto)}` : ''}.</div>`;
+    const lista = [...faltaF.slice(0, 5).map(i => `<button onclick="irPara('trilha');tocar('${i}')">🎧 ${whatsEsc(rotuloFaixa(i))}</button>`),
+                   ...faltaV.slice(0, 3).map(i => `<button onclick="abrirVideo('${i}')">🎬 ${whatsEsc(D.videos[i].titulo)}</button>`),
+                   ...faltaT.slice(0, 3).map(x => `<button onclick="irPara('trilha')">✍️ ${whatsEsc(x.texto)}</button>`)];
+    if (lista.length) pend = `<div class="sec-tit" style="margin-top:14px">O que falta (próximos itens)</div><div class="pend">${lista.join('')}</div>`;
+  }
+  const opcoes = t ? [...t.faixas, ...t.videos, ...t.opcionais, ...t.tarefas.map(x => x.id)] : [];
+  const sel = (E.atual && opcoes.includes(E.atual)) ? E.atual : (E.perfil && E.perfil.ultimo_item) || '';
+  el.innerHTML = `<div class="card"><h2>Onde parei e o que falta</h2><div style="margin-top:10px">${onde}</div>${pend}</div>
+<div class="card"><h2>Nova anotação</h2>
+<form id="form-nota">
+  <div class="campo"><label for="nota-item">Sobre</label><select id="nota-item"><option value="">Geral</option>${opcoes.map(i => `<option value="${i}"${i === sel ? ' selected' : ''}>${whatsEsc(rotuloItem(i))}</option>`).join('')}</select></div>
+  <div class="campo"><label for="nota-txt">Anotação</label><textarea id="nota-txt" maxlength="4000" placeholder="Ex.: Parei no Módulo 3, na parte do split payment. Falta refazer o exercício de apuração. Dúvida: ..."></textarea></div>
+  <button class="btn prim inteiro" type="submit" id="nota-btn">Salvar anotação</button>
+</form></div>
+<div class="card"><h2>Minhas anotações <span class="cont">${E.notas.length}</span></h2>
+${E.notas.length ? E.notas.map(nota => `<div class="nota"><div class="nota-topo"><span>${dataHora(nota.criado_em)}</span>${nota.trilha ? `<span>· ${whatsEsc((D.trilhas.find(x => x.id === nota.trilha) || {}).curto || nota.trilha)}</span>` : ''}${nota.item ? `<span>· ${whatsEsc(rotuloItem(nota.item))}</span>` : ''}<button class="rm" onclick="apagarNota(${Number(nota.id)})">Apagar</button></div><p>${whatsEsc(nota.texto)}</p></div>`).join('')
+  : '<p class="muted" style="margin-top:6px">Nenhuma anotação ainda. Só você vê as suas anotações.</p>'}</div>`;
+  $('form-nota').addEventListener('submit', salvarNota)
+}
+async function salvarNota(ev) {
+  ev.preventDefault();
+  const texto = $('nota-txt').value.trim();
+  if (!texto) { toast('Escreva a anotação.', 'err'); return }
+  const btn = $('nota-btn'); btn.disabled = true;
+  try {
+    const r = await api('POST', '/rest/v1/agenda_estudo_notas', { body: { texto, trilha: E.trilha, item: $('nota-item').value || null, tenant_id: E.usuario.tenant_id }, prefer: 'return=representation' });
+    if (r && r[0]) E.notas.unshift(r[0]);
+    toast('Anotação salva ✓', 'ok');
+    renderNotas()
+  } catch (e) { toast('Não foi possível salvar. Verifique a conexão.', 'err'); btn.disabled = false }
+}
+async function apagarNota(id) {
+  if (!confirm('Apagar esta anotação?')) return;
+  try {
+    await api('DELETE', `/rest/v1/agenda_estudo_notas?id=eq.${id}`);
+    E.notas = E.notas.filter(n => n.id !== id);
+    renderNotas()
+  } catch (e) { toast('Não foi possível apagar.', 'err') }
+}
+
+function abrirVideo(id) { const v = D.videos[id]; if (v) window.open(v.link, '_blank', 'noopener') }
+
+// ── equipe (admin e gerente) ─────────────────────────────
+async function renderEquipe() {
+  const el = $('pg-equipe');
+  if (!ehGestor()) { el.innerHTML = ''; return }
+  el.innerHTML = '<div class="card"><div class="gira" style="margin:20px auto"></div></div>';
+  try {
+    const tid = Number(E.usuario.tenant_id);
+    const [us, so, perfis, prog] = await Promise.all([
+      api('GET', `/rest/v1/agenda_usuarios?tenant_id=eq.${tid}&ativo=eq.true&select=nome,auth_id,perfil&order=nome`),
+      api('GET', `/rest/v1/agenda_estudo_usuarios?tenant_id=eq.${tid}&select=id,auth_id,nome,email,whatsapp,ativo&order=nome`),
+      api('GET', '/rest/v1/agenda_estudo_perfil?select=auth_id,trilha,atualizado_em'),
+      api('GET', '/rest/v1/agenda_estudo_progresso?select=auth_id,item,concluido,posicao_seg,atualizado_em&limit=10000'),
+    ]);
+    E.soEstudo = so || [];
+    const naEquipe = new Set((us || []).map(u => u.auth_id));
+    const pessoas = [...(us || []).filter(u => u.auth_id),
+                     ...E.soEstudo.filter(p => p.ativo && !naEquipe.has(p.auth_id)).map(p => ({ nome: p.nome, auth_id: p.auth_id, so: true }))];
+    const porPessoa = {};
+    (prog || []).forEach(p => { (porPessoa[p.auth_id] = porPessoa[p.auth_id] || {})[p.item] = { concluido: p.concluido, pos: Number(p.posicao_seg) || 0, em: p.atualizado_em } });
+    if (E.authId) porPessoa[E.authId] = { ...(porPessoa[E.authId] || {}), ...E.prog };
+    const linhas = pessoas.map(u => {
+      const pf = (perfis || []).find(x => x.auth_id === u.auth_id);
+      const t = pf && D.trilhas.find(x => x.id === pf.trilha);
+      const pr = porPessoa[u.auth_id] || {};
+      const n = t ? numeros(t, pr) : null;
+      const datas = Object.values(pr).map(x => x.em).filter(Boolean).sort();
+      return { nome: u.nome, so: u.so, t, n, ult: datas[datas.length - 1] };
+    }).sort((a, b) => ((b.n ? b.n.pct : -1) - (a.n ? a.n.pct : -1)) || String(a.nome).localeCompare(b.nome));
+    const comecaram = linhas.filter(l => l.t).length;
+    const media = comecaram ? Math.round(linhas.filter(l => l.n).reduce((s, l) => s + l.n.pct, 0) / comecaram) : 0;
+    const ativos = E.soEstudo.filter(p => p.ativo).length;
+    el.innerHTML = `<div class="card"><h2>Andamento da equipe <span class="cont">${comecaram} de ${linhas.length} com trilha</span></h2>
+<p class="muted" style="margin-top:4px">Conclusão média de quem já escolheu a trilha: <b>${media}%</b>. As anotações de cada pessoa são particulares e não aparecem aqui.</p>
+<div style="margin-top:10px">${linhas.map(l => `<div class="eq-l"><div class="nome">${whatsEsc(l.nome)}${l.so ? '<span class="tag-so">só Estudo</span>' : ''}</div><div class="tr">${l.t ? whatsEsc(l.t.curto) : 'Sem trilha'}${l.ult ? `<br><span class="muted">${dataHora(l.ult)}</span>` : ''}</div>
+<div class="eq-barra"><div class="trilho"><div class="enche" style="width:${l.n ? l.n.pct : 0}%;background:${l.n && l.n.pct >= 100 ? 'var(--green)' : 'var(--accent)'}"></div></div><span>${l.n ? l.n.pct + '%' : '—'}</span></div></div>`).join('')}</div></div>
+
+<div class="card"><h2>Pessoas só do Estudo <span class="cont">${ativos} ativa${ativos === 1 ? '' : 's'}</span></h2>
+<p class="muted" style="margin-top:4px">Para quem não usa o Agenda: a pessoa entra só no Estudo, com login próprio, e não vê nada da agenda. O cadastro fica só aqui (não vai para o Portal Artecon). Quem já é da equipe do Agenda não precisa de cadastro.</p>
+<form id="form-so" autocomplete="off">
+  <div class="grade-form">
+    <div class="campo"><label for="so-nome">Nome</label><input id="so-nome" maxlength="120" required></div>
+    <div class="campo"><label for="so-email">E-mail</label><input id="so-email" type="email" maxlength="200" required></div>
+    <div class="campo"><label for="so-wpp">WhatsApp (opcional)</label><input id="so-wpp" type="tel" inputmode="tel" maxlength="20" placeholder="DDD + número"></div>
+  </div>
+  <button class="btn prim inteiro" type="submit" id="so-btn">Cadastrar e gerar a senha</button>
+</form>
+<div style="margin-top:12px">${E.soEstudo.length ? E.soEstudo.map(p => `<div class="so-l${p.ativo ? '' : ' inativo'}">
+<div class="so-info"><b>${whatsEsc(p.nome)}${p.ativo ? '' : '<span class="tag-off">desativada</span>'}${naEquipe.has(p.auth_id) ? '<span class="tag-off">também na equipe do Agenda</span>' : ''}</b>
+<span class="muted">${whatsEsc(p.email)}${p.whatsapp ? ' · ' + whatsEsc(foneTela(p.whatsapp)) : ''}</span></div>
+<div class="so-acoes">${p.ativo
+  ? `<button class="btn peq" onclick="soNovaSenha(${Number(p.id)})">Nova senha</button><button class="btn peq" onclick="soAtivar(${Number(p.id)}, false)">Desativar</button>`
+  : `<button class="btn peq" onclick="soAtivar(${Number(p.id)}, true)">Reativar</button>`}</div></div>`).join('')
+  : '<p class="muted">Ninguém cadastrado só para o Estudo ainda.</p>'}</div></div>`;
+    $('form-so').addEventListener('submit', soCadastrar)
+  } catch (e) {
+    el.innerHTML = `<div class="card">Não foi possível carregar a equipe. ${whatsEsc(e.message)}</div>`
+  }
+}
+
+// ── pessoas só do Estudo (função estudo-usuario) ─────────
+function foneDig(v) {
+  let d = String(v || '').replace(/\D/g, '');
+  if ((d.length === 12 || d.length === 13) && d.startsWith('55')) d = d.slice(2);
+  return d.length === 10 || d.length === 11 ? d : ''
+}
+function foneTela(v) {
+  const d = foneDig(v);
+  return d ? `(${d.slice(0, 2)}) ${d.slice(2, -4)}-${d.slice(-4)}` : String(v || '')
+}
+async function chamarEstudoUsuario(corpo) {
+  for (let tentativa = 0; tentativa < 2; tentativa++) {
+    const r = await fetchT(`${SUPA_URL}/functions/v1/estudo-usuario`, {
+      method: 'POST', headers: { apikey: SUPA_KEY, Authorization: `Bearer ${E.token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(corpo)
+    }, 30000);
+    if (r.status === 401 && tentativa === 0 && await renovarSessao()) continue;
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || !j.ok) throw new Error(j.erro || j.message || ('Erro ' + r.status));
+    return j
+  }
+}
+async function soCadastrar(ev) {
+  ev.preventDefault();
+  const nome = $('so-nome').value.trim(), email = $('so-email').value.trim(), wpp = $('so-wpp').value.trim();
+  if (wpp && !foneDig(wpp)) { toast('WhatsApp inválido: informe DDD + número.', 'err'); return }
+  const btn = $('so-btn'); btn.disabled = true; btn.textContent = 'Cadastrando...';
+  try {
+    const j = await chamarEstudoUsuario({ acao: 'cadastrar', nome, email, whatsapp: wpp || null });
+    mostrarAcesso(j.usuario, j.senha, j.reativado ? 'reativado' : (j.ja_tinha_login ? 'ja_tinha' : 'novo'));
+    renderEquipe()
+  } catch (e) {
+    toast(e.message || 'Não foi possível cadastrar.', 'err');
+    btn.disabled = false; btn.textContent = 'Cadastrar e gerar a senha'
+  }
+}
+async function soNovaSenha(id) {
+  const p = E.soEstudo.find(x => x.id === id);
+  if (!p || !confirm(`Gerar uma nova senha provisória para ${p.nome}? A senha atual deixa de valer.`)) return;
+  try {
+    const j = await chamarEstudoUsuario({ acao: 'nova_senha', id });
+    mostrarAcesso(j.usuario, j.senha, 'nova_senha')
+  } catch (e) { toast(e.message || 'Não foi possível gerar a senha.', 'err') }
+}
+async function soAtivar(id, ativo) {
+  const p = E.soEstudo.find(x => x.id === id);
+  if (!p) return;
+  if (!ativo && !confirm(`Desativar ${p.nome}? A pessoa deixa de entrar no Estudo; o andamento fica guardado.`)) return;
+  try {
+    const r = await api('PATCH', `/rest/v1/agenda_estudo_usuarios?id=eq.${Number(id)}`, { body: { ativo }, prefer: 'return=representation' });
+    if (!r || !r.length) throw new Error('sem permissão');
+    toast(ativo ? `${p.nome} pode entrar de novo ✓` : `${p.nome} foi desativada`, ativo ? 'ok' : '');
+    renderEquipe()
+  } catch (e) { toast('Não foi possível alterar o cadastro.', 'err') }
+}
+// tela com o acesso para repassar (mesmo jeito do convite em Colaboradores do Agenda)
+function mostrarAcesso(u, senha, caso) {
+  const link = new URL('estudo.html', location.href).href;
+  const primeiro = String(u.nome || '').split(' ')[0];
+  const texto = `Olá, ${primeiro}! Seu acesso ao Estudo da Reforma Tributária (Artecon):\n${link}\nE-mail: ${u.email}`
+    + (senha ? `\nSenha provisória: ${senha}\nNo primeiro acesso você cria a sua senha.` : '\nSenha: a mesma que você já usa');
+  E.acessoTexto = texto;
+  const wpp = foneDig(u.whatsapp);
+  const titulo = { novo: 'foi cadastrado(a)', ja_tinha: 'foi cadastrado(a)', reativado: 'pode entrar de novo', nova_senha: 'tem uma nova senha' }[caso] || '';
+  const aviso = senha ? 'Repasse estes dados. A senha aparece só agora; envie em seguida. No primeiro acesso a pessoa cria a senha dela.'
+    : caso === 'reativado' ? 'O cadastro estava desativado e voltou a valer. A pessoa entra com a senha que já tinha (se esqueceu, use "Nova senha").'
+    : 'Esse e-mail já tinha login no sistema (Agenda ou Financeiro Pro): a pessoa entra com a senha que já usa.';
+  $('leitor-tit').textContent = `✅ ${primeiro} ${titulo}`;
+  $('leitor-corpo').innerHTML = `<p class="muted">${aviso}</p>
+<div class="acesso">
+<div><span class="muted">Endereço</span><b>${whatsEsc(link)}</b></div>
+<div><span class="muted">E-mail</span><b>${whatsEsc(u.email)}</b></div>
+${senha ? `<div><span class="muted">Senha provisória</span><b class="senha">${whatsEsc(senha)}</b></div>` : ''}
+</div>
+<div class="acesso-botoes">${wpp ? `<a class="btn" href="https://wa.me/55${wpp}?text=${encodeURIComponent(texto)}" target="_blank" rel="noopener">💬 Enviar pelo WhatsApp</a>` : ''}
+<button class="btn" onclick="copiarAcesso()">Copiar</button><button class="btn prim" onclick="$('leitor').hidden = true">Concluir</button></div>`;
+  $('leitor').hidden = false;
+  $('leitor-corpo').scrollTop = 0
+}
+function copiarAcesso() {
+  const ok = () => toast('Copiado ✓', 'ok'), falhou = () => toast('Não foi possível copiar. Selecione o texto e copie.', 'err');
+  if (navigator.clipboard) navigator.clipboard.writeText(E.acessoTexto).then(ok, falhou); else falhou()
+}
+
+iniciar();
+</script>
+</body>
+</html>

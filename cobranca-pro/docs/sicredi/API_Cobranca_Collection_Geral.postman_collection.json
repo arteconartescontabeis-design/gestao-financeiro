@@ -1,0 +1,2445 @@
+{
+ "info": {
+  "_postman_id": "711571c0-c091-4257-9001-8da37b5e4d11",
+  "name": "API Cobranca - Collection Geral",
+  "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+  "_exporter_id": "12786553"
+ },
+ "item": [
+  {
+   "name": "Sandbox",
+   "item": [
+    {
+     "name": "Autenticação",
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "exec": [
+         ""
+        ],
+        "type": "text/javascript",
+        "packages": {}
+       }
+      }
+     ],
+     "protocolProfileBehavior": {
+      "disabledSystemHeaders": {}
+     },
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/x-www-form-urlencoded"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}"
+       },
+       {
+        "key": "context",
+        "value": "COBRANCA"
+       }
+      ],
+      "body": {
+       "mode": "urlencoded",
+       "urlencoded": [
+        {
+         "key": "username",
+         "value": "{{usuario}}",
+         "type": "text"
+        },
+        {
+         "key": "password",
+         "value": "{{senha}}",
+         "type": "text"
+        },
+        {
+         "key": "scope",
+         "value": "cobranca",
+         "type": "text"
+        },
+        {
+         "key": "grant_type",
+         "value": "password",
+         "type": "text"
+        },
+        {
+         "key": "cooperativa",
+         "value": "6789",
+         "type": "text",
+         "disabled": true
+        },
+        {
+         "key": "posto",
+         "value": "03",
+         "type": "text",
+         "disabled": true
+        },
+        {
+         "key": "codigoBeneficiario",
+         "value": "12345",
+         "type": "text",
+         "disabled": true
+        }
+       ]
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/sb/auth/openapi/token",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "sb",
+        "auth",
+        "openapi",
+        "token"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Cadastro Mock",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "cooperativa",
+        "value": "6789"
+       },
+       {
+        "key": "posto",
+        "value": "03"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\n   \"beneficiarioFinal\":{\n      \"cep\":91250000,\n      \"cidade\":\"PORTO ALEGRE\",\n      \"documento\":\"65613259585\",\n      \"logradouro\":\"RUA DOUTOR VARGAS NETO 180\",\n      \"nome\":\"TESTE FAKE\",\n      \"numeroEndereco\":119,\n      \"tipoPessoa\":\"PESSOA_FISICA\",\n      \"uf\":\"RS\"\n   },\n   \"codigoBeneficiario\":\"12345\",\n   \"dataVencimento\":\"2022-10-30\",\n   \"especieDocumento\":\"DUPLICATA_MERCANTIL_INDICACAO\",\n   \"pagador\":{\n      \"cep\":\"91250000\",\n      \"cidade\":\"PORTO ALEGRE\",\n      \"documento\":\"35169335695\",\n      \"nome\":\"TESTE FAKE\",\n      \"tipoPessoa\":\"PESSOA_FISICA\",\n      \"endereco\":\"RUA DOUTOR VARGAS NETO 180\",\n      \"uf\":\"RS\"\n   },\n   \"tipoCobranca\":\"HIBRIDO\",\n   \"seuNumero\":\"TESTE\",\n   \"valor\":100.01,\n   \"informativos\": [\n    \"info 1\",\n    \"info 2\",\n    \"info 3\",\n    \"info 4\",\n    \"info 5\"\n  ],\n  \"mensagens\": [\n    \"mens 1\",\n    \"mens 2\",\n    \"mens 3\",\n    \"mens 4\"\n  ]\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/sb/cobranca/boleto/v1/boletos",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "sb",
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrução Baixa",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "6789"
+       },
+       {
+        "key": "posto",
+        "value": "03"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n    \r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/sb/cobranca/boleto/v1/boletos/211001292/baixa",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "sb",
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "211001292",
+        "baixa"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrução Data Vencimento",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "6789"
+       },
+       {
+        "key": "posto",
+        "value": "03"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n  \"dataVencimento\": \"2022-12-05\"\r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/sb/cobranca/boleto/v1/boletos/211001292/data-vencimento",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "sb",
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "211001292",
+        "data-vencimento"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrução Altera Juros",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "6789"
+       },
+       {
+        "key": "posto",
+        "value": "03"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n  \"valorAbatimento\": \"10.0\"\r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/sb/cobranca/boleto/v1/boletos/211001292/juros",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "sb",
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "211001292",
+        "juros"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrução Altera Seu Numero",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "6789"
+       },
+       {
+        "key": "posto",
+        "value": "03"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n  \"seuNumero\": \"0123456789\"\r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/sb/cobranca/boleto/v1/boletos/211001292/seu-numero",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "sb",
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "211001292",
+        "seu-numero"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrução Altera Desconto",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "6789"
+       },
+       {
+        "key": "posto",
+        "value": "03"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n  \"valorDesconto1\": 3.25,\r\n  \"valorDesconto2\": 2.25,\r\n  \"valorDesconto3\": 1.25\r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/sb/cobranca/boleto/v1/boletos/211001292/desconto",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "sb",
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "211001292",
+        "desconto"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrução Protesto",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "6789"
+       },
+       {
+        "key": "posto",
+        "value": "03"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n    \r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/sb/cobranca/boleto/v1/boletos/211001292/protesto",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "sb",
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "211001292",
+        "protesto"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrução Sustar Protesto Baixar",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "6789"
+       },
+       {
+        "key": "posto",
+        "value": "03"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": ""
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/sb/cobranca/boleto/v1/boletos/211001292/sustar-protesto-baixar-titulo",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "sb",
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "211001292",
+        "sustar-protesto-baixar-titulo"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrução Sustar Protesto Manter",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "6789"
+       },
+       {
+        "key": "posto",
+        "value": "03"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": ""
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/sb/cobranca/boleto/v1/boletos/211001292/sustar-protesto-manter-titulo",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "sb",
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "211001292",
+        "sustar-protesto-manter-titulo"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrução Cancelar Protesto Automatico",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "6789"
+       },
+       {
+        "key": "posto",
+        "value": "03"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n    \r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/sb/cobranca/boleto/v1/boletos/211001292/cancelar-protesto-automatico",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "sb",
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "211001292",
+        "cancelar-protesto-automatico"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrução Conceder Abatimento",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "6789"
+       },
+       {
+        "key": "posto",
+        "value": "03"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n  \"valorAbatimento\": \"10.0\"\r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/sb/cobranca/boleto/v1/boletos/211001292/conceder-abatimento",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "sb",
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "211001292",
+        "conceder-abatimento"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrução Cancelar Abatimento",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "6789"
+       },
+       {
+        "key": "posto",
+        "value": "03"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n  \"valorAbatimento\": \"10.0\"\r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/sb/cobranca/boleto/v1/boletos/211001292/cancelar-abatimento",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "sb",
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "211001292",
+        "cancelar-abatimento"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrução Negativação",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "6789"
+       },
+       {
+        "key": "posto",
+        "value": "03"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n    \r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/sb/cobranca/boleto/v1/boletos/211001292/negativacao",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "sb",
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "211001292",
+        "negativacao"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrução Excluir Negativação Baixar",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "6789"
+       },
+       {
+        "key": "posto",
+        "value": "03"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": ""
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/sb/cobranca/boleto/v1/boletos/211001292/sustar-negativacao-baixar-titulo",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "sb",
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "211001292",
+        "sustar-negativacao-baixar-titulo"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Impressão",
+     "request": {
+      "method": "GET",
+      "header": [
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}",
+        "type": "text"
+       },
+       {
+        "key": "posto",
+        "value": "03",
+        "type": "text"
+       },
+       {
+        "key": "cooperativa",
+        "value": "6789",
+        "type": "text"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json",
+        "type": "text"
+       }
+      ],
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/sb/cobranca/boleto/v1/boletos/pdf?linhaDigitavel=74891121150039736789903123451001187340000000050",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "sb",
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "pdf"
+       ],
+       "query": [
+        {
+         "key": "linhaDigitavel",
+         "value": "74891121150039736789903123451001187340000000050"
+        }
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Consulta NN",
+     "request": {
+      "method": "GET",
+      "header": [
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/x-www-form-urlencoded"
+       },
+       {
+        "key": "cooperativa",
+        "value": "6789"
+       },
+       {
+        "key": "posto",
+        "value": "03"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}"
+       }
+      ],
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/sb/cobranca/boleto/v1/boletos?codigoBeneficiario=12345&nossoNumero=211001293",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "sb",
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos"
+       ],
+       "query": [
+        {
+         "key": "codigoBeneficiario",
+         "value": "12345"
+        },
+        {
+         "key": "nossoNumero",
+         "value": "211001293"
+        }
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Consulta LIQUIDADOS DIA",
+     "request": {
+      "method": "GET",
+      "header": [
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/x-www-form-urlencoded"
+       },
+       {
+        "key": "cooperativa",
+        "value": "6789"
+       },
+       {
+        "key": "posto",
+        "value": "03"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}"
+       }
+      ],
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/sb/cobranca/boleto/v1/boletos/liquidados/dia?codigoBeneficiario=12345&dia=10/07/2023",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "sb",
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "liquidados",
+        "dia"
+       ],
+       "query": [
+        {
+         "key": "codigoBeneficiario",
+         "value": "12345"
+        },
+        {
+         "key": "dia",
+         "value": "10/07/2023"
+        }
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Francesinha - Sandbox",
+     "request": {
+      "method": "GET",
+      "header": [
+       {
+        "key": "accept",
+        "value": "*/*"
+       },
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}",
+        "type": "text"
+       }
+      ],
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/sb/cobranca/v1/cobranca-financeiro/movimentacoes?cooperativa=6789&codigoBeneficiario=12345&posto=03&dataLancamento=07-09-2023&pagina=0&tipoMovimento=CREDITO",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "sb",
+        "cobranca",
+        "v1",
+        "cobranca-financeiro",
+        "movimentacoes"
+       ],
+       "query": [
+        {
+         "key": "cooperativa",
+         "value": "6789"
+        },
+        {
+         "key": "codigoBeneficiario",
+         "value": "12345"
+        },
+        {
+         "key": "posto",
+         "value": "03"
+        },
+        {
+         "key": "dataLancamento",
+         "value": "07-09-2023"
+        },
+        {
+         "key": "pagina",
+         "value": "0"
+        },
+        {
+         "key": "tipoMovimento",
+         "value": "CREDITO"
+        }
+       ]
+      }
+     },
+     "response": []
+    }
+   ]
+  },
+  {
+   "name": "Produção",
+   "item": [
+    {
+     "name": "Autenticação",
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "exec": [
+         "//var jsonData = pm.response.json(); \r",
+         "\r",
+         "//pm.environment.set(\"token\", jsonData.access_token)"
+        ],
+        "type": "text/javascript",
+        "packages": {}
+       }
+      }
+     ],
+     "protocolProfileBehavior": {
+      "disabledSystemHeaders": {}
+     },
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/x-www-form-urlencoded",
+        "disabled": true
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}"
+       },
+       {
+        "key": "context",
+        "value": "COBRANCA"
+       }
+      ],
+      "body": {
+       "mode": "urlencoded",
+       "urlencoded": [
+        {
+         "key": "username",
+         "value": "{{usuario}}",
+         "type": "text"
+        },
+        {
+         "key": "password",
+         "value": "{{senha}}",
+         "type": "text"
+        },
+        {
+         "key": "scope",
+         "value": "cobranca",
+         "type": "text"
+        },
+        {
+         "key": "grant_type",
+         "value": "password",
+         "type": "text"
+        }
+       ]
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/auth/openapi/token",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "auth",
+        "openapi",
+        "token"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Cadastro",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "accept",
+        "value": "*/*",
+        "disabled": true
+       },
+       {
+        "key": "cooperativa",
+        "value": "13455"
+       },
+       {
+        "key": "posto",
+        "value": "12"
+       },
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json",
+        "type": "text"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}",
+        "type": "text"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n    \"codigoBeneficiario\":\"12345\",\r\n   \"dataVencimento\":\"2024-06-28\",\r\n   \"pagador\":{\r\n      \"cep\":\"25780959\",\r\n      \"cidade\":\"PORTO ALEGRE\",\r\n      \"documento\":\"\",\r\n      \"nome\":\"COSTA MOURA PRODUCAO PROD PAGADOR\",\r\n      \"tipoPessoa\":\"PESSOA_FISICA\",\r\n      \"uf\":\"RS\"\r\n   },\r\n   \"tipoCobranca\":\"HIBRIDO\",\r\n    \"especieDocumento\":\"DUPLICATA_MERCANTIL_INDICACAO\",\r\n   \"validadeAposVencimento\": 3,\r\n   \"seuNumero\":\"TESTEeeeeeeeeeeee\",\r\n   \"valor\": 0.05,\r\n    \"juros\": 0.01,\r\n    \"tipoJuros\": \"VALOR\",\r\n   \"informativos\": [\r\n    \"Infortivos Teste teste te\",\r\n    \"info 2\",\r\n    \"info 3\",\r\n    \"info 4\",\r\n    \"info 5\"\r\n  ],\r\n  \"mensagens\": [\r\n    \"Mensaem Teste teste mensagem\",\r\n    \"mensagem 2\",\r\n    \"mensagem 3\",\r\n    \"mensagem 4\"\r\n  ]\r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/cobranca/boleto/v1/boletos",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Impressão",
+     "request": {
+      "method": "GET",
+      "header": [
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}",
+        "type": "text"
+       }
+      ],
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/cobranca/boleto/v1/boletos/pdf?linhaDigitavel=748911600912345592596400000000003",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "pdf"
+       ],
+       "query": [
+        {
+         "key": "linhaDigitavel",
+         "value": "748911600912345592596400000000003"
+        }
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrução Baixa",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "1234"
+       },
+       {
+        "key": "posto",
+        "value": "12"
+       },
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}",
+        "type": "text"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n\r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/cobranca/boleto/v1/boletos/600009115/baixa",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "600009115",
+        "baixa"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrução Desconto",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "1134"
+       },
+       {
+        "key": "posto",
+        "value": "12"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n  \"valorDesconto1\": 0.18\r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/cobranca/boleto/v1/boletos/600008054/desconto",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "600008054",
+        "desconto"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrução Altera Juros",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "1234"
+       },
+       {
+        "key": "posto",
+        "value": "12"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n  \"valorOuPercentual\": \"10.0\"\r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/cobranca/boleto/v1/boletos/600007945/desconto",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "600007945",
+        "desconto"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrução Altera Seu Numero",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "1234"
+       },
+       {
+        "key": "posto",
+        "value": "12"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n  \"seuNumero\": \"0123456789\"\r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/cobranca/boleto/v1/boletos/600007945/seu-numero",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "600007945",
+        "seu-numero"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrucao - Altera Vencimento",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "1234"
+       },
+       {
+        "key": "posto",
+        "value": "12"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n  \"dataVencimento\": \"2024-09-30\"\r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/cobranca/boleto/v1/boletos/241000727/data-vencimento",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "241000727",
+        "data-vencimento"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrucao - Altera Data Desconto",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "1234"
+       },
+       {
+        "key": "posto",
+        "value": "12"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n  \"data1\": \"2021-09-23\"\r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/cobranca/boleto/v1/boletos/600007970/data-vencimento",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "600007970",
+        "data-vencimento"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrução Conceder Abatimento",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "12345"
+       },
+       {
+        "key": "posto",
+        "value": "12"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n  \"valorAbatimento\": \"0.02\"\r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/cobranca/boleto/v1/boletos/600009999/conceder-abatimento",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "600009999",
+        "conceder-abatimento"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrucao Cancelar Abatimento",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "1234"
+       },
+       {
+        "key": "posto",
+        "value": "12"
+       },
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}",
+        "type": "text"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n\r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/cobranca/boleto/v1/boletos/600009199/cancelar-abatimento",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "600009199",
+        "cancelar-abatimento"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrucao Protesto",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "1234"
+       },
+       {
+        "key": "posto",
+        "value": "12"
+       },
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}",
+        "type": "text"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n\r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/cobranca/boleto/v1/boletos/600009999/protesto",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "600009999",
+        "protesto"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrucao Sustar Protesto Baixar",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "1234"
+       },
+       {
+        "key": "posto",
+        "value": "12"
+       },
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}",
+        "type": "text"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n\r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/cobranca/boleto/v1/boletos/60000999/sustar-protesto-baixar-titulo",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "60000999",
+        "sustar-protesto-baixar-titulo"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrucao Sustar Protesto Manter",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "1234"
+       },
+       {
+        "key": "posto",
+        "value": "12"
+       },
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}",
+        "type": "text"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n\r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/cobranca/boleto/v1/boletos/600009999/sustar-protesto-manter-titulo",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "600009999",
+        "sustar-protesto-manter-titulo"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrucao Cancelar Protesto Automatico",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "1234"
+       },
+       {
+        "key": "posto",
+        "value": "12"
+       },
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}",
+        "type": "text"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n\r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/cobranca/boleto/v1/boletos/600009999/cancelar-protesto-automatico",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "600009999",
+        "cancelar-protesto-automatico"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrucao Negativacao",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "1234"
+       },
+       {
+        "key": "posto",
+        "value": "12"
+       },
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}",
+        "type": "text"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n\r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/cobranca/boleto/v1/boletos/600009999/negativacao",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "600009999",
+        "negativacao"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrucao Sustar Negativacao Baixar",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "1234"
+       },
+       {
+        "key": "posto",
+        "value": "12"
+       },
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}",
+        "type": "text"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n\r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/cobranca/boleto/v1/boletos/600009115/sustar-negativacao-baixar-titulo",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "600009115",
+        "sustar-negativacao-baixar-titulo"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Instrucao Sustar Negativacao Manter",
+     "request": {
+      "method": "PATCH",
+      "header": [
+       {
+        "key": "codigoBeneficiario",
+        "value": "12345"
+       },
+       {
+        "key": "cooperativa",
+        "value": "1234"
+       },
+       {
+        "key": "posto",
+        "value": "12"
+       },
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}",
+        "type": "text"
+       }
+      ],
+      "body": {
+       "mode": "raw",
+       "raw": "{\r\n\r\n}"
+      },
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/cobranca/boleto/v1/boletos/600009115/sustar-negativacao-manter-titulo",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "600009115",
+        "sustar-negativacao-manter-titulo"
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Consulta NN",
+     "request": {
+      "method": "GET",
+      "header": [
+       {
+        "key": "cooperativa",
+        "value": "1234"
+       },
+       {
+        "key": "posto",
+        "value": "12"
+       },
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}",
+        "type": "text"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/x-www-form-urlencoded",
+        "type": "text"
+       }
+      ],
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/cobranca/boleto/v1/boletos?codigoBeneficiario=12345&nossoNumero=211009999",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos"
+       ],
+       "query": [
+        {
+         "key": "codigoBeneficiario",
+         "value": "12345"
+        },
+        {
+         "key": "nossoNumero",
+         "value": "211009999"
+        }
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Consulta NN - v2",
+     "request": {
+      "method": "GET",
+      "header": [
+       {
+        "key": "cooperativa",
+        "value": "1234"
+       },
+       {
+        "key": "posto",
+        "value": "12"
+       },
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}",
+        "type": "text"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/x-www-form-urlencoded",
+        "type": "text"
+       }
+      ],
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/cobranca/boleto/v2/boletos?codigoBeneficiario=12345&nossoNumero=211009999",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "cobranca",
+        "boleto",
+        "v2",
+        "boletos"
+       ],
+       "query": [
+        {
+         "key": "codigoBeneficiario",
+         "value": "12345"
+        },
+        {
+         "key": "nossoNumero",
+         "value": "211009999"
+        }
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Consulta idEmpresa/SeuNum",
+     "request": {
+      "method": "GET",
+      "header": [
+       {
+        "key": "cooperativa",
+        "value": "1234"
+       },
+       {
+        "key": "posto",
+        "value": "12"
+       },
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}",
+        "type": "text"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/json",
+        "type": "text"
+       }
+      ],
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/cobranca/boleto/v1/boletos/cadastrados?idTituloEmpresa=XYZ123456789ABC&codigoBeneficiario=12345",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "cadastrados"
+       ],
+       "query": [
+        {
+         "key": "idTituloEmpresa",
+         "value": "XYZ123456789ABC"
+        },
+        {
+         "key": "seuNumero",
+         "value": "teste",
+         "disabled": true
+        },
+        {
+         "key": "codigoBeneficiario",
+         "value": "12345"
+        }
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Consulta Liquidados",
+     "request": {
+      "method": "GET",
+      "header": [
+       {
+        "key": "cooperativa",
+        "value": "1234"
+       },
+       {
+        "key": "posto",
+        "value": "12"
+       },
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}",
+        "type": "text"
+       },
+       {
+        "key": "Content-Type",
+        "value": "application/x-www-form-urlencoded",
+        "type": "text"
+       }
+      ],
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/cobranca/boleto/v1/boletos/liquidados/dia?codigoBeneficiario=12345&dia=25/01/2024",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "cobranca",
+        "boleto",
+        "v1",
+        "boletos",
+        "liquidados",
+        "dia"
+       ],
+       "query": [
+        {
+         "key": "codigoBeneficiario",
+         "value": "12345"
+        },
+        {
+         "key": "cpfCnpjBeneficiarioFinal",
+         "value": "",
+         "disabled": true
+        },
+        {
+         "key": "dia",
+         "value": "25/01/2024"
+        }
+       ]
+      }
+     },
+     "response": []
+    },
+    {
+     "name": "Francesinha - PRD",
+     "request": {
+      "method": "GET",
+      "header": [
+       {
+        "key": "accept",
+        "value": "*/*",
+        "disabled": true
+       },
+       {
+        "key": "Authorization",
+        "value": "Bearer {{access_token}}"
+       },
+       {
+        "key": "x-api-key",
+        "value": "{{x_api_key}}",
+        "type": "text"
+       }
+      ],
+      "url": {
+       "raw": "https://api-parceiro.sicredi.com.br/cobranca/v1/cobranca-financeiro/movimentacoes?codigoBeneficiario=12345&cooperativa=1234&dataLancamento=07/08/2023&pagina=0&posto=12&tipoMovimento=AMBOS",
+       "protocol": "https",
+       "host": [
+        "api-parceiro",
+        "sicredi",
+        "com",
+        "br"
+       ],
+       "path": [
+        "cobranca",
+        "v1",
+        "cobranca-financeiro",
+        "movimentacoes"
+       ],
+       "query": [
+        {
+         "key": "codigoBeneficiario",
+         "value": "12345"
+        },
+        {
+         "key": "cooperativa",
+         "value": "1234"
+        },
+        {
+         "key": "dataLancamento",
+         "value": "07/08/2023"
+        },
+        {
+         "key": "pagina",
+         "value": "0"
+        },
+        {
+         "key": "posto",
+         "value": "12"
+        },
+        {
+         "key": "tipoMovimento",
+         "value": "AMBOS"
+        }
+       ]
+      }
+     },
+     "response": []
+    }
+   ]
+  }
+ ]
+}

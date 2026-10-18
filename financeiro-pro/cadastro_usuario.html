@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Aceitar Convite — Financeiro Pro · Artecon</title>
+<style>
+:root {
+  --bg:        #f4f6f9;
+  --bg-2:      #ffffff;
+  --surface:   #ffffff;
+  --surface-2: #f0f2f5;
+  --border:    rgba(0,0,0,0.08);
+  --border-lt: rgba(0,0,0,0.14);
+  --text:      #1a2332;
+  --text-2:    #4a5568;
+  --text-3:    #8896a8;
+  --gold:      #1a5276;
+  --gold-lt:   #d6e4f0;
+  --gold-dim:  #154360;
+  --green:     #1e8449;
+  --green-lt:  #d4efdf;
+  --red:       #c0392b;
+  --red-lt:    #fdedec;
+  --amber:     #b7770d;
+  --amber-lt:  #fef9e7;
+  --tr:        all .18s cubic-bezier(.4,0,.2,1);
+  --shadow:    0 4px 24px rgba(0,0,0,.06);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,.10);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+.bg-gradient {
+  position: fixed; inset: 0; z-index: -1;
+  background:
+    radial-gradient(ellipse at top left, rgba(26,82,118,.08), transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(214,228,240,.4), transparent 50%),
+    var(--bg);
+}
+.wrap {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.card {
+  width: 100%; max-width: 440px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+.brand {
+  background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+  color: #fff;
+  padding: 24px 28px;
+  text-align: center;
+}
+.brand h1 {
+  font-size: 17px; font-weight: 700; letter-spacing: -.01em;
+}
+.brand .sub {
+  font-size: 11.5px; opacity: .85; margin-top: 2px;
+  text-transform: uppercase; letter-spacing: .08em; font-weight: 600;
+}
+.body { padding: 28px 28px 32px; }
+.title {
+  font-size: 20px; font-weight: 700; letter-spacing: -.01em;
+  margin-bottom: 6px;
+}
+.subtitle {
+  font-size: 13px; color: var(--text-2); margin-bottom: 22px; line-height: 1.55;
+}
+.meta {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 22px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.meta-row {
+  display: flex; justify-content: space-between; gap: 12px; font-size: 12px;
+}
+.meta-row .lbl {
+  color: var(--text-3); font-weight: 600;
+  text-transform: uppercase; letter-spacing: .06em; font-size: 10.5px;
+}
+.meta-row .val { color: var(--text); font-weight: 600; text-align: right; }
+.field { margin-bottom: 16px; }
+.field label {
+  display: block; font-size: 10.5px; font-weight: 600;
+  color: var(--text-3); text-transform: uppercase; letter-spacing: .07em;
+  margin-bottom: 6px;
+}
+.field input {
+  width: 100%; padding: 11px 13px;
+  border: 1.5px solid var(--border);
+  border-radius: 9px;
+  font-size: 14px; font-family: inherit;
+  background: var(--bg-2); color: var(--text);
+  outline: none; transition: var(--tr);
+}
+.field input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(26,82,118,.1);
+}
+.field input:disabled {
+  background: var(--surface-2); color: var(--text-3); cursor: not-allowed;
+}
+.hint {
+  font-size: 11.5px; color: var(--text-3); margin-top: 5px;
+}
+.btn {
+  width: 100%; padding: 13px; margin-top: 8px;
+  background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+  color: #fff; border: none; border-radius: 10px;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: var(--tr);
+  letter-spacing: .01em;
+}
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(26,82,118,.25);
+}
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+.alert {
+  padding: 12px 14px; border-radius: 9px;
+  font-size: 13px; margin-bottom: 18px;
+  border: 1px solid; display: flex; gap: 10px; align-items: flex-start;
+}
+.alert .ico { flex-shrink: 0; font-size: 16px; line-height: 1; margin-top: 1px; }
+.alert.error  { background: var(--red-lt);   border-color: var(--red);   color: var(--red); }
+.alert.success{ background: var(--green-lt); border-color: var(--green); color: var(--green); }
+.alert.info   { background: var(--amber-lt); border-color: var(--amber); color: var(--amber); }
+.center { text-align: center; padding: 40px 24px; }
+.center h2 { font-size: 17px; margin-bottom: 8px; }
+.center p { font-size: 13px; color: var(--text-2); }
+.spinner {
+  width: 28px; height: 28px; margin: 0 auto 16px;
+  border: 3px solid var(--surface-2);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.footer {
+  text-align: center; padding: 16px;
+  font-size: 11px; color: var(--text-3);
+  border-top: 1px solid var(--border);
+  background: var(--surface-2);
+}
+.footer a { color: var(--gold); text-decoration: none; }
+.template-tag {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-size: 10.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .05em;
+}
+.template-tag.admin      { background: var(--gold-lt); color: var(--gold-dim); }
+.template-tag.financeiro { background: var(--amber-lt); color: var(--amber); }
+.template-tag.leitura    { background: var(--surface-2); color: var(--text-2); }
+</style>
+</head>
+<body>
+<div class="bg-gradient"></div>
+
+<div class="wrap">
+  <div class="card">
+    <div class="brand">
+      <h1>Artecon · Financeiro Pro</h1>
+      <div class="sub">Convite de acesso</div>
+    </div>
+
+    <div id="content" class="body">
+      <div class="center">
+        <div class="spinner"></div>
+        <h2>Validando convite…</h2>
+        <p>Um momento.</p>
+      </div>
+    </div>
+
+    <div class="footer">
+      Artecon Artes Contábeis &middot;
+      <a href="https://arteconartescontabeis-design.github.io/gestao-financeiro/financeiro-pro/">acesse o sistema</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── CONFIG ────────────────────────────────────────────────────────
+const SUPA_URL = 'https://vuwgxndahrzinfdlapxz.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1d2d4bmRhaHJ6aW5mZGxhcHh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3NTA0ODgsImV4cCI6MjA5MDMyNjQ4OH0.9DaPGHIxt0CO-pjYPBwsHaoSqDN35CwVU0lJUyTXQIQ';
+const APP_URL  = 'https://arteconartescontabeis-design.github.io/gestao-financeiro/financeiro-pro/';
+
+const $ = (id) => document.getElementById(id);
+const content = $('content');
+let TOKEN = null;
+let CONVITE = null;
+
+// ─── HELPERS ───────────────────────────────────────────────────────
+async function rpc(fn, args = {}, token) {
+  const res = await fetch(`${SUPA_URL}/rest/v1/rpc/${fn}`, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPA_KEY,
+      'Authorization': `Bearer ${token || SUPA_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(args),
+  });
+  if (!res.ok) {
+    const txt = await res.text();
+    throw new Error(txt);
+  }
+  return res.json();
+}
+
+async function authSignup(email, password) {
+  const res = await fetch(`${SUPA_URL}/auth/v1/signup`, {
+    method: 'POST',
+    headers: { 'apikey': SUPA_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  });
+  return res.json();
+}
+
+async function authLogin(email, password) {
+  const res = await fetch(`${SUPA_URL}/auth/v1/token?grant_type=password`, {
+    method: 'POST',
+    headers: { 'apikey': SUPA_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  });
+  return res.json();
+}
+
+// ─── RENDER ────────────────────────────────────────────────────────
+function renderError(msg) {
+  content.innerHTML = `
+    <div class="alert error">
+      <span class="ico">⚠️</span>
+      <div><strong>Convite inválido.</strong><br>${msg}</div>
+    </div>
+    <div class="center" style="padding:20px 0 0">
+      <p style="font-size:12.5px">Solicite um novo convite ao administrador da empresa.</p>
+    </div>
+  `;
+}
+
+function renderForm() {
+  const tplLabel = { admin: 'Administrador', financeiro: 'Operacional', leitura: 'Visualização' };
+  content.innerHTML = `
+    <div class="title">Crie sua senha</div>
+    <div class="subtitle">Você foi convidado(a) para acessar o sistema. Defina uma senha para concluir o cadastro.</div>
+
+    <div class="meta">
+      <div class="meta-row"><span class="lbl">Empresa</span><span class="val">${escape(CONVITE.empresa)}</span></div>
+      <div class="meta-row"><span class="lbl">Nome</span><span class="val">${escape(CONVITE.nome)}</span></div>
+      <div class="meta-row"><span class="lbl">E-mail</span><span class="val">${escape(CONVITE.email)}</span></div>
+      <div class="meta-row"><span class="lbl">Perfil</span>
+        <span class="val"><span class="template-tag ${CONVITE.template}">${tplLabel[CONVITE.template]||CONVITE.template}</span></span>
+      </div>
+    </div>
+
+    <div id="form-err"></div>
+
+    <div class="field">
+      <label for="senha">Senha</label>
+      <input id="senha" type="password" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
+      <div class="hint">Use pelo menos 6 caracteres.</div>
+    </div>
+    <div class="field">
+      <label for="senha2">Confirme a senha</label>
+      <input id="senha2" type="password" autocomplete="new-password" placeholder="Digite novamente">
+    </div>
+
+    <button id="btn-aceitar" class="btn">Concluir cadastro</button>
+  `;
+
+  $('btn-aceitar').addEventListener('click', aceitar);
+  $('senha2').addEventListener('keydown', e => { if (e.key === 'Enter') aceitar(); });
+  $('senha').focus();
+}
+
+function renderSucesso() {
+  content.innerHTML = `
+    <div class="center" style="padding:24px 0 8px">
+      <div style="font-size:48px;line-height:1;margin-bottom:14px">✓</div>
+      <h2>Cadastro concluído!</h2>
+      <p style="margin-top:8px">Você já pode acessar o sistema com seu e-mail e senha.</p>
+    </div>
+    <a href="${APP_URL}" class="btn" style="display:block;text-align:center;text-decoration:none;margin-top:8px">
+      Acessar o Financeiro Pro →
+    </a>
+  `;
+}
+
+function escape(s) { return String(s||'').replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function showFormErr(msg) {
+  $('form-err').innerHTML = `<div class="alert error"><span class="ico">⚠️</span><div>${msg}</div></div>`;
+}
+function clearFormErr() { $('form-err').innerHTML = ''; }
+
+// ─── FLOW ──────────────────────────────────────────────────────────
+async function aceitar() {
+  const senha  = $('senha').value;
+  const senha2 = $('senha2').value;
+  const btn    = $('btn-aceitar');
+
+  clearFormErr();
+  if (!senha || senha.length < 6) { showFormErr('Senha precisa ter no mínimo 6 caracteres.'); return; }
+  if (senha !== senha2)            { showFormErr('Senhas não conferem.'); return; }
+
+  btn.disabled = true; btn.textContent = 'Criando conta…';
+
+  try {
+    // 1) Signup no Supabase Auth
+    const su = await authSignup(CONVITE.email, senha);
+    if (su.error || su.error_description) {
+      throw new Error(su.error_description || su.error || 'Erro ao criar conta no Auth');
+    }
+
+    // 2) Tenta pegar token de acesso direto do signup
+    let accessToken = su.access_token || su?.session?.access_token;
+
+    // 3) Se signup retornou apenas user (sem session — projeto exige confirmação),
+    //    tenta login imediato (caso confirmação por email esteja desativada)
+    if (!accessToken) {
+      btn.textContent = 'Validando…';
+      const lg = await authLogin(CONVITE.email, senha);
+      accessToken = lg.access_token;
+      if (!accessToken) {
+        // Confirmação por email obrigatória — orientar
+        content.innerHTML = `
+          <div class="alert info" style="margin-bottom:18px">
+            <span class="ico">📧</span>
+            <div>
+              <strong>Quase lá!</strong><br>
+              Enviamos um e-mail para <strong>${escape(CONVITE.email)}</strong> com um link de confirmação.
+              Após confirmar, faça login no sistema com a senha que você acabou de cadastrar.
+            </div>
+          </div>
+          <a href="${APP_URL}" class="btn" style="display:block;text-align:center;text-decoration:none">
+            Ir para o login →
+          </a>
+          <div class="hint" style="text-align:center;margin-top:12px">
+            ⚠️ Após confirmar o email e fazer o primeiro login, o vínculo com a empresa será criado automaticamente.
+          </div>
+        `;
+        // Salva token pra usar quando logar (será aceito pela primeira sessão válida)
+        try { localStorage.setItem('fin_convite_pendente', TOKEN); } catch(_) {}
+        return;
+      }
+    }
+
+    // 4) Aceitar convite (cria fin_usuarios + fin_usuarios_empresas)
+    btn.textContent = 'Vinculando à empresa…';
+    await rpc('fin_aceitar_convite', { p_token: TOKEN }, accessToken);
+
+    // 5) Sucesso
+    try { localStorage.removeItem('fin_convite_pendente'); } catch(_) {}
+    renderSucesso();
+  } catch(e) {
+    console.error(e);
+    showFormErr('Erro: ' + (e.message || 'falha ao concluir cadastro'));
+    btn.disabled = false; btn.textContent = 'Concluir cadastro';
+  }
+}
+
+// ─── INIT ──────────────────────────────────────────────────────────
+(async () => {
+  const params = new URLSearchParams(location.search);
+  TOKEN = params.get('token') || params.get('t');
+  if (!TOKEN) {
+    renderError('Link inválido. Falta o token na URL.');
+    return;
+  }
+  // Validação UUID básica
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(TOKEN)) {
+    renderError('Token mal formatado.');
+    return;
+  }
+
+  try {
+    const r = await rpc('fin_validar_convite', { p_token: TOKEN });
+    if (!r || !r.valido) {
+      renderError(r?.erro || 'Convite inválido.');
+      return;
+    }
+    CONVITE = r;
+    renderForm();
+  } catch(e) {
+    renderError('Erro ao validar: ' + e.message);
+  }
+})();
+</script>
+</body>
+</html>

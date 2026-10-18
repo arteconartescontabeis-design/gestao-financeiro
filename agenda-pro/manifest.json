@@ -1,0 +1,28 @@
+{
+  "name": "Agenda Pro — Artecon",
+  "short_name": "Agenda Pro",
+  "description": "Sistema de agendamento Artecon Artes Contábeis",
+  "start_url": "/gestao-financeiro/agenda-pro/app.html",
+  "scope": "/gestao-financeiro/agenda-pro/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f172a",
+  "theme_color": "#6366f1",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "business"],
+  "screenshots": []
+}
