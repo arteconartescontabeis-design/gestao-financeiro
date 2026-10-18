@@ -1,7 +1,8 @@
 # Agenda Pro — memória do projeto
 
 App de agendamento da **Artecon** (escritório contábil). Tudo em português.
-Publicado pelo GitHub Pages: https://arteconartescontabeis-design.github.io/agenda-pro/app.html
+Publicado pelo GitHub Pages: https://arteconartescontabeis-design.github.io/gestao-financeiro/agenda-pro/app.html
+(desde 18/10/2026, no repositório `gestao-financeiro`, pasta `agenda-pro/`; o endereço antigo `/agenda-pro/` virou aviso).
 
 ## Estrutura
 - `app.html` — o app inteiro (HTML + CSS + JS). Supabase via REST (`supa`/`supaWithAuth`), anon key no cliente, protegido por RLS.
@@ -114,8 +115,8 @@ O número aparece no topo de todas as telas e no login; tocar nele abre o histó
   leaked passwords" ligado nos três projetos (agenda-pro, Departamento Pessoal e Cobrança; conferido nos alertas do Supabase). Pendente: orçamento na Azure antes de 08/11/2026.
 - Fora do Agenda (avisar, não mexer sem pedido): no mesmo projeto, as funções `fin_*` do Financeiro aceitam chamada sem login
   (conferir dentro de cada uma); `validar-anexos` lê documento sem login (limitado pela IA Central a US$ 1/dia).
-  O armazenamento `fin-documentos` (privado) deixa **qualquer pessoa logada** no projeto ler, trocar e apagar todos os arquivos
-  (inclusive quem é só do Agenda ou só do Estudo): a regra olha só o nome do armazenamento.
+  **18/10/2026:** o Financeiro saiu deste projeto (foi para o `cobranca-pro`); as tabelas `fin_*` e o `fin-documentos` que ficaram
+  aqui estão só para consulta, e a brecha do `fin-documentos` (qualquer login lia/trocava/apagava) foi fechada nos dois projetos.
 
 ## Regras
 - Dado do banco que vai para `innerHTML` passa por `whatsEsc` (texto e atributos) e cor do banco por `corSegura` — em todo o app
