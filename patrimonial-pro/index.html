@@ -206,7 +206,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
       <div class="field"><label>E-mail</label><input id="loginEmail" type="email" placeholder="voce@artecon.cnt.br" autocomplete="username"></div>
       <div class="field"><label>Senha</label><input id="loginSenha" type="password" placeholder="••••••••" autocomplete="current-password"></div>
       <button class="btn btn-primary" id="btnLogin">Entrar</button>
-      <p style="text-align:center;color:var(--texto-3);font-size:11px;margin-top:18px;letter-spacing:.3px">build 2026.21a</p>
+      <p style="text-align:center;color:var(--texto-3);font-size:11px;margin-top:18px;letter-spacing:.3px">build 2026.21b</p>
     </div>
   </div>
 </div>
@@ -268,8 +268,9 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 // ============================================================
 // CONFIG — preencher com os dados do seu projeto Supabase
 // ============================================================
-const SUPABASE_URL = 'https://rujfstmskkgyeksspyoa.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_lAyztS-kWdXyJlnsYUT9yg_KQ4HZ_39'; // chave publishable (pública) — pode ficar exposta
+// banco da Gestão Empresarial e Financeiro (agenda-pro) desde 10/2026 — o mesmo login da Agenda e do Carreira
+const SUPABASE_URL = 'https://vuwgxndahrzinfdlapxz.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_n52t3_PPzeErFmL5eX07Cw_-qOkk-tH'; // chave publishable (pública) — pode ficar exposta
 
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: { persistSession: false, autoRefreshToken: true }
@@ -3322,7 +3323,7 @@ window.pdfSim=pdfSim; window.pdfSimConsolidado=pdfSimConsolidado; window.exporta
 window.closeModal=closeModal;
 
 // build version
-console.log('Patrimonial Artecon — app-shell · build 2026.21a (Relatórios Fiscais: Ficha de Bens IRPF + relatório patrimonial PDF-Excel + código IRPF no ativo)');
+console.log('Patrimonial Artecon — app-shell · build 2026.21b (banco da Gestão Empresarial e Financeiro; 2026.21a: Relatórios Fiscais: Ficha de Bens IRPF + relatório patrimonial PDF-Excel + código IRPF no ativo)');
 </script>
 </body>
 </html>
