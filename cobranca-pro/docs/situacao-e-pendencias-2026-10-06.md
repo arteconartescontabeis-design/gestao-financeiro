@@ -7,6 +7,7 @@
 > **09/10/2026 — v2.15.0:** Conferir → Parcelas ganhou **Alterar boleto** e **Excluir boleto** (só diretor, só boletos em aberto; excluir vira "Cancelada", com motivo e histórico).
 > **09/10/2026 — v2.16.0:** avisos de suspensão (2º e 3º nível) agora precisam ser **liberados em Configurações** — começam bloqueados até o texto ser revisado. Rodar `migration_v2_16_0_niveis_cobranca.sql`.
 > **10/10/2026 — v2.17.0 (segurança, etapa A):** travas no banco e na função de e-mail preparadas — falta rodar `migration_v2_17_0_seguranca_etapa_a.sql` (e a da v2.16.0) e publicar `supabase/functions/mail-proxy`.
+> **19/10/2026 — v2.18.0:** **Estornar pagamento** em Conferir → Parcelas (só diretor, motivo obrigatório): o pagamento fica marcado como estornado (não é apagado), a parcela volta para Aberta e o item do retorno vira Ignorado (Reprocessar pendentes e robô não baixam de novo); o estorno pode ser desfeito na mesma janela. **Rodar `migration_v2_18_0_estorno_pagamento.sql`.**
 > **Robô:** recebidos só `questor.py` v0.2.4 e `sicredi.py` v0.1.1 (antigos). Para corrigir a data do relatório de pendentes falta o `questor.py` v0.6.0 e o `robo_cobranca.py` v2.6.0 que rodam no ARTEDB01.
 > **Pendente:** a tabela de classificação de clientes (para ligar com o projeto Propostas) não chegou — reenviar.
 
