@@ -346,6 +346,24 @@ table.tab-edit input{width:100%;padding:6px 8px;font-size:13px}table.tab-edit td
 input[type=month]{border:1px solid #cfd9de;background:#fff;padding:6px 8px;font:inherit}
 @media (max-width:1000px){.abas-tipo button{padding:8px 10px;font-size:13px}.cd-tab-parc{width:100%}.duas code{word-break:break-all}.duas table.lista td:first-child{max-width:45vw}}
 .falta{background:#fde2e2;color:#8e1015}
+/* v2.2.0: cadastro único de clientes */
+.reg{display:inline-block;padding:2px 8px;font-size:12px;font-weight:700;border-left:4px solid var(--cinza);background:#eef1f3;color:var(--cinza);white-space:nowrap}
+.reg.sn{border-color:var(--ciano);background:#e4f5fd;color:#056a90}.reg.lp{border-color:#d8cd00;background:#fffbc2;color:#5c5600}
+.reg.lr{border-color:var(--vermelho);background:#fde8e8;color:#8e1015}.reg.mei{border-color:var(--verde);background:#e4f7ed;color:var(--verde)}
+.reg.vazio{border-style:dashed;background:#fff;color:var(--suave);font-weight:600}
+.ok-tag,.al-tag{display:inline-block;font-size:11.5px;font-weight:700;padding:1px 7px;margin:0 3px 2px 0;white-space:nowrap}
+.ok-tag{background:#e4f7ed;color:var(--verde)}.al-tag{background:#fde8e8;color:#8e1015}
+.resumo-topo.r4{grid-template-columns:repeat(4,1fr)}.alerta-ind b{color:var(--vermelho)}
+.filtros4 select{width:190px}
+.marcas{display:flex;gap:14px;flex-wrap:wrap;padding-top:4px}.marcas label{display:flex;gap:6px;align-items:center;font-weight:400}
+.origens{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.origem{display:block;border:1px solid var(--linha);border-left:5px solid var(--linha);padding:12px 14px;cursor:pointer;background:#fff;text-align:left;font:inherit}
+.origem b{font:600 15px var(--texto);color:var(--cinza)}.origem span{display:block;color:var(--suave);font-size:12.5px;margin-top:4px}
+.origem.on{border-left-color:var(--ciano);background:#f3fbfe}.origem:disabled{opacity:.55;cursor:not-allowed}
+table.tab-edit td.marca{text-align:center}table.tab-edit input[type=checkbox]{width:auto}
+details.imp{margin-top:10px}details.imp summary{cursor:pointer;font-weight:700;color:var(--cinza);padding:6px 0}
+.imp-prog{font-weight:700;color:#056a90;margin:8px 0}
+@media (max-width:1000px){.resumo-topo.r4{grid-template-columns:repeat(2,1fr)}.filtros4 select{width:100%}.abas-tipo{flex-wrap:wrap}}
 @media (max-width:1000px){.grupo-menu{font-size:0;padding:4px 0;border-bottom:2px solid var(--vermelho)}.barra-empresa{grid-template-columns:1fr;margin-top:-6px}.barra-empresa>span{display:none}.barra-empresa>div:last-child{text-align:center!important}}
 @media print{.barra-empresa{display:none!important}.ct-folha{box-shadow:none;margin:0}.doc-area .ct-folha{zoom:1}.ct-pe img{position:fixed;left:0;bottom:1.5mm}.falta{background:none;color:#000}}
 @media print{
@@ -679,10 +697,17 @@ function porSituacao(props){
 const CFG = { SUPABASE_URL:'https://yeujqjtjqtegsnzwwazb.supabase.co', SUPABASE_ANON_KEY:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlldWpxanRqcXRlZ3Nuend3YXpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU1NDE0OTksImV4cCI6MjEwMTExNzQ5OX0.5p1_wJ_aApJpRrN6tFu8qmAytK5FMXWt1soCubpzqao' };
 const SUPABASE_JS = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js';
 
-const APP_VERSION = '2.1.2';
+const APP_VERSION = '2.2.0';
 const LOGO_EMAIL = 'https://arteconartescontabeis-design.github.io/gestao-financeiro/propostas/logo_artecon.png';
 const PORTAL_URL = 'https://arteconartescontabeis-design.github.io/portal/';
 const CHANGELOG = [
+  { v:'2.2.0', data:'20/10/2026', itens:[
+    'Cadastro único de clientes: "Clientes da proposta" e "Contratantes" viraram um só cadastro, no grupo Clientes do menu. O mesmo cliente serve para propostas, contratos e confissões de dívida.',
+    'Ficha do cliente em abas: Empresa (dados da Receita Federal, matriz/filial, código do Questor, perfil tributário e representante que assina), Contatos para envio (quem recebe por e-mail e WhatsApp e quem assina), Atendimento e honorário (departamentos, honorário atual e nível), Enquadramento (lançamentos e folha) e Histórico (propostas, contratos e confissões).',
+    'Perfil tributário: regime (Simples Nacional, Lucro Presumido, Lucro Real, MEI, Imune/isenta), atividade, apuração e situação (ativa, sem movimento, inativa). A lista tem atalhos por regime, filtros por situação, atividade e departamento e o alerta dos clientes sem e-mail para envio.',
+    'Importação com conferência antes de gravar: do Cobrança Pro (clientes, contatos e honorário atual pelos boletos dos últimos 4 meses: o valor que se repete; no empate, o menor; sem repetição, a mediana) e da planilha de empresas do S3D (regime, atividade, apuração, situação e código). Junta pelo CNPJ/CPF, liga as filiais à matriz pela raiz do CNPJ e pede decisão quando o dado do cadastro é diferente.',
+    'Banco: migração 21 (21_migracao_v2_2_0_cadastro_unico.sql; reversão 92). Os contratantes existentes foram levados para o cadastro de clientes, e contratos e confissões passaram a apontar para ele.'
+  ]},
   { v:'2.1.2', data:'18/10/2026', itens:[
     'Endereço novo: o app passou para o repositório do departamento Gestão Empresarial e Financeiro (gestao-financeiro/propostas/). Links de assinatura já enviados continuam valendo: o endereço antigo leva ao novo com o mesmo link. Dados e login não mudaram.'
   ]},
@@ -846,14 +871,16 @@ const CHANGELOG = [
 
 const MODO_NUVEM = !!(CFG.SUPABASE_URL && CFG.SUPABASE_ANON_KEY);
 const CFG_INCOMPLETA = !MODO_NUVEM && !!(CFG.SUPABASE_URL || CFG.SUPABASE_ANON_KEY);
-const TAB = { clientes:'prop_clientes', servicos:'prop_servicos', propostas:'prop_propostas', contratantes:'prop_contratantes', contratos:'prop_contratos', confissoes:'prop_confissoes' };
+const TAB = { clientes:'prop_clientes', servicos:'prop_servicos', propostas:'prop_propostas', contatos:'prop_clientes_contatos', contratos:'prop_contratos', confissoes:'prop_confissoes' };
 const ESCRITORIO_PADRAO = { endereco:'R. Livorno, nº 15 - Sala 101, Pagani, Palhoça/SC.', cidade:'Palhoça/SC', telefone:'(48) 3242-0530', site:'www.artecon.cnt.br', instagram:'@arteconartescontábeis', frase:'O sucesso da sua empresa depende das escolhas que você faz hoje', responsavel:'Cleiver Gonçalves', registro:'CRC/SC 030.315/O-2', dia_vencimento:20, indice:'IGP-M/FGV', valor_funcionario:70.96, validade_dias:10, ct_razao:'ARTECON ARTES CONTÁBEIS SOCIEDADE SIMPLES', ct_cnpj:'79876769000128', ct_endereco:'Rua Livorno, nº 15, Sala 101', ct_cep:'88.132-274', ct_bairro:'Parque Residencial Pagani', ct_cidade:'Palhoça', ct_uf:'SC', ct_foro:'Palhoça, em Santa Catarina', adm_profissao:'contador', valor_inativa:250, retrabalho_pct:50 };
 const ABERTURA = {
   recorrente:'Conforme tratativas prévias, apresentamos nossa proposta de trabalho para a escrituração de uma empresa do tipo jurídico Limitada, com regime de tributação pelo Simples Nacional.',
   pontual:'Conforme tratativas prévias, apresentamos nossa proposta de trabalho para a execução dos serviços descritos a seguir.' };
 const ASSUNTO = { recorrente:'escrituração contábil', pontual:'Planejamento Tributário' };
 
-const S = { view:'painel', tenant:null, perfil:null, email:'', clientes:[], servicos:[], propostas:[], busca:'', filtroStatus:'', F:null, errosForm:[], docId:null, hist:[] };
+const S = { view:'painel', tenant:null, perfil:null, email:'', clientes:[], contatos:[], servicos:[], propostas:[], busca:'', filtroStatus:'', F:null, errosForm:[], docId:null, hist:[] };
+// desde a v2.2.0 o contratante é o próprio cliente: a lista é derivada do cadastro único (o código de contratos e confissões continua lendo razao_social)
+Object.defineProperty(S, 'contratantes', { get(){ return (S.clientes || []).map(cliCtt); }, set(){ /* derivado de S.clientes */ }, enumerable:false });
 const $ = id => document.getElementById(id);
 const uid = () => (crypto.randomUUID ? crypto.randomUUID() : 'l' + Date.now() + Math.random().toString(16).slice(2));
 
@@ -891,15 +918,16 @@ const Local = {
     return db;
   },
   async carregar(){ S.email = 'modo local'; S.empresas = [{ ...this.db.tenant, perfil:'diretor' }]; return S.empresas; },
-  async entrarEmpresa(){ const d = this.db; S.tenant = { ...d.tenant, escritorio:escritorioCompleto(d.tenant.escritorio) }; S.perfil = 'diretor'; S.clientes = d.clientes; S.servicos = d.servicos; S.propostas = d.propostas; await this.ctCarregar(); await this.cdCarregar(); },
+  async entrarEmpresa(){ const d = this.db; this.migraV220(); S.tenant = { ...d.tenant, escritorio:escritorioCompleto(d.tenant.escritorio) }; S.perfil = 'diretor'; S.clientes = d.clientes; S.contatos = d.contatos; S.cadOk = true; S.servicos = d.servicos; S.propostas = d.propostas; await this.ctCarregar(); await this.cdCarregar(); },
   async inserir(tab, row){
     const r = { ...row, id:uid(), tenant_id:'local', criado_em:new Date().toISOString(), atualizado_em:new Date().toISOString(), excluido_em:null };
     if(tab==='clientes' && r.documento && this.db.clientes.some(c => !c.excluido_em && c.documento===r.documento)) throw new Error('Já existe cliente ativo com este CNPJ/CPF.');
-    if(tab==='contratantes'){ this.garanteCt(); if(this.db.contratantes.some(c => !c.excluido_em && c.documento===r.documento)) throw new Error('Já existe contratante ativo com este CNPJ/CPF neste escritório.'); }
-    if(tab==='contratos'){ this.garanteCt(); if(!this.db.contratantes.some(c => c.id===r.contratante_id)) throw new Error('O contratante não pertence a este escritório.');
+    if(tab==='clientes'){ r.situacao = r.situacao || 'ativa'; r.departamentos = r.departamentos || []; r.enquadramento = r.enquadramento || {}; }
+    if(tab==='clientes' && r.matriz_id && !this.db.clientes.some(c => c.id===r.matriz_id && !c.excluido_em && !c.matriz_id)) throw new Error('A matriz precisa ser um cliente ativo deste escritório (e não pode ser filial).');
+    if(tab==='contratos'){ this.garanteCt(); if(!this.db.clientes.some(c => c.id===r.contratante_id && !c.excluido_em)) throw new Error('O contratante não pertence a este escritório.');
       r.ano = +String(r.data_contrato || hojeISO()).slice(0,4); this.db.ct_num[r.ano] = (this.db.ct_num[r.ano] || 0) + 1; r.numero = this.db.ct_num[r.ano]; if(!['rascunho','enviado'].includes(r.status)) r.status = 'rascunho';
       this.ctHist(r.id, 'criado', null, r.status); }
-    if(tab==='confissoes'){ this.garanteCt(); this.garanteCd(); if(!this.db.contratantes.some(c => c.id===r.contratante_id)) throw new Error('O devedor não pertence a este escritório.');
+    if(tab==='confissoes'){ this.garanteCt(); this.garanteCd(); if(!this.db.clientes.some(c => c.id===r.contratante_id && !c.excluido_em)) throw new Error('O devedor não pertence a este escritório.');
       if(r.contrato_id && !this.db.contratos.some(c => c.id===r.contrato_id && c.contratante_id===r.contratante_id)) throw new Error('O contrato de origem precisa ser do mesmo devedor.');
       r.ano = +String(r.data_documento || hojeISO()).slice(0,4); this.db.cd_num[r.ano] = (this.db.cd_num[r.ano] || 0) + 1; r.numero = this.db.cd_num[r.ano]; r.pagamentos = []; if(!['rascunho','enviado'].includes(r.status)) r.status = 'rascunho';
       this.cdHist(r.id, 'criado', null, r.status); }
@@ -914,8 +942,14 @@ const Local = {
       if(patch.status!==undefined && patch.status!==r.status) this.db.historico.push({ id:uid(), proposta_id:id, de:r.status, para:patch.status, usuario_email:'modo local', criado_em:new Date().toISOString() });
     }
     if(tab==='clientes' && patch.documento && this.db.clientes.some(c => c.id!==id && !c.excluido_em && c.documento===patch.documento)) throw new Error('Já existe cliente ativo com este CNPJ/CPF.');
-    if(tab==='contratantes'){ if(patch.documento && this.db.contratantes.some(c => c.id!==id && !c.excluido_em && c.documento===patch.documento)) throw new Error('Já existe contratante ativo com este CNPJ/CPF neste escritório.');
-      if(patch.excluido_em && this.db.contratos.some(k => k.contratante_id===id && !k.excluido_em && ['rascunho','enviado','vigente','aviso'].includes(k.status))) throw new Error('Contratante com contrato em andamento não pode ser excluído.'); }
+    if(tab==='clientes'){ this.garanteCt(); this.garanteCd(); const filiais = () => this.db.clientes.some(k => k.matriz_id===id && !k.excluido_em);
+      if(patch.excluido_em && !r.excluido_em){
+        if(this.db.contratos.some(k => k.contratante_id===id && !k.excluido_em && ['rascunho','enviado','vigente','aviso'].includes(k.status))) throw new Error('Cliente com contrato em andamento não pode ser excluído.');
+        if(this.db.confissoes.some(k => k.contratante_id===id && !k.excluido_em && ['rascunho','enviado','assinado','inadimplente'].includes(k.status))) throw new Error('Cliente com confissão de dívida em andamento não pode ser excluído.');
+        if(filiais()) throw new Error('Cliente é matriz de filiais ativas; exclua ou desvincule as filiais antes.'); }
+      if(patch.matriz_id && patch.matriz_id!==r.matriz_id){
+        if(!this.db.clientes.some(c => c.id===patch.matriz_id && c.id!==id && !c.excluido_em && !c.matriz_id)) throw new Error('A matriz precisa ser um cliente ativo deste escritório (e não pode ser filial).');
+        if(filiais()) throw new Error('Este cliente é matriz de outras empresas e não pode virar filial.'); } }
     if(tab==='contratos'){ const x = ctRegra(r, patch, S.perfil); if(x.erro) throw new Error(x.erro); patch = x.patch;
       if(patch.status && patch.status!==r.status) this.ctHist(id, 'status', r.status, patch.status, { inicio_vigencia:patch.inicio_vigencia || r.inicio_vigencia, aviso_em:patch.aviso_em, aviso_por:patch.aviso_por, encerrado_em:patch.encerrado_em });
       const campos = ['dados','modelo_texto','contratante_id','data_contrato'].filter(k => k in patch && JSON.stringify(patch[k])!==JSON.stringify(r[k])); if(patch.excluido_em && !r.excluido_em) campos.push('excluido');
@@ -926,6 +960,28 @@ const Local = {
       const campos = ['dados','modelo_texto','contratante_id','contrato_id','data_documento'].filter(k => k in patch && JSON.stringify(patch[k])!==JSON.stringify(r[k])); if(patch.excluido_em && !r.excluido_em) campos.push('excluido');
       if(campos.length) this.cdHist(id, 'alteracao', null, null, { campos, antes:{ valor_total:r.valor_total }, depois:{ valor_total:'valor_total' in patch ? patch.valor_total : r.valor_total } }); }
     Object.assign(r, patch, { atualizado_em:new Date().toISOString() }); this.grava(); return r;
+  },
+  async inserirVarios(tab, rows){ const out = []; for(const r of rows) out.push(await this.inserir(tab, r)); return out; },
+  // v2.2.0 no modo local: contratantes viram clientes (mesma regra da migração 21 do banco)
+  migraV220(){
+    const d = this.db; d.contatos = d.contatos || [];
+    if(!d.v220){ const mapa = {}, vazio = v => v===undefined || v===null || v==='';
+      (d.contratantes || []).forEach(t => {
+        let c = (t.cliente_id && d.clientes.find(x => x.id===t.cliente_id)) || (!t.excluido_em && d.clientes.find(x => !x.excluido_em && x.documento===t.documento));
+        if(!c){ c = { id:uid(), tenant_id:'local', nome:t.razao_social, documento:t.documento, contato:t.rep_nome || null, tratamento:null, email:t.email || null, telefone:t.telefone || null, observacoes:null, criado_em:t.criado_em || new Date().toISOString(), atualizado_em:new Date().toISOString(), excluido_em:t.excluido_em || null }; d.clientes.push(c); }
+        ['nome_fantasia','endereco','complemento','bairro','cep','municipio','uf','cnae','rep_nome','rep_cpf','rep_qualidade','rep_profissao','rep_email','rep_celular','receita','receita_em','email','telefone'].forEach(k => { if(vazio(c[k]) && !vazio(t[k])) c[k] = t[k]; });
+        if(vazio(c.situacao_receita)) c.situacao_receita = t.situacao || null; if(vazio(c.regime)) c.regime = regimeDeTexto(t.regime);
+        mapa[t.id] = c.id; });
+      (d.contratos || []).forEach(k => { if(mapa[k.contratante_id]) k.contratante_id = mapa[k.contratante_id]; });
+      (d.confissoes || []).forEach(k => { if(mapa[k.contratante_id]) k.contratante_id = mapa[k.contratante_id]; });
+      d.clientes.forEach(c => { if(c.excluido_em) return; const t = new Set(d.contatos.filter(k => k.cliente_id===c.id).map(k => k.email || k.celular));
+        const mais = (nome, funcao, email, cel, assina) => { email = emailOk(String(email || '').trim().toLowerCase()) ? String(email).trim().toLowerCase() : null; cel = String(cel || '').replace(/\D/g,''); cel = celularOk(cel) ? cel : null;
+          if((!email && !cel) || t.has(email) || t.has(cel)) return; t.add(email || cel);
+          d.contatos.push({ id:uid(), tenant_id:'local', cliente_id:c.id, nome:nome || null, funcao:funcao || null, email, celular:cel, recebe_email:true, recebe_whatsapp:false, assina, origem:'migracao', criado_em:new Date().toISOString(), atualizado_em:new Date().toISOString(), excluido_em:null }); };
+        mais(c.contato, null, c.email, c.telefone, !c.rep_nome); mais(c.rep_nome, c.rep_qualidade, c.rep_email, c.rep_celular, true); });
+      if(d.contratantes) d.contratantes_v21 = d.contratantes; delete d.contratantes; d.v220 = true; }
+    d.clientes.forEach(c => { if(!c.situacao) c.situacao = 'ativa'; if(!Array.isArray(c.departamentos)) c.departamentos = []; if(!c.enquadramento) c.enquadramento = {}; });
+    this.grava();
   },
   async historico(id){ return this.db.historico.filter(h => h.proposta_id===id).sort((a,b) => a.criado_em < b.criado_em ? -1 : 1); },
   async salvarEscritorio(e){ this.db.tenant.escritorio = e; this.grava(); },
@@ -953,6 +1009,7 @@ const Nuvem = {
     if(e && e.code==='PGRST116') return new Error('Registro não encontrado ou sem permissão para alterá-lo.');
     if(e && e.code==='23505') return new Error(/contratant/i.test(m + ' ' + (e.details||'')) ? 'Já existe contratante ativo com este CNPJ/CPF neste escritório.' : /client/i.test(m + ' ' + (e.details||'')) ? 'Já existe cliente ativo com este CNPJ/CPF.' : 'Já existe um registro com estes dados.');
     if(e && e.code==='42501') return new Error('Sem permissão para esta operação (RLS). Confira se o usuário está vinculado ao escritório.');
+    if(e && e.code==='23514') return new Error(/prop_cc_email/.test(m) ? 'E-mail de contato inválido.' : /prop_cc_celular/.test(m) ? 'Celular de contato inválido: informe DDD e número.' : /prop_cc_meio/.test(m) ? 'Cada contato precisa de e-mail ou celular.' : /documento/.test(m) ? 'CNPJ/CPF inválido.' : 'Algum campo do cadastro tem valor fora do permitido (' + m + ').');
     return new Error(m);
   },
   async todos(tabela, ordem){
@@ -976,10 +1033,17 @@ const Nuvem = {
     const t = (S.empresas || []).find(x => x.id===id); if(!t) throw new Error('Empresa não encontrada para este usuário.');
     S.perfil = t.perfil; S.tenant = { ...t, escritorio:escritorioCompleto(t.escritorio) };
     [S.clientes, S.servicos, S.propostas] = await Promise.all([ this.todos('prop_clientes','nome'), this.todos('prop_servicos','ordem'), this.todos('prop_propostas','criado_em') ]);
+    try{ S.contatos = await this.todos('prop_clientes_contatos','criado_em'); S.cadOk = true; }
+    catch(e){ if(!semTabela(e)) throw e; S.contatos = []; S.cadOk = false; }   // banco ainda sem a migração 21
     await this.ctCarregar(); await this.cdCarregar();
   },
   async inserir(tab, row){ const { data, error } = await this.sb.from(TAB[tab]).insert({ ...row, tenant_id:S.tenant.id }).select().single(); if(error) throw this.erro(error); S[tab].push(data); return data; },
   async alterar(tab, id, patch){ const { data, error } = await this.sb.from(TAB[tab]).update(patch).eq('id', id).select().single(); if(error) throw this.erro(error); const i = S[tab].findIndex(x => x.id===id); if(i>=0) S[tab][i] = data; return data; },
+  async inserirVarios(tab, rows){ const out = [];
+    for(let i = 0; i < rows.length; i += 200){ const { data, error } = await this.sb.from(TAB[tab]).insert(rows.slice(i, i+200).map(r => ({ ...r, tenant_id:S.tenant.id }))).select(); if(error) throw this.erro(error); S[tab].push(...data); out.push(...data); }
+    return out; },
+  async cobrancaClientes(){ const { data, error } = await this.sb.rpc('prop_cobranca_clientes', { p_tenant:S.tenant.id, p_meses:4 });
+    if(error){ if(semTabela(error)) throw new Error('Rode antes no banco a migração 21 (21_migracao_v2_2_0_cadastro_unico.sql).'); throw this.erro(error); } return data; },
   async historico(id){ const { data, error } = await this.sb.from('prop_historico').select('*').eq('proposta_id', id).order('criado_em'); if(error) throw this.erro(error); return data; },
   async linhaDoTempo(id){ const { data, error } = await this.sb.rpc('prop_linha_do_tempo', { p_proposta:id }); if(error) throw this.erro(error); return data; },
   async atividades(dias){ const { data, error } = await this.sb.rpc('prop_atividades', { p_dias:dias });
@@ -1023,10 +1087,11 @@ const selo = s => `<span class="selo ${esc(s)}">${esc(STATUS[s] || s)}</span>`;
 const esc_ = () => (S.tenant && S.tenant.escritorio) || ESCRITORIO_PADRAO;
 
 /* ===================== MOLDURA ===================== */
-const MENU = [['g','Propostas'],['painel','▦','Visão geral'],['propostas','▤','Propostas'],['clientes','◉','Clientes da proposta'],
-  ['g','Contratos'],['cpainel','▦','Visão geral'],['contratos','▣','Prestação de serviços'],['confissoes','◆','Confissão de dívida'],['contratantes','◈','Contratantes'],['modelo','✎','Modelos dos contratos'],
+const MENU = [['g','Propostas'],['painel','▦','Visão geral'],['propostas','▤','Propostas'],
+  ['g','Clientes'],['clientes','◉','Clientes'],
+  ['g','Contratos'],['cpainel','▦','Visão geral'],['contratos','▣','Prestação de serviços'],['confissoes','◆','Confissão de dívida'],['modelo','✎','Modelos dos contratos'],
   ['g','Configurações'],['servicos','☰','Serviços'],['escritorio','⚙','Escritório'],['versoes','↻','Versões']];
-const MENU_DE = { form:'propostas', documento:'propostas', ctForm:'contratos', contrato:'contratos', contratanteForm:'contratantes', cdForm:'confissoes', confissao:'confissoes' };
+const MENU_DE = { form:'propostas', documento:'propostas', ctForm:'contratos', contrato:'contratos', clienteForm:'clientes', importar:'clientes', cdForm:'confissoes', confissao:'confissoes' };
 function barraEmpresa(){ const e = esc_(), t = S.tenant || {};
   return `<div class="barra-empresa"><span></span><div class="empresa-centro"><b>${esc(t.nome || '')}</b><small>${esc([e.ct_cnpj ? 'CNPJ ' + docFmt(e.ct_cnpj) : '', [e.ct_cidade, e.ct_uf].filter(Boolean).join('/') || e.cidade || ''].filter(Boolean).join(' · '))}</small></div><div style="text-align:right">${(S.empresas || []).length > 1 ? '<button class="btn mini" data-act="trocarEmpresa">⇄ Trocar empresa</button>' : ''}</div></div>`; }
 function moldura(){
@@ -1043,7 +1108,7 @@ function moldura(){
   </aside>
   <main class="principal">${barraEmpresa()}<div id="conteudo"></div></main></div>`;
 }
-function hashDe(view){ if(view==='documento') return (S.docId && !S.docPrevia) ? '#/proposta/' + S.docId : null; if(view==='contrato') return (S.ctId && !S.ctPrevia) ? '#/contrato/' + S.ctId : null; if(view==='confissao') return (S.cdId && !S.cdPrevia) ? '#/confissao/' + S.cdId : null; if(['form','ctForm','contratanteForm','cdForm'].includes(view)) return null; return '#/' + view; }
+function hashDe(view){ if(view==='documento') return (S.docId && !S.docPrevia) ? '#/proposta/' + S.docId : null; if(view==='contrato') return (S.ctId && !S.ctPrevia) ? '#/contrato/' + S.ctId : null; if(view==='confissao') return (S.cdId && !S.cdPrevia) ? '#/confissao/' + S.cdId : null; if(['form','ctForm','clienteForm','cdForm'].includes(view)) return null; return '#/' + view; }
 function rota(){
   const h = location.hash;
   if(S._hashInterno === h){ S._hashInterno = null; return; }
@@ -1056,20 +1121,22 @@ function rota(){
   const md = h.match(/^#\/confissao\/([0-9a-f-]{36})$/i);
   if(md){ const c = (S.confissoes || []).find(x => x.id===md[1].toLowerCase() && !x.excluido_em);
     if(c){ S.cdPrevia = null; S.cdId = c.id; ir('confissao'); } else { ir('confissoes'); toast('Confissão não encontrada nesta empresa.', true); } return; }
-  const v = h.replace(/^#\//,''); ir(VIEWS[v] && !['form','documento','ctForm','contrato','contratanteForm','cdForm','confissao'].includes(v) ? v : 'painel');
+  const v0 = h.replace(/^#\//,''), v = v0==='contratantes' ? 'clientes' : v0;   // endereço antigo da tela de contratantes
+  ir(VIEWS[v] && !['form','documento','ctForm','contrato','clienteForm','cdForm','confissao'].includes(v) ? v : 'painel');
 }
 window.addEventListener('hashchange', () => { if(S.modoCliente || !document.querySelector('.app')) return; if(/^#\/c\//.test(location.hash)){ location.reload(); return; } if(S.tenant && S.view!=='form') rota(); else if(S.tenant && S.view==='form' && S._hashInterno!==location.hash){ if(!formAlterado() || confirm('Sair do formulário? O que não foi salvo será perdido.')){ S._Fbase = null; S.F = null; rota(); } } });
-window.addEventListener('beforeunload', ev => { if(((S.view==='form' || (S.view==='documento' && S.docPrevia)) && formAlterado()) || (['ctForm','contratanteForm','contrato','cdForm','confissao'].includes(S.view) && ctSujo())){ ev.preventDefault(); ev.returnValue = ''; } });
+window.addEventListener('beforeunload', ev => { if(((S.view==='form' || (S.view==='documento' && S.docPrevia)) && formAlterado()) || (['ctForm','clienteForm','contrato','cdForm','confissao'].includes(S.view) && ctSujo())){ ev.preventDefault(); ev.returnValue = ''; } });
 function formAlterado(){ return !!(S.F && S._Fbase && JSON.stringify(S.F) !== S._Fbase); }
 function ir(view){
   if((S.view==='form' || (S.view==='documento' && S.docPrevia)) && view!=='form' && !(view==='documento' && S.docPrevia) && formAlterado()){
     if(!confirm('Sair do formulário? O que não foi salvo será perdido.')){ document.querySelectorAll('.menu button').forEach(b => b.classList.toggle('ativo', b.dataset.ir==='propostas')); return; }
   }
-  const emCt = ['ctForm','contratanteForm','cdForm'].includes(S.view) || (S.view==='contrato' && S.ctPrevia) || (S.view==='confissao' && S.cdPrevia), paraCt = ['ctForm','contratanteForm','cdForm'].includes(view) || (view==='contrato' && S.ctPrevia) || (view==='confissao' && S.cdPrevia);
+  const emCt = ['ctForm','clienteForm','cdForm'].includes(S.view) || (S.view==='contrato' && S.ctPrevia) || (S.view==='confissao' && S.cdPrevia), paraCt = ['ctForm','clienteForm','cdForm'].includes(view) || (view==='contrato' && S.ctPrevia) || (view==='confissao' && S.cdPrevia);
   if(emCt && !paraCt && ctSujo() && !confirm('Sair do formulário? O que não foi salvo será perdido.')) return;
   if(view!=='form' && !(view==='documento' && S.docPrevia)){ S.F = null; S._Fbase = null; S.docPrevia = null; }
   if(!paraCt){ S.CTF = null; S._CTFbase = null; S.ctPrevia = null; S.CDF = null; S._CDFbase = null; S.cdPrevia = null; }
-  if(view!=='contratanteForm'){ S.CF = null; S._CFbase = null; if(view!=='ctForm') S._aposContratante = null; }
+  if(view!=='clienteForm'){ S.CF = null; S._CFbase = null; if(view!=='ctForm' && view!=='cdForm') S._aposContratante = null; }
+  if(view!=='importar') S.IMP = null;
   S.view = view; document.querySelectorAll('.menu button').forEach(b => b.classList.toggle('ativo', b.dataset.ir === (MENU_DE[view] || view))); VIEWS[view](); window.scrollTo(0,0); const h = hashDe(S.view); if(h && location.hash !== h){ S._hashInterno = h; location.hash = h; } }
 function topo(titulo, sub, botoes){ return `<div class="topo"><div><h1>${esc(titulo)}</h1><p>${esc(sub)}</p></div><div class="acoes">${botoes || ''}</div></div>`; }
 
@@ -1111,16 +1178,7 @@ const VIEWS = {
     listarPropostas(); carregaAlertasLista();
   },
 
-  clientes(){
-    const arr = ativos(S.clientes).slice().sort((a,b) => a.nome.localeCompare(b.nome,'pt-BR'));
-    const linhas = arr.map(c => {
-      const ps = ativos(S.propostas).filter(p => p.cliente_id===c.id);
-      const ult = ps.map(p => String(p.atualizado_em || p.criado_em || '').slice(0,10)).sort().pop();
-      return `<tr><td><b>${esc(c.nome)}</b><br><small>${esc(docFmt(c.documento)) || 'sem CNPJ/CPF'}</small></td><td>${esc([c.tratamento,c.contato].filter(Boolean).join(' ')) || '—'}<br><small>${esc(c.email||'')} ${esc(c.telefone||'')}</small></td><td class="num">${ps.length}</td><td>${ult ? dataBR(ult) : '—'}</td>
-      <td class="acoes-linha"><button class="btn mini" data-act="nova" data-cliente="${c.id}">Nova proposta</button> <button class="btn mini" data-act="cliente" data-id="${c.id}">Editar</button> <button class="btn mini" data-act="excluirCliente" data-id="${c.id}">Excluir</button></td></tr>`; }).join('');
-    $('conteudo').innerHTML = topo('Clientes da proposta','Cadastro simples usado nas propostas. O cadastro completo para contrato fica em Contratantes.','<button class="btn primario" data-act="cliente">Novo cliente</button>') +
-      `<div class="painel rolagem">${arr.length ? `<table class="lista"><thead><tr><th>Cliente</th><th>Contato</th><th class="num">Propostas</th><th>Última movimentação</th><th></th></tr></thead><tbody>${linhas}</tbody></table>` : '<div class="vazio">Nenhum cliente ainda. Cadastre aqui ou direto ao criar a proposta.</div>'}</div>`;
-  },
+  clientes(){ cliTela(); },
 
   servicos(){
     const arr = ativos(S.servicos).slice().sort((a,b) => a.ordem - b.ordem);
@@ -1228,7 +1286,7 @@ const VIEWS = {
       <div class="grade" style="margin-top:12px"><div class="campo"><label for="emp_email">Vincular usuário por e-mail</label><input type="email" id="emp_email" placeholder="nome@artecon.cnt.br"></div><div class="campo c1"><label for="emp_perfil">Perfil</label><select id="emp_perfil"><option value="operador">Operador</option><option value="diretor">Diretor</option></select></div><div class="campo c1" style="align-self:end"><button class="btn" data-act="empVincular">Vincular</button></div></div>
       <p class="dica">O usuário precisa existir antes em Authentication › Users do Supabase. Cada escritório tem os próprios clientes, propostas, contratos e numeração.</p>
       <div class="barra-salvar" style="justify-content:flex-start"><button class="btn" data-act="novoEscritorio">Cadastrar novo escritório</button></div></div>` : ''}
-    <div class="painel"><h2>Cópia de segurança</h2><p>Baixa um arquivo JSON com clientes, serviços, propostas, contratantes e contratos deste escritório.</p><button class="btn" data-act="backup">Exportar backup</button></div>`;
+    <div class="painel"><h2>Cópia de segurança</h2><p>Baixa um arquivo JSON com clientes e contatos, serviços, propostas, contratos e confissões deste escritório.</p><button class="btn" data-act="backup">Exportar backup</button></div>`;
     if(MODO_NUVEM && pode) setTimeout(carregaUsuariosEmp, 0);
   },
 
@@ -1507,7 +1565,8 @@ function desenhaTopoEnvio(p){
 function dlgSignatario(id, papel){
   const p = S.propostas.find(x => x.id===S.docId); let s = id ? S.doc.sigs.find(x => x.id===id) : null;
   if(!s){ const primeiro = papel!=='testemunha' && !S.doc.sigs.some(x => x.papel!=='testemunha'), c = primeiro && p.cliente_id ? S.clientes.find(x => x.id===p.cliente_id) : null;
-    s = { papel:papel || 'parte', nome:primeiro ? (p.contato||'') : '', qualidade:'', email:c ? (c.email||'') : '', celular:c ? soDoc(c.telefone||'').replace(/\D/g,'') : '' }; }
+    const k = c ? ativos(S.contatos || []).find(x => x.cliente_id===c.id && x.assina) : null;
+    s = { papel:papel || 'parte', nome:primeiro ? ((k && k.nome) || p.contato || '') : '', qualidade:primeiro && k ? (k.funcao || '') : '', email:k && k.email ? k.email : c ? (c.email||'') : '', celular:k && k.celular ? k.celular : c ? soDoc(c.telefone||'').replace(/\D/g,'') : '' }; }
   const tes = (s.papel || 'parte')==='testemunha', temLink = id && S.doc.links.some(l => l.signatario_id===id && l.tipo==='assinatura');
   $('dlg').innerHTML = `<h2>${id ? (tes ? 'Editar testemunha' : 'Editar signatário') : (tes ? 'Nova testemunha' : 'Novo signatário')}</h2><div class="grade">
     <div class="campo c4"><label for="g_papel">Assina como</label><select id="g_papel" ${temLink ? 'disabled title="Já recebeu o link: para mudar, remova e cadastre de novo"' : ''}><option value="parte" ${tes?'':'selected'}>Parte — assina pelo cliente</option><option value="testemunha" ${tes?'selected':''}>Testemunha</option></select></div>
@@ -1756,18 +1815,6 @@ function comprovanteHTML(p, lista, op){
 }
 function baixar(nome, conteudo, tipo){ const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([conteudo], { type:tipo })); a.download = nome; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); }
 /* ----- diálogos de cliente e serviço ----- */
-function dlgCliente(id){
-  const c = id ? S.clientes.find(x => x.id===id) : { nome:'', documento:'', contato:'', tratamento:'', email:'', telefone:'' };
-  $('dlg').innerHTML = `<h2>${id ? 'Editar cliente' : 'Novo cliente'}</h2><div class="grade">
-    <div class="campo c4"><label for="d_nome">Razão social ou nome *</label><input type="text" id="d_nome" value="${esc(c.nome)}"></div>
-    <div class="campo"><label for="d_doc">CNPJ / CPF</label><input type="text" id="d_doc" value="${esc(docFmt(c.documento))}"></div>
-    <div class="campo"><label for="d_trat">Tratamento</label><select id="d_trat">${['','Sr.','Sra.','Dr.','Dra.'].map(t => `<option ${c.tratamento===t?'selected':''}>${t}</option>`).join('')}</select></div>
-    <div class="campo c4"><label for="d_contato">Responsável</label><input type="text" id="d_contato" value="${esc(c.contato||'')}"></div>
-    <div class="campo"><label for="d_email">E-mail</label><input type="email" id="d_email" value="${esc(c.email||'')}"></div>
-    <div class="campo"><label for="d_tel">Telefone</label><input type="text" id="d_tel" value="${esc(c.telefone||'')}"></div>
-  </div><div class="barra-salvar" style="margin-top:18px"><button class="btn" data-act="fecharDlg">Cancelar</button><button class="btn primario" data-act="salvarCliente" data-id="${id||''}">Salvar cliente</button></div>`;
-  $('dlg').showModal();
-}
 function dlgServico(id){
   const s = id ? S.servicos.find(x => x.id===id) : { nome:'', descricao:'', tipo:'mensal', valor_padrao:0, ordem:(ativos(S.servicos).length+1)*10 };
   $('dlg').innerHTML = `<h2>${id ? 'Editar serviço' : 'Novo serviço'}</h2><div class="grade">
@@ -1933,16 +1980,8 @@ const ACOES = {
   meioMeio(){ const t = totais(S.F.itens).pontual; if(!t){ toast('Informe antes o valor do serviço pontual.', true); return; } const a = r2(t/2); S.F.condicoes.parcelas = [{ valor:a, descricao:'na aceitação da proposta;' },{ valor:r2(t-a), descricao:'no término dos trabalhos, com a entrega do material.' }]; desenhaCondicoes(); },
   async excluirProposta(el){ const p = S.propostas.find(x => x.id===el.dataset.id); if(p && temAssinatura(p)){ toast('Proposta com assinatura não pode ser excluída. Se não vai seguir, marque como Perdida.', true); return; } if(!p || !confirm(`Excluir a proposta ${numeroFmt(p)} de ${p.cliente_nome}? O número não é reaproveitado.`)) return;
     await tenta(async () => { await DB.alterar('propostas', p.id, { excluido_em:new Date().toISOString() }); toast('Proposta excluída.'); ir(S.view==='documento' ? 'propostas' : S.view); }); },
-  cliente(el){ dlgCliente(el.dataset.id); },
   servico(el){ dlgServico(el.dataset.id); },
   fecharDlg(){ $('dlg').close(); },
-  async salvarCliente(el){
-    const row = { nome:$('d_nome').value.trim(), documento:soDoc($('d_doc').value)||null, tratamento:$('d_trat').value||null, contato:$('d_contato').value.trim()||null, email:$('d_email').value.trim()||null, telefone:$('d_tel').value.trim()||null };
-    if(!row.nome){ toast('Informe o nome do cliente.', true); return; } if(!docValido(row.documento)){ toast('CNPJ/CPF inválido. Confira os dígitos ou deixe em branco.', true); return; }
-    await tenta(async () => { if(el.dataset.id) await DB.alterar('clientes', el.dataset.id, row); else await DB.inserir('clientes', row); $('dlg').close(); toast('Cliente salvo.'); ir('clientes'); });
-  },
-  async excluirCliente(el){ const c = S.clientes.find(x => x.id===el.dataset.id); if(!c || !confirm(`Excluir o cliente ${c.nome}? As propostas dele continuam guardadas.`)) return;
-    await tenta(async () => { await DB.alterar('clientes', c.id, { excluido_em:new Date().toISOString() }); toast('Cliente excluído.'); ir('clientes'); }); },
   async salvarServico(el){
     const row = { nome:$('s_nome').value.trim(), descricao:$('s_desc').value.trim()||null, tipo:$('s_tipo').value, valor_padrao:parseValor($('s_valor').value), ordem:parseInt($('s_ordem').value)||0 };
     if(!row.nome){ toast('Informe o nome do serviço.', true); return; }
@@ -1960,7 +1999,7 @@ const ACOES = {
     if(e.cpf_responsavel && !cpfValido(e.cpf_responsavel)){ toast('CPF de quem assina pelo escritório está inválido.', true); return; }
     await tenta(async () => { await DB.salvarEscritorio(e); S.tenant.escritorio = escritorioCompleto(e); const t = (S.empresas || []).find(x => x.id===S.tenant.id); if(t) t.escritorio = e; toast('Dados do escritório salvos.'); moldura(); ir('escritorio'); });
   },
-  backup(){ baixar(`backup_propostas_${hojeISO()}.json`, JSON.stringify({ app:'artecon-propostas', versao:APP_VERSION, gerado_em:new Date().toISOString(), tenant:S.tenant, clientes:S.clientes, servicos:S.servicos, propostas:S.propostas, contratantes:S.contratantes, contratos:S.contratos, modelo_contrato:S.ctModelo, confissoes:S.confissoes, modelo_confissao:S.cdModelo }, null, 2), 'application/json'); },
+  backup(){ baixar(`backup_propostas_${hojeISO()}.json`, JSON.stringify({ app:'artecon-propostas', versao:APP_VERSION, gerado_em:new Date().toISOString(), tenant:S.tenant, clientes:S.clientes, contatos:S.contatos, servicos:S.servicos, propostas:S.propostas, contratos:S.contratos, modelo_contrato:S.ctModelo, confissoes:S.confissoes, modelo_confissao:S.cdModelo }, null, 2), 'application/json'); },
   async sair(){ await DB.sair(); location.reload(); }
 };
 
@@ -2139,8 +2178,8 @@ function ctRegra(old, patch, perfil){
 /* ----- banco: contratos no modo local ----- */
 const semTabela = e => /PGRST205|PGRST202|42P01|42883|does not exist|schema cache|Could not find/i.test(((e && e.code) || '') + ' ' + ((e && e.message) || ''));
 Object.assign(Local, {
-  garanteCt(){ const d = this.db; d.contratantes = d.contratantes || []; d.contratos = d.contratos || []; d.ct_modelos = d.ct_modelos || []; d.ct_hist = d.ct_hist || []; d.ct_num = d.ct_num || {}; },
-  async ctCarregar(){ this.garanteCt(); S.ctOk = true; S.contratantes = this.db.contratantes; S.contratos = this.db.contratos; S.ctModelo = this.db.ct_modelos.slice().sort((a,b) => b.versao - a.versao)[0] || null; },
+  garanteCt(){ const d = this.db; d.contratos = d.contratos || []; d.ct_modelos = d.ct_modelos || []; d.ct_hist = d.ct_hist || []; d.ct_num = d.ct_num || {}; },
+  async ctCarregar(){ this.garanteCt(); S.ctOk = true; S.contratos = this.db.contratos; S.ctModelo = this.db.ct_modelos.slice().sort((a,b) => b.versao - a.versao)[0] || null; },
   ctHist(id, tipo, de, para, detalhe){ this.db.ct_hist.push({ id:uid(), contrato_id:id, tipo, de, para, detalhe:detalhe || null, usuario_email:'modo local', criado_em:new Date().toISOString() }); },
   async ctHistorico(id){ this.garanteCt(); return this.db.ct_hist.filter(h => h.contrato_id===id).sort((a,b) => a.criado_em < b.criado_em ? -1 : 1); },
   async ctModeloSalvar(texto){ this.garanteCt(); const v = { id:uid(), tenant_id:'local', versao:(this.db.ct_modelos.reduce((m,x) => Math.max(m, x.versao), 0)) + 1, texto, criado_em:new Date().toISOString() }; this.db.ct_modelos.push(v); this.grava(); S.ctModelo = v; return v; },
@@ -2148,10 +2187,10 @@ Object.assign(Local, {
 });
 Object.assign(Nuvem, {
   async ctCarregar(){
-    try{ const [a, b, m] = await Promise.all([ this.todos('prop_contratantes','razao_social'), this.todos('prop_contratos','criado_em'),
+    try{ const [b, m] = await Promise.all([ this.todos('prop_contratos','criado_em'),
         this.sb.from('prop_ct_modelos').select('versao,texto,criado_em').eq('tenant_id', S.tenant.id).order('versao', { ascending:false }).limit(1) ]);
-      if(m.error) throw m.error; S.contratantes = a; S.contratos = b; S.ctModelo = (m.data || [])[0] || null; S.ctOk = true; }
-    catch(e){ if(semTabela(e)){ S.ctOk = false; S.contratantes = []; S.contratos = []; S.ctModelo = null; return; } throw e; } },
+      if(m.error) throw m.error; S.contratos = b; S.ctModelo = (m.data || [])[0] || null; S.ctOk = true; }
+    catch(e){ if(semTabela(e)){ S.ctOk = false; S.contratos = []; S.ctModelo = null; return; } throw e; } },
   async ctHistorico(id){ const { data, error } = await this.sb.from('prop_ct_historico').select('*').eq('contrato_id', id).order('criado_em'); if(error) throw this.erro(error); return data; },
   async ctModeloSalvar(texto){ const { data, error } = await this.sb.from('prop_ct_modelos').insert({ tenant_id:S.tenant.id, texto }).select('versao,texto,criado_em').single(); if(error) throw this.erro(error); S.ctModelo = data; return data; },
   async empresasUsuarios(){ const { data, error } = await this.sb.rpc('prop_escritorio_usuarios', { p_tenant:S.tenant.id }); if(error){ if(semTabela(error)) return null; throw this.erro(error); } return data; },
@@ -2225,36 +2264,6 @@ Object.assign(VIEWS, {
     ctListar();
   },
 
-  contratantes(){
-    const arr = ativos(S.contratantes || []).slice().sort((a,b) => a.razao_social.localeCompare(b.razao_social,'pt-BR'));
-    const linhas = arr.map(c => { const n = ativos(S.contratos || []).filter(k => k.contratante_id===c.id).length;
-      return `<tr><td><b>${esc(c.razao_social)}</b><br><small>${esc(docFmt(c.documento))}${c.situacao ? ' · ' + esc(c.situacao) : ''}</small></td><td>${esc([c.municipio, c.uf].filter(Boolean).join('/')) || '—'}</td><td>${esc(c.rep_nome || '—')}<br><small>${esc(c.rep_qualidade || '')}</small></td><td class="num">${n}</td>
-      <td class="acoes-linha"><button class="btn mini" data-act="ctNovo" data-contratante="${c.id}">Novo contrato</button> <button class="btn mini" data-act="cttEditar" data-id="${c.id}">Editar</button> <button class="btn mini" data-act="cttExcluir" data-id="${c.id}">Excluir</button></td></tr>`; }).join('');
-    $('conteudo').innerHTML = topo('Contratantes','Cadastro completo para os contratos. Os clientes da proposta ficam no cadastro simples, em Propostas.','<button class="btn" data-act="cttImportar">⇩ Importar do cadastro de propostas</button><button class="btn primario" data-act="cttNovo">Novo contratante</button>') + ctAvisoMigracao() +
-      `<div class="painel rolagem">${arr.length ? `<table class="lista"><thead><tr><th>Contratante</th><th>Cidade</th><th>Representante</th><th class="num">Contratos</th><th></th></tr></thead><tbody>${linhas}</tbody></table>` : '<div class="vazio">Nenhum contratante ainda. Cadastre pelo CNPJ, com busca na Receita Federal, ou importe do cadastro de propostas.</div>'}</div>`;
-  },
-
-  contratanteForm(){
-    const C = S.CF, q = (C.receita && C.receita.qsa) || [];
-    const campo = (k, rot, cls, extra) => `<div class="campo ${cls||''}"><label for="cf_${k}">${rot}</label><input type="text" id="cf_${k}" data-cf="${k}" value="${esc(k==='documento' ? docFmt(C[k]) : (C[k] ?? ''))}">${extra || ''}</div>`;
-    const rf = k => C.receita && C.receita.campos && C.receita.campos.includes(k) ? '<span class="rf">Receita Federal</span>' : '';
-    $('conteudo').innerHTML = topo(C.id ? 'Editar contratante' : 'Novo contratante','Cadastro completo para o contrato.','<button class="btn" data-act="cttImportar">⇩ Importar do cadastro de propostas</button><button class="btn" data-act="cttCancelar">Cancelar</button>') + `
-    <div id="errosCF"></div>
-    <div class="painel"><h2>Empresa</h2><div class="grade">
-      <div class="campo"><label for="cf_documento">CNPJ (ou CPF) *</label><div style="display:flex;gap:8px"><input type="text" id="cf_documento" data-cf="documento" value="${esc(docFmt(C.documento))}"><button class="btn primario" data-act="cttReceita" style="white-space:nowrap">Buscar na Receita Federal</button></div></div>
-      <div class="campo" style="align-self:end">${C.receita_em ? `<div class="chip-aviso" style="margin:0"><span>Dados da <b>Receita Federal</b> consultados em ${esc(dataHora(C.receita_em))}${C.situacao ? ' · situação <b>' + esc(C.situacao) + '</b>' : ''}</span></div>` : '<span class="dica">A busca traz razão social, endereço, CNAE e sócios da base pública do CNPJ da Receita Federal. Tudo continua editável.</span>'}</div>
-      ${campo('razao_social','Razão social *','',rf('razao_social'))}${campo('nome_fantasia','Nome fantasia','',rf('nome_fantasia'))}
-      ${campo('endereco','Logradouro e número *','',rf('endereco'))}${campo('complemento','Complemento','c1',rf('complemento'))}${campo('cep','CEP','c1',rf('cep'))}
-      ${campo('bairro','Bairro *','',rf('bairro'))}${campo('municipio','Município *','c1',rf('municipio'))}${campo('uf','UF *','c1',rf('uf'))}
-      ${campo('cnae','Atividade principal (CNAE)','c4',rf('cnae'))}${campo('regime','Regime de tributação','',rf('regime'))}${campo('email','E-mail da empresa','',rf('email'))}
-    </div></div>
-    <div class="painel"><h2>Representante que assina</h2>
-      ${q.length ? `<p style="margin:0 0 8px">Sócios na Receita Federal — escolha quem assina:</p><div class="socios">${q.map((s,i) => `<label class="marcar"><input type="radio" name="socio" data-socio="${i}" ${C.rep_socio===i ? 'checked' : ''}> <b>${esc(s.nome)}</b> — ${esc(s.qualificacao)}${s.cpf ? ' · CPF ' + esc(s.cpf) : ''}</label>`).join('')}<label class="marcar"><input type="radio" name="socio" data-socio="-1" ${C.rep_socio===-1 ? 'checked' : ''}> Outra pessoa (procurador)</label></div>` : ''}
-      <div class="grade" style="margin-top:12px">${campo('rep_nome','Nome completo *')}${campo('rep_cpf','CPF completo *','c1', q.length ? '<span class="dica">A Receita publica o CPF mascarado: complete aqui.</span>' : '')}${campo('rep_qualidade','Qualidade *','c1')}
-      ${campo('rep_profissao','Profissão')}${campo('rep_email','E-mail do representante','c1')}${campo('rep_celular','Celular (WhatsApp)','c1')}</div></div>
-    <div class="barra-salvar"><button class="btn primario" data-act="cttSalvar">Salvar contratante</button></div>`;
-  },
-
   ctForm(){
     const F = S.CTF, d = F.dados, e = esc_(), ctt = (S.contratantes || []).find(c => c.id===F.contratante_id), prop = F.proposta_id ? S.propostas.find(p => p.id===F.proposta_id) : null;
     const opcoes = ativos(S.contratantes || []).slice().sort((a,b) => a.razao_social.localeCompare(b.razao_social,'pt-BR')).map(c => `<option value="${c.id}" ${c.id===F.contratante_id ? 'selected' : ''}>${esc(c.razao_social)} — ${esc(docFmt(c.documento))}</option>`).join('');
@@ -2264,8 +2273,8 @@ Object.assign(VIEWS, {
     $('conteudo').innerHTML = topo(F.id ? 'Editar contrato ' + ctNumero(F) : 'Novo contrato','O documento segue o Modelo do contrato (Contrato Particular de Serviços Contábeis).','<button class="btn" data-act="ctCancelar">Cancelar</button>') + `
     <div id="errosCT"></div>
     ${prop ? `<div class="chip-aviso"><span>Gerado da <b>Proposta ${esc(numeroFmt(prop))}</b>: honorários, vencimento, índice, adicional anual, revisão e serviços vieram da proposta. Confira e complete.</span></div>` : ''}
-    <div class="painel"><h2>Contratante</h2><div class="grade"><div class="campo c4"><label for="ct_ctt">Contratante *</label><select id="ct_ctt" data-ctr="contratante_id"><option value="">Escolha no cadastro de contratantes…</option>${opcoes}</select>
-      <span class="dica">${ctt ? esc([ctt.endereco, ctt.bairro, [ctt.municipio, ctt.uf].filter(Boolean).join('/')].filter(Boolean).join(' · ')) + ' · representante: ' + esc(ctt.rep_nome || 'não informado') + (ctt.rep_cpf ? ', CPF ' + esc(docFmt(ctt.rep_cpf)) : '') + ` · <button class="elo" data-act="cttEditar" data-id="${ctt.id}">editar contratante</button>` : '<button class="elo" data-act="cttNovo">Cadastrar contratante</button>'}</span></div></div></div>
+    <div class="painel"><h2>Contratante</h2><div class="grade"><div class="campo c4"><label for="ct_ctt">Contratante *</label><select id="ct_ctt" data-ctr="contratante_id"><option value="">Escolha no cadastro de clientes…</option>${opcoes}</select>
+      <span class="dica">${ctt ? esc([ctt.endereco, ctt.bairro, [ctt.municipio, ctt.uf].filter(Boolean).join('/')].filter(Boolean).join(' · ')) + ' · representante: ' + esc(ctt.rep_nome || 'não informado') + (ctt.rep_cpf ? ', CPF ' + esc(docFmt(ctt.rep_cpf)) : '') + ` · <button class="elo" data-act="cttEditar" data-id="${ctt.id}">editar cadastro do cliente</button>` : '<button class="elo" data-act="cttNovo">Cadastrar cliente</button>'}</span></div></div></div>
     <div class="painel"><h2>Objeto — Cláusula Primeira</h2>${INCISOS.map(([n,t]) => `<label class="marcar"><input type="checkbox" data-inciso="${n}" ${(d.incisos||[]).includes(n) ? 'checked' : ''}> ${ROMANOS[n-1]} — ${esc(t)}</label>`).join('')}<p class="dica" style="margin:6px 0 0">Os incisos desmarcados saem do texto e os restantes são renumerados. Com o inciso IV desmarcado, sai também o parágrafo do valor por empregado.</p></div>
     <div class="painel"><h2>Honorários — Cláusula Terceira</h2><div class="grade">
       ${campo('valor_mensal','Valor mensal (R$) *','c1','text', d.valor_mensal ? num2(d.valor_mensal) : '')}${campo('valor_empregado','Por empregado (R$)','c1','text', d.valor_empregado ? num2(d.valor_empregado) : '')}${campo('valor_inativa','Se ficar inativa (R$)','c1','text', d.valor_inativa ? num2(d.valor_inativa) : '')}${campo('dia_vencimento','Dia de vencimento *','c1','number')}
@@ -2377,31 +2386,10 @@ function ctFormDe(c, duplicar){
   const F = { id:duplicar ? null : c.id, numero:duplicar ? null : c.numero, ano:duplicar ? null : c.ano, contratante_id:c.contratante_id, proposta_id:duplicar ? null : c.proposta_id, data_contrato:duplicar ? hojeISO() : c.data_contrato, observacoes:duplicar ? '' : (c.observacoes || ''), modelo_versao:duplicar ? (S.ctModelo ? S.ctModelo.versao : null) : c.modelo_versao, modelo_texto:duplicar ? null : c.modelo_texto, dados:JSON.parse(JSON.stringify(c.dados || {})) };
   delete F.dados.contratante; delete F.dados.contratada; return F;
 }
-function cttNovo(){ return { id:null, cliente_id:null, documento:'', razao_social:'', nome_fantasia:'', endereco:'', complemento:'', bairro:'', cep:'', municipio:'', uf:'', cnae:'', situacao:'', regime:'', email:'', telefone:'', rep_nome:'', rep_cpf:'', rep_qualidade:'', rep_profissao:'', rep_email:'', rep_celular:'', receita:null, receita_em:null, rep_socio:null }; }
-function cttDeCliente(C, cli){
-  Object.assign(C, { cliente_id:cli.id, razao_social:C.razao_social || cli.nome, documento:C.documento || soDoc(cli.documento), rep_nome:C.rep_nome || cli.contato || '', rep_email:C.rep_email || cli.email || '', rep_celular:C.rep_celular || String(cli.telefone || '').replace(/\D/g,''), email:C.email || cli.email || '', telefone:C.telefone || cli.telefone || '' });
-  return C;
-}
 function ctSujo(){ return !!((S.CTF && S._CTFbase && JSON.stringify(S.CTF) !== S._CTFbase) || (S.CF && S._CFbase && JSON.stringify(S.CF) !== S._CFbase) || (S.CDF && S._CDFbase && JSON.stringify(S.CDF) !== S._CDFbase)); }
 function abreCtForm(F){ S.CTF = F; S._CTFbase = JSON.stringify(F); S.ctPrevia = null; ir('ctForm'); }
-function abreCttForm(C){ S.CF = C; S._CFbase = JSON.stringify(C); ir('contratanteForm'); }
 function exigeCt(){ if(S.ctOk) return true; toast('Rode antes no banco a migração 17 (17_migracao_v2_0_0_contratos.sql).', true); return false; }
 
-async function cttAplicaReceita(auto){
-  const C = S.CF; if(!C) return;
-  const b = document.querySelector('[data-act="cttReceita"]'); if(b){ b.disabled = true; b.textContent = 'Consultando…'; }
-  try{ const r = await consultaReceita(C.documento);
-    const campos = ['razao_social','nome_fantasia','endereco','complemento','bairro','cep','municipio','uf','cnae','regime','email'].filter(k => r[k]);
-    campos.forEach(k => C[k] = r[k]); C.situacao = r.situacao; C.telefone = C.telefone || r.telefone; C.receita = { qsa:r.qsa, campos, fonte:'Receita Federal — base pública do CNPJ (BrasilAPI)' }; C.receita_em = new Date().toISOString();
-    if(!C.rep_nome && r.qsa.length){ const s = r.qsa.find(x => /administrador/i.test(x.qualificacao)) || r.qsa[0]; C.rep_socio = r.qsa.indexOf(s); C.rep_nome = nomeProprio(s.nome); C.rep_qualidade = s.qualificacao.toLowerCase(); }
-    else if(C.rep_nome){ const sem = t => String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(), pal = sem(C.rep_nome).split(/\s+/).filter(w => w.length>2);
-      const i = r.qsa.findIndex(x => pal.length && pal.every(w => sem(x.nome).split(/\s+/).includes(w)));
-      if(i>=0){ C.rep_socio = i; C.rep_nome = nomeProprio(r.qsa[i].nome); C.rep_qualidade = C.rep_qualidade || r.qsa[i].qualificacao.toLowerCase(); } }
-    if(S.view==='contratanteForm') VIEWS.contratanteForm();
-    toast(`Dados da Receita Federal carregados${/ativa/i.test(r.situacao) ? '' : ' — atenção: situação ' + r.situacao}.`, !/ativa/i.test(r.situacao));
-  }catch(e){ if(!auto || !/14 números/.test(e.message)) toast(e.message, true); }
-  finally{ const b2 = document.querySelector('[data-act="cttReceita"]'); if(b2){ b2.disabled = false; b2.textContent = 'Buscar na Receita Federal'; } }
-}
 function cttValida(C){
   const er = [], doc = soDoc(C.documento);
   if(!(doc.length===14 || doc.length===11) || !docValido(doc)) er.push('CNPJ (ou CPF) inválido.');
@@ -2418,7 +2406,7 @@ function cttValida(C){
 }
 function ctValida(F){
   const er = [], d = F.dados, e = esc_(), c = (S.contratantes || []).find(x => x.id===F.contratante_id && !x.excluido_em);
-  if(!c) er.push('Escolha o contratante.'); else { const f = cttValida(c); if(f.length) er.push('Complete o cadastro do contratante: ' + f.map(x => x.replace(/\.$/,'').toLowerCase()).join('; ') + '.'); }
+  if(!c) er.push('Escolha o contratante.'); else { const f = cttValida(c); if(f.length) er.push('Complete o cadastro do cliente: ' + f.map(x => x.replace(/\.$/,'').toLowerCase()).join('; ') + '.'); }
   const falta = [['ct_razao','razão social'],['ct_cnpj','CNPJ'],['ct_endereco','endereço'],['ct_bairro','bairro'],['ct_cidade','cidade'],['ct_uf','UF'],['ct_foro','foro'],['adm_nome','administrador'],['adm_cpf','CPF do administrador']].filter(([k]) => !String(e[k] || '').trim()).map(x => x[1]);
   if(falta.length) er.push('Complete em Escritório os dados da contratada: ' + falta.join(', ') + '.');
   if(e.adm_cpf && !cpfValido(soDoc(e.adm_cpf))) er.push('CPF do administrador (Escritório) inválido.');
@@ -2452,7 +2440,7 @@ function telaEmpresas(emps, msg){
   document.querySelectorAll('[data-emp]').forEach(b => b.onclick = () => { if($('lembrarEmp').checked){ try{ localStorage.setItem(CHAVE_EMPRESA(), b.dataset.emp); }catch(e){} } entrarEmpresa(b.dataset.emp); });
   if($('sairEmp')) $('sairEmp').onclick = async () => { await DB.sair(); location.reload(); };
 }
-function limpaEstado(){ Object.assign(S, { F:null, _Fbase:null, CF:null, _CFbase:null, CTF:null, _CTFbase:null, doc:null, docId:null, docPrevia:null, ctId:null, ctPrevia:null, CDF:null, _CDFbase:null, cdId:null, cdPrevia:null, cdBusca:'', cdChip:'', filtroExtra:null, filtroStatus:'', chip:'', busca:'', ctBusca:'', ctChip:'', naoAbertos:null, ops15:null, opsFiltro:null, modeloRascunho:null, modeloTipo:null }); }
+function limpaEstado(){ Object.assign(S, { cliBusca:'', cliChip:'', cliFiltro:{}, cfAba:'emp', IMP:null, _aposContratante:null, F:null, _Fbase:null, CF:null, _CFbase:null, CTF:null, _CTFbase:null, doc:null, docId:null, docPrevia:null, ctId:null, ctPrevia:null, CDF:null, _CDFbase:null, cdId:null, cdPrevia:null, cdBusca:'', cdChip:'', filtroExtra:null, filtroStatus:'', chip:'', busca:'', ctBusca:'', ctChip:'', naoAbertos:null, ops15:null, opsFiltro:null, modeloRascunho:null, modeloTipo:null }); }
 async function entrarEmpresa(id){
   $('raiz').innerHTML = '<div class="login"><div class="cx"><p style="text-align:center">Carregando…</p></div></div>';
   try{ await DB.entrarEmpresa(id); }
@@ -2490,46 +2478,6 @@ Object.assign(ACOES, {
     baixarWord(nomeArquivoDoc('Contrato_Servicos', c.numero ? ctNumero(c).replace('CT ','CT-').replace('/','-') : 'novo', (c.dados.contratante || {}).razao_social), doc.cabTexto.razao, doc.cabTexto.linha, doc.corpo); toast('Arquivo Word gerado (texto sem a arte do papel timbrado).'); },
   copiarLinkCt(){ const url = location.href.split('#')[0] + '#/contrato/' + S.ctId; navigator.clipboard.writeText(url).then(() => toast('Link do contrato copiado.'), () => prompt('Copie o link do contrato:', url)); },
   ctNovo(el){ if(!exigeCt()) return; abreCtForm(ctNovoForm(el && el.dataset ? el.dataset.contratante : null, null)); },
-  async gerarContrato(el){ if(!exigeCt()) return; const p = S.propostas.find(x => x.id===el.dataset.id); if(!p) return; if($('dlg').open) $('dlg').close();
-    const ja = ativos(S.contratos).find(c => c.proposta_id===p.id); if(ja){ toast('Esta proposta já tem o contrato ' + ctNumero(ja) + '.'); S.ctId = ja.id; S.ctPrevia = null; return ir('contrato'); }
-    const doc = soDoc(p.cliente_documento), ctt = doc && ativos(S.contratantes).find(c => c.documento===doc);
-    if(ctt) return abreCtForm(ctNovoForm(ctt.id, p));
-    const cli = S.clientes.find(c => c.id===p.cliente_id) || { id:null, nome:p.cliente_nome, documento:p.cliente_documento, contato:p.contato };
-    const C = cttDeCliente(cttNovo(), cli); C.cliente_id = cli.id || null;
-    if(MODO_NUVEM){ const ass = await DB.assinaturas(p.id).catch(() => []), a = (ass || []).find(x => x.papel!=='escritorio' && x.papel!=='testemunha');
-      if(a){ C.rep_nome = a.nome || C.rep_nome; if(/^\d{11}$/.test(a.cpf || '')) C.rep_cpf = a.cpf; C.rep_qualidade = a.cargo || C.rep_qualidade; C.rep_email = a.email || C.rep_email; } }
-    S._aposContratante = { proposta_id:p.id }; toast('Primeiro o cadastro completo do contratante. Depois o contrato abre já preenchido.');
-    abreCttForm(C); if(/^\d{14}$/.test(C.documento)) cttAplicaReceita(true); },
-  cttNovo(){ if(!exigeCt()) return; S._aposContratante = S.view==='ctForm' ? { voltarForm:true } : null; abreCttForm(cttNovo()); },
-  cttEditar(el){ const c = (S.contratantes || []).find(x => x.id===el.dataset.id); if(!c) return; S._aposContratante = S.view==='ctForm' ? { voltarForm:true } : null; abreCttForm({ ...cttNovo(), ...JSON.parse(JSON.stringify(c)), rep_socio:null }); },
-  cttCancelar(){ if(S._aposContratante && S._aposContratante.voltarForm && S.CTF){ const F = S.CTF; S._aposContratante = null; if(!ctSujo() || confirm('Sair sem salvar o contratante?')){ S.CF = null; S._CFbase = null; S.view = 'x'; abreCtForm(F); } return; } ir('contratantes'); },
-  cttImportar(){ const lista = ativos(S.clientes).slice().sort((a,b) => a.nome.localeCompare(b.nome,'pt-BR'));
-    $('dlg').classList.add('largo');
-    $('dlg').innerHTML = `<h2>Importar do cadastro de propostas</h2><p style="margin-top:-6px">Traz nome, CNPJ, responsável, e-mail e telefone. Em seguida a busca na Receita Federal completa o endereço e os sócios.</p>
-      <input type="text" id="impBusca" placeholder="Buscar cliente da proposta" style="margin-bottom:10px;width:100%">
-      <div style="max-height:55vh;overflow:auto"><table class="lista"><tbody id="impLista">${lista.map(c => { const ja = c.documento && ativos(S.contratantes || []).find(x => x.documento===soDoc(c.documento)); const n = ativos(S.propostas).filter(p => p.cliente_id===c.id);
-        return `<tr data-nome="${esc((c.nome + ' ' + (c.documento || '')).toLowerCase())}"><td><b>${esc(c.nome)}</b><br><small>${esc([docFmt(c.documento) || 'sem CNPJ', c.contato, n.length ? n.length + ' proposta' + (n.length>1 ? 's' : '') : ''].filter(Boolean).join(' · '))}</small>${ja ? ' <span class="selo aprovada">já é contratante</span>' : ''}</td><td class="acoes-linha">${ja ? `<button class="btn mini" data-act="cttEditar" data-id="${ja.id}">Abrir contratante</button>` : `<button class="btn mini primario" data-act="cttImportarUm" data-id="${c.id}">Importar</button>`}</td></tr>`; }).join('') || '<tr><td>Nenhum cliente no cadastro de propostas.</td></tr>'}</tbody></table></div>
-      <div class="barra-salvar" style="margin-top:14px"><button class="btn" data-act="fecharDlg">Fechar</button></div>`;
-    $('dlg').showModal(); $('impBusca').oninput = ev => { const q = ev.target.value.trim().toLowerCase(); document.querySelectorAll('#impLista tr[data-nome]').forEach(tr => tr.hidden = q && !tr.dataset.nome.includes(q)); }; },
-  cttImportarUm(el){ const cli = S.clientes.find(c => c.id===el.dataset.id); if(!cli) return; $('dlg').close();
-    const C = S.view==='contratanteForm' && S.CF ? S.CF : cttNovo(); cttDeCliente(C, cli);
-    if(S.view==='contratanteForm'){ VIEWS.contratanteForm(); } else { S._aposContratante = null; abreCttForm(C); }
-    if(/^\d{14}$/.test(soDoc(C.documento))) cttAplicaReceita(true); else toast('Cliente importado. Sem CNPJ completo, preencha o endereço à mão.'); },
-  cttReceita(){ cttAplicaReceita(false); },
-  async cttSalvar(){ const C = S.CF, er = cttValida(C);
-    if(er.length){ $('errosCF').innerHTML = `<div class="erros" role="alert"><b>Não foi possível salvar:</b><ul>${er.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>`; window.scrollTo(0,0); return; }
-    const row = { cliente_id:C.cliente_id || null, documento:soDoc(C.documento), razao_social:C.razao_social.trim(), nome_fantasia:C.nome_fantasia || null, endereco:C.endereco.trim(), complemento:C.complemento || null, bairro:C.bairro.trim(), cep:C.cep || null,
-      municipio:C.municipio.trim(), uf:String(C.uf).toUpperCase(), cnae:C.cnae || null, situacao:C.situacao || null, regime:C.regime || null, email:C.email || null, telefone:C.telefone || null,
-      rep_nome:C.rep_nome.trim().replace(/\s+/g,' '), rep_cpf:soDoc(C.rep_cpf), rep_qualidade:C.rep_qualidade.trim(), rep_profissao:C.rep_profissao || null, rep_email:C.rep_email || null, rep_celular:String(C.rep_celular || '').replace(/\D/g,'') || null, receita:C.receita || null, receita_em:C.receita_em || null };
-    await tenta(async () => { const r = C.id ? await DB.alterar('contratantes', C.id, row) : await DB.inserir('contratantes', row); toast('Contratante salvo.');
-      const depois = S._aposContratante; S._aposContratante = null; S.CF = null; S._CFbase = null;
-      if(depois && depois.proposta_id){ const p = S.propostas.find(x => x.id===depois.proposta_id); S.view = 'x'; return abreCtForm(ctNovoForm(r.id, p)); }
-      if(depois && depois.voltarForm && S.CTF){ const F = S.CTF; F.contratante_id = r.id; S.view = 'x'; return abreCtForm(F); }
-      ir('contratantes'); }); },
-  async cttExcluir(el){ const c = (S.contratantes || []).find(x => x.id===el.dataset.id); if(!c) return;
-    if(ativos(S.contratos).some(k => k.contratante_id===c.id && ['rascunho','enviado','vigente','aviso'].includes(k.status))){ toast('Contratante com contrato em andamento não pode ser excluído.', true); return; }
-    if(!confirm(`Excluir o contratante ${c.razao_social}? Os contratos encerrados dele continuam guardados.`)) return;
-    await tenta(async () => { await DB.alterar('contratantes', c.id, { excluido_em:new Date().toISOString() }); toast('Contratante excluído.'); ir('contratantes'); }); },
   ctCancelar(){ ir(S.CTF && S.CTF.id ? 'contrato' : 'contratos'); },
   ctEditar(el){ const c = (S.contratos || []).find(x => x.id===el.dataset.id); if(!c || !['rascunho','enviado'].includes(c.status)) return; S.ctId = c.id; abreCtForm(ctFormDe(c)); },
   ctDuplicar(el){ const c = (S.contratos || []).find(x => x.id===el.dataset.id); if(!c) return; abreCtForm(ctFormDe(c, true)); toast('Cópia aberta como novo contrato. Revise e salve.'); },
@@ -2582,7 +2530,7 @@ document.addEventListener('change', ev => {
   const el = ev.target;
   if(el.dataset.socio!==undefined && S.CF){ const i = +el.dataset.socio, s = ((S.CF.receita || {}).qsa || [])[i]; S.CF.rep_socio = i;
     if(s){ S.CF.rep_nome = nomeProprio(s.nome); S.CF.rep_qualidade = s.qualificacao.toLowerCase(); S.CF.rep_cpf = ''; } else { S.CF.rep_nome = ''; S.CF.rep_qualidade = 'procurador(a)'; S.CF.rep_cpf = ''; }
-    VIEWS.contratanteForm(); setTimeout(() => { const f = $('cf_rep_cpf'); if(f) f.focus(); }, 30); return; }
+    VIEWS.clienteForm(); setTimeout(() => { const f = $('cf_rep_cpf'); if(f) f.focus(); }, 30); return; }
   if(el.dataset.cf==='documento' && S.CF){ el.value = docFmt(el.value); return; }
   if(el.dataset.cf==='uf' && S.CF){ S.CF.uf = el.value.toUpperCase(); el.value = S.CF.uf; return; }
   if(!S.CTF) return;
@@ -2823,7 +2771,7 @@ function cdFormDe(c, duplicar){
 }
 function cdValida(F){
   const er = [], d = F.dados, e = esc_(), c = (S.contratantes || []).find(x => x.id===F.contratante_id && !x.excluido_em), calc = cdCalcula(d);
-  if(!c) er.push('Escolha o devedor no cadastro de contratantes.'); else { const f = cttValida(c); if(f.length) er.push('Complete o cadastro do devedor: ' + f.map(x => x.replace(/\.$/,'').toLowerCase()).join('; ') + '.'); }
+  if(!c) er.push('Escolha o devedor no cadastro de clientes.'); else { const f = cttValida(c); if(f.length) er.push('Complete o cadastro do devedor: ' + f.map(x => x.replace(/\.$/,'').toLowerCase()).join('; ') + '.'); }
   if(F.contrato_id && !(S.contratos || []).some(x => x.id===F.contrato_id && x.contratante_id===F.contratante_id)) er.push('O contrato de origem precisa ser do mesmo devedor.');
   const falta = [['ct_razao','razão social'],['ct_cnpj','CNPJ'],['ct_endereco','endereço'],['ct_bairro','bairro'],['ct_cidade','cidade'],['ct_uf','UF'],['ct_foro','foro'],['adm_nome','administrador'],['adm_cpf','CPF do administrador']].filter(([k]) => !String(e[k] || '').trim()).map(x => x[1]);
   if(falta.length) er.push('Complete em Escritório os dados do credor: ' + falta.join(', ') + '.');
@@ -2883,8 +2831,8 @@ Object.assign(VIEWS, {
     const novoTexto = F.id && S.cdModelo && F.modelo_versao !== S.cdModelo.versao, f = d.fiador || {};
     $('conteudo').innerHTML = topo(F.id ? 'Editar confissão ' + cdNumero(F) : 'Nova confissão de dívida','O documento segue o Modelo da confissão de dívida (aba Modelos).','<button class="btn" data-act="cdCancelar">Cancelar</button>') + `
     <div id="errosCD"></div>
-    <div class="painel"><h2>Devedor</h2><div class="grade"><div class="campo c4"><label for="cd_ctt">Devedor (do cadastro de contratantes) *</label><select id="cd_ctt" data-cdr="contratante_id"><option value="">Escolha no cadastro de contratantes…</option>${opcoes}</select>
-      <span class="dica">${ctt ? esc([ctt.endereco, ctt.bairro, [ctt.municipio, ctt.uf].filter(Boolean).join('/')].filter(Boolean).join(' · ')) + ' · representante: ' + esc(ctt.rep_nome || 'não informado') + (ctt.rep_cpf ? ', CPF ' + esc(docFmt(ctt.rep_cpf)) : '') + ` · <button class="elo" data-act="cttEditar" data-id="${ctt.id}">editar cadastro</button>` : '<button class="elo" data-act="cttNovo">Cadastrar contratante</button>'}</span></div>
+    <div class="painel"><h2>Devedor</h2><div class="grade"><div class="campo c4"><label for="cd_ctt">Devedor (do cadastro de clientes) *</label><select id="cd_ctt" data-cdr="contratante_id"><option value="">Escolha no cadastro de clientes…</option>${opcoes}</select>
+      <span class="dica">${ctt ? esc([ctt.endereco, ctt.bairro, [ctt.municipio, ctt.uf].filter(Boolean).join('/')].filter(Boolean).join(' · ')) + ' · representante: ' + esc(ctt.rep_nome || 'não informado') + (ctt.rep_cpf ? ', CPF ' + esc(docFmt(ctt.rep_cpf)) : '') + ` · <button class="elo" data-act="cttEditar" data-id="${ctt.id}">editar cadastro</button>` : '<button class="elo" data-act="cttNovo">Cadastrar cliente</button>'}</span></div>
       <div class="campo c4"><label for="cd_ct">Contrato de origem (opcional)</label><select id="cd_ct" data-cdr="contrato_id" ${F.contratante_id ? '' : 'disabled'}><option value="">Dívida avulsa (sem contrato cadastrado)</option>${cts.map(c => `<option value="${c.id}" ${c.id===F.contrato_id ? 'selected' : ''}>${esc(ctNumero(c))} — ${brl(c.total_mensal)}/mês · ${esc(CT_STATUS[c.status])}</option>`).join('')}</select>
       <span class="dica">${ct ? 'Com o contrato escolhido, o texto cita o contrato e os débitos podem ser gerados pelas competências em aberto.' : F.contratante_id && !cts.length ? 'Este devedor não tem contrato de prestação de serviços cadastrado; os débitos são digitados.' : 'Escolha o devedor para listar os contratos dele.'}</span></div></div></div>
     <div class="painel"><h2>Origem da dívida — Cláusula Primeira</h2><div class="grade"><div class="campo c4"><label for="cd_origem">Descrição da origem *</label><input type="text" id="cd_origem" data-cd="origem" value="${esc(d.origem || '')}" placeholder="honorários contábeis não pagos, serviços extraordinários…"><span class="dica">Entra no texto: “…quantia originária de R$ …, proveniente de <b>${esc(d.origem || '…')}</b>”.</span></div></div>
@@ -3132,6 +3080,446 @@ document.addEventListener('change', async ev => {
   if(el.dataset.p!==undefined && el.dataset.k==='valor'){ const pa = S.F.condicoes.parcelas[+el.dataset.p]; if(pa) el.value = pa.valor ? num2(pa.valor) : ''; return; }
   if(el.dataset.f==='cliente_documento'){ el.value = docFmt(el.value); if(!docValido(el.value)) toast('CNPJ/CPF inválido. Confira os dígitos.', true); }
 });
+
+/* ===================== v2.2.0: CADASTRO ÚNICO DE CLIENTES ===================== */
+const REGIMES = { simples:'Simples Nacional', presumido:'Lucro Presumido', real:'Lucro Real', mei:'MEI', imune:'Imune/isenta' };
+const REG_CURTO = { simples:'Simples', presumido:'Presumido', real:'Real', mei:'MEI', imune:'Imune/isenta' };
+const REG_COR = { simples:'sn', presumido:'lp', real:'lr', mei:'mei', imune:'' };
+const ATIVIDADES = { servicos:'Serviços', comercio:'Comércio', industria:'Indústria', mista:'Comércio e serviços' };
+const APURACOES = { mensal:'Mensal', trimestral:'Trimestral' };
+const SITUACOES = { ativa:'Ativa', sem_movimento:'Sem movimento', inativa:'Inativa' };
+const DEPTOS = { fiscal:'Fiscal', contabil:'Contábil', pessoal:'Pessoal', societario:'Societário' };
+const NIVEIS = { essencial:'Essencial', gestao:'Gestão', estrategico:'Estratégico' };
+const ENQ_CAMPOS = [['lanc_fiscal','Lançamentos fiscais por mês'],['lanc_contabil','Lançamentos contábeis por mês'],['empregados','Empregados'],['socios_prolabore','Sócios com pró-labore'],['contas','Contas bancárias e cartões'],['eventos_dp','Admissões + rescisões (12 meses)']];
+const XLSX_JS = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+
+/* ----- lógica pura (sem DOM) ----- */
+function semAcento(t){ return String(t ?? '').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase(); }
+function emailOk(v){ return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(v || '')); }
+function celularOk(v){ return /^\d{10,13}$/.test(String(v || '')); }
+const cnpjRaiz = d => { const c = soDoc(d); return c.length===14 ? c.slice(0,8) : ''; };
+const cnpjOrdem = d => { const c = soDoc(d); return c.length===14 ? c.slice(8,12) : ''; };
+function mesAbrev(ym){ const [y,m] = String(ym || '').split('-'); return m ? MESES[+m-1].slice(0,3) + '/' + y : ''; }
+// texto livre (Receita, contratante antigo, planilha) → código do regime; "Presumido/Real" fica sem regime
+function regimeDeTexto(t){ const s = semAcento(t);
+  if(!s) return null; if(/\bmei\b|micro ?empreendedor/.test(s)) return 'mei'; if(/simples/.test(s)) return 'simples'; if(/imune|isent/.test(s)) return 'imune';
+  if(/presumido\s*\/\s*real|presumido ou real/.test(s)) return null; if(/presumido/.test(s)) return 'presumido'; if(/\breal\b/.test(s)) return 'real'; return null; }
+// coluna "Regime" do relatório de empresas do S3D (ex.: "Simples Nacional - Serviços - Mensal - com funcionário")
+function s3dRegime(txt){ const s = semAcento(txt), serv = /servi/.test(s), com = /comerc/.test(s), ind = /industr/.test(s);
+  return { regime:regimeDeTexto(s), filial:/^filial/.test(s), normal:/regime normal/.test(s),
+    atividade:serv && (com || ind) ? 'mista' : ind ? 'industria' : com ? 'comercio' : serv ? 'servicos' : null,
+    apuracao:/trimestral/.test(s) ? 'trimestral' : /mensal/.test(s) ? 'mensal' : null,
+    situacao:/inativa/.test(s) ? 'inativa' : /sem movimento/.test(s) ? 'sem_movimento' : 'ativa' }; }
+// linhas da planilha (lista de listas) → empresas; acha o cabeçalho pela coluna CNPJ
+function s3dLinhas(rows){
+  const h = (rows || []).findIndex(r => (r || []).some(c => semAcento(c).trim()==='cnpj'));
+  if(h<0) throw new Error('A planilha não tem a coluna CNPJ. Use o relatório de empresas e regimes do S3D.');
+  const cab = rows[h].map(c => semAcento(c).trim()), col = n => cab.findIndex(c => c.startsWith(n));
+  const ix = { nome:col('razao'), id:col('id'), cnpj:col('cnpj'), fone:col('fone'), regime:col('regime') };
+  if(ix.nome<0 || ix.regime<0) throw new Error('A planilha precisa das colunas Razão social, CNPJ e Regime.');
+  return rows.slice(h+1).filter(r => r && String(r[ix.nome] ?? '').trim() && (String(r[ix.cnpj] ?? '').trim() || (ix.id>=0 && String(r[ix.id] ?? '').trim()))).map(r => ({ nome:String(r[ix.nome]).trim().replace(/\s+\d{4}-\d{2}$/,''),
+    codigo:ix.id>=0 ? String(r[ix.id] ?? '').trim().replace(/\.0+$/,'') : '', documento:soDoc(r[ix.cnpj]), fone:ix.fone>=0 ? String(r[ix.fone] ?? '').trim() : '', regimeTxt:String(r[ix.regime] ?? '').trim() }));
+}
+// mensalidade atual pelos boletos do mês: o valor que se repete; no empate, o menor; sem repetição, a mediana
+function honorarioDosBoletos(meses){
+  const v = (meses || []).map(m => r2(m.soma)).filter(x => x > 0); if(!v.length) return null;
+  const cont = {}; v.forEach(x => { cont[x] = (cont[x] || 0) + 1; }); const max = Math.max(...Object.values(cont));
+  if(max > 1) return Math.min(...Object.keys(cont).filter(k => cont[k]===max).map(Number));
+  const o = v.slice().sort((a,b) => a-b), m = o.length >> 1; return o.length % 2 ? o[m] : r2((o[m-1] + o[m]) / 2);
+}
+// o contratante dos contratos e o devedor das confissões são o próprio cliente
+function cliCtt(c){ return { ...c, razao_social:c.nome, situacao:c.situacao_receita || '', regime:REGIMES[c.regime] || '' }; }
+
+/* ----- utilidades de tela ----- */
+const regSelo = r => r ? `<span class="reg ${REG_COR[r] || ''}">${esc(REG_CURTO[r] || r)}</span>` : '<span class="reg vazio">sem regime</span>';
+function cliIndiceContatos(){ const m = {}; ativos(S.contatos || []).forEach(k => { (m[k.cliente_id] = m[k.cliente_id] || []).push(k); }); return m; }
+const cliTemEmail = (c, ix) => (ix[c.id] || []).some(k => k.email && k.recebe_email);
+function cadAviso(){ return S.cadOk === false ? '<div class="aviso ambar"><span>O cadastro único ainda não está no banco. Rode no SQL Editor do projeto <b>cobranca-pro</b> a migração <b>21_migracao_v2_2_0_cadastro_unico.sql</b> e recarregue a página. Até lá a ficha completa e a importação ficam bloqueadas.</span></div>' : ''; }
+function exigeCad(){ if(S.cadOk !== false) return true; toast('Rode antes no banco a migração 21 (21_migracao_v2_2_0_cadastro_unico.sql).', true); return false; }
+const CLI_CHIPS = [['','Todos',() => true], ...Object.keys(REGIMES).map(k => [k, REG_CURTO[k], c => c.regime===k]), ['semreg','Sem regime', c => !c.regime], ['sememail','Sem e-mail', (c, ix) => !cliTemEmail(c, ix), true]];
+
+function cliTela(){
+  const todos = ativos(S.clientes), ix = cliIndiceContatos(), n = f => todos.filter(f).length, pct = x => todos.length ? Math.round(x*100/todos.length) + '%' : '—';
+  const reg = k => `<div class="ind"><div class="rot">${esc(REGIMES[k])}</div><b>${n(c => c.regime===k)}</b><div class="rot">${pct(n(c => c.regime===k))}</div></div>`, F = S.cliFiltro || {};
+  const opc = (id, rot, mapa, v) => `<select id="${id}"><option value="">${rot}</option>${Object.entries(mapa).map(([k,t]) => `<option value="${k}" ${v===k ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select>`;
+  $('conteudo').innerHTML = topo('Clientes','Cadastro único: o mesmo cliente serve para propostas, contratos e confissões (e, nas próximas versões, para os lotes e envios em massa).','<button class="btn" data-ir="importar">⇩ Importar</button><button class="btn primario" data-act="cliente">Novo cliente</button>') + cadAviso() + `
+  <div class="resumo-topo">
+    <div class="ind"><div class="rot">Clientes ativos</div><b>${n(c => c.situacao!=='inativa')}</b><div class="rot">matrizes e filiais · ${todos.length} no cadastro</div></div>
+    ${reg('simples')}${reg('presumido')}${reg('real')}
+    <div class="ind alerta-ind"><div class="rot">Sem e-mail para envio</div><b>${n(c => !cliTemEmail(c, ix))}</b><div class="rot">não entram nos envios em massa</div></div>
+  </div>
+  <div class="painel"><div class="filtros filtros4">
+    <input type="text" id="cliBusca" placeholder="Buscar por nome, CNPJ/CPF, código do Questor ou contato" value="${esc(S.cliBusca || '')}">
+    ${opc('cliFSit','Todas as situações',SITUACOES,F.sit)}${opc('cliFAtv','Todas as atividades',ATIVIDADES,F.atv)}${opc('cliFDep','Todos os departamentos',DEPTOS,F.dep)}
+  </div><div id="cliChips" class="chips"></div><div id="cliLista"></div></div>`;
+  cliListar();
+}
+function cliListar(){
+  const ix = cliIndiceContatos(), q = semAcento(S.cliBusca || '').trim(), qd = soDoc(q), F = S.cliFiltro || {}, porId = Object.fromEntries(S.clientes.map(c => [c.id, c]));
+  const filiais = {}; ativos(S.clientes).forEach(c => { if(c.matriz_id) filiais[c.matriz_id] = (filiais[c.matriz_id] || 0) + 1; });
+  const base = ativos(S.clientes).filter(c => (!F.sit || c.situacao===F.sit) && (!F.atv || c.atividade===F.atv) && (!F.dep || (c.departamentos || []).includes(F.dep))
+    && (!q || semAcento([c.nome, c.nome_fantasia, c.codigo_questor, c.contato, ...(ix[c.id] || []).map(k => [k.nome, k.email].join(' '))].join(' ')).includes(q) || (qd.length>=3 && String(c.documento || '').includes(qd))));
+  const chip = CLI_CHIPS.find(x => x[0]===(S.cliChip || '')) || CLI_CHIPS[0];
+  $('cliChips').innerHTML = CLI_CHIPS.map(x => `<button class="chip ${x[0]===chip[0] ? 'on' : ''} ${x[3] ? 'alerta' : ''}" data-act="cliChip" data-chip="${x[0]}">${esc(x[1])} <b>${base.filter(c => x[2](c, ix)).length}</b></button>`).join('');
+  const arr = base.filter(c => chip[2](c, ix)).sort((a,b) => a.nome.localeCompare(b.nome,'pt-BR'));
+  const envio = c => { const ks = ix[c.id] || []; const e = ks.some(k => k.email && k.recebe_email), w = ks.some(k => k.celular && k.recebe_whatsapp);
+    return (e ? '<span class="ok-tag">e-mail</span>' : '<span class="al-tag">sem e-mail</span>') + (w ? '<span class="ok-tag">WhatsApp</span>' : ''); };
+  const sub = c => [docFmt(c.documento) || 'sem CNPJ/CPF', c.matriz_id && porId[c.matriz_id] ? 'filial de ' + porId[c.matriz_id].nome : filiais[c.id] ? `matriz · ${filiais[c.id]} filia${filiais[c.id]>1 ? 'is' : 'l'}` : '', c.codigo_questor ? 'Questor ' + c.codigo_questor : ''].filter(Boolean).join(' · ');
+  $('cliLista').innerHTML = arr.length ? `<div class="rolagem"><table class="lista"><thead><tr><th>Cliente</th><th>Regime</th><th>Atividade</th><th>Situação</th><th class="num">Honorário atual</th><th>Envio</th><th></th></tr></thead><tbody>${arr.map(c => `<tr>
+    <td><b>${esc(c.nome)}</b><br><small>${esc(sub(c))}</small></td><td>${regSelo(c.regime)}</td><td>${esc(ATIVIDADES[c.atividade] || '—')}</td><td>${esc(SITUACOES[c.situacao] || 'Ativa')}</td>
+    <td class="num">${c.honorario_atual!=null ? brl(c.honorario_atual) : '—'}</td><td>${envio(c)}</td>
+    <td class="acoes-linha"><button class="btn mini" data-act="cliente" data-id="${c.id}">Abrir</button> <button class="btn mini" data-act="nova" data-cliente="${c.id}">Nova proposta</button> <button class="btn mini" data-act="cliExcluir" data-id="${c.id}">Excluir</button></td></tr>`).join('')}</tbody></table></div>`
+    : `<div class="vazio">${ativos(S.clientes).length ? 'Nenhum cliente com estes filtros.' : 'Nenhum cliente ainda. Cadastre aqui, importe do Cobrança Pro ou da planilha do S3D, ou crie direto ao fazer uma proposta.'}</div>`;
+}
+
+/* ----- ficha do cliente ----- */
+const CLI_TEXTO = ['nome','documento','nome_fantasia','endereco','complemento','bairro','cep','municipio','uf','cnae','situacao_receita','rep_nome','rep_cpf','rep_qualidade','rep_profissao','rep_email','rep_celular','codigo_questor','contato','tratamento','observacoes','honorario_origem','honorario_ref'];
+function cliVazio(){ return { id:null, nome:'', documento:'', nome_fantasia:'', endereco:'', complemento:'', bairro:'', cep:'', municipio:'', uf:'', cnae:'', situacao_receita:'', rep_nome:'', rep_cpf:'', rep_qualidade:'', rep_profissao:'', rep_email:'', rep_celular:'',
+  receita:null, receita_em:null, regime:'', atividade:'', apuracao:'', situacao:'ativa', matriz_id:'', codigo_questor:'', cob_cliente_id:null, departamentos:[], nivel_atual:'', honorario_atual:null, honorario_ref:'', honorario_origem:'', enquadramento:{},
+  contato:'', tratamento:'', observacoes:'', contatos:[], rep_socio:null }; }
+function cliParaForm(c){ const C = cliVazio(); Object.keys(C).forEach(k => { if(k!=='contatos' && c[k]!==undefined && c[k]!==null) C[k] = JSON.parse(JSON.stringify(c[k])); });
+  C.contatos = ativos(S.contatos || []).filter(k => k.cliente_id===c.id).map(k => ({ id:k.id, nome:k.nome || '', funcao:k.funcao || '', email:k.email || '', celular:k.celular || '', recebe_email:!!k.recebe_email, recebe_whatsapp:!!k.recebe_whatsapp, assina:!!k.assina, origem:k.origem }));
+  return C; }
+function abreCliForm(C){ S.CF = C; S._CFbase = JSON.stringify(C); ir('clienteForm'); }
+function cliValida(C, paraContrato){
+  const er = [], doc = soDoc(C.documento);
+  if(!String(C.nome || '').trim()) er.push('Informe a razão social ou o nome.');
+  if(doc && (!(doc.length===14 || doc.length===11) || !docValido(doc))) er.push('CNPJ/CPF inválido.');
+  if(!C.regime) er.push('Escolha o regime tributário (aba Empresa).');
+  if(C.matriz_id && C.matriz_id===C.id) er.push('O cliente não pode ser matriz dele mesmo.');
+  if(C.rep_cpf && !cpfValido(soDoc(C.rep_cpf))) er.push('CPF do representante inválido.');
+  if(C.rep_email && !emailOk(C.rep_email)) er.push('E-mail do representante inválido.');
+  if(C.honorario_atual!=null && !(+C.honorario_atual >= 0)) er.push('Honorário atual inválido.');
+  C.contatos.filter(k => !k._tirar).forEach((k, i) => { const cel = String(k.celular || '').replace(/\D/g,''), q = `Contato ${i+1}${k.nome ? ' (' + k.nome + ')' : ''}`;
+    if(!String(k.email || '').trim() && !cel) er.push(q + ': informe o e-mail ou o celular.');
+    if(String(k.email || '').trim() && !emailOk(String(k.email).trim())) er.push(q + ': e-mail inválido.');
+    if(cel && !celularOk(cel)) er.push(q + ': celular com DDD (10 a 13 números).');
+    if(k.recebe_whatsapp && !cel) er.push(q + ': para receber por WhatsApp, informe o celular.'); });
+  if(paraContrato) cttValida(cliCtt(C)).forEach(x => er.push('Para o contrato: ' + x.charAt(0).toLowerCase() + x.slice(1)));
+  return er;
+}
+// matrizes possíveis: as da mesma raiz do CNPJ primeiro
+function cliMatrizes(C){ const raiz = cnpjRaiz(C.documento); return ativos(S.clientes).filter(x => x.id!==C.id && !x.matriz_id).sort((a,b) => (cnpjRaiz(b.documento)===raiz) - (cnpjRaiz(a.documento)===raiz) || a.nome.localeCompare(b.nome,'pt-BR')); }
+const cliOpcaoMatriz = (m, C) => `<option value="${m.id}" ${C.matriz_id===m.id ? 'selected' : ''}>Filial de ${esc(m.nome)}${m.documento ? ' — ' + esc(docFmt(m.documento)) : ''}</option>`;
+// CNPJ de filial digitado: marca a matriz de mesma raiz, se estiver no cadastro
+function cliAtualizaMatrizes(){ const C = S.CF, el = $('cf_matriz_id'); if(!C || !el || el.disabled) return; const raiz = cnpjRaiz(C.documento), o = cnpjOrdem(C.documento);
+  if(!C.matriz_id && raiz && o && o!=='0001'){ const m = ativos(S.clientes).find(x => x.id!==C.id && !x.matriz_id && cnpjRaiz(x.documento)===raiz && cnpjOrdem(x.documento)==='0001'); if(m) C.matriz_id = m.id; }
+  el.innerHTML = '<option value="">Matriz ou empresa única</option>' + cliMatrizes(C).map(m => cliOpcaoMatriz(m, C)).join(''); }
+function cliHistoricoHTML(id){
+  if(!id) return '<div class="vazio">O histórico aparece depois que o cliente é salvo.</div>';
+  const ps = ativos(S.propostas).filter(p => p.cliente_id===id).map(p => ({ n:numeroFmt(p), tipo:'Proposta', v:brl(p.total_mensal) + '/mês' + (+p.total_pontual ? ' + ' + brl(p.total_pontual) : ''), sit:selo(p.status), quando:p.data_proposta, act:'doc', id:p.id }));
+  const cts = ativos(S.contratos || []).filter(k => k.contratante_id===id).map(k => ({ n:ctNumero(k), tipo:'Contrato', v:brl(k.total_mensal) + '/mês', sit:ctSelo(k.status), quando:k.data_contrato, act:'ctAbrir', id:k.id }));
+  const cds = ativos(S.confissoes || []).filter(k => k.contratante_id===id).map(k => ({ n:cdNumero(k), tipo:'Confissão de dívida', v:brl(k.valor_total), sit:cdSelo(k.status), quando:k.data_documento, act:'cdAbrir', id:k.id }));
+  const t = [...ps, ...cts, ...cds].sort((a,b) => String(b.quando || '') < String(a.quando || '') ? -1 : 1);
+  return t.length ? `<div class="rolagem"><table class="lista"><thead><tr><th>Nº</th><th>Documento</th><th>Data</th><th class="num">Valor</th><th>Situação</th><th></th></tr></thead><tbody>${t.map(x => `<tr><td><b>${esc(x.n)}</b></td><td>${esc(x.tipo)}</td><td>${esc(dataBR(x.quando))}</td><td class="num">${esc(x.v)}</td><td>${x.sit}</td><td class="acoes-linha"><button class="btn mini" data-act="${x.act}" data-id="${x.id}">Abrir</button></td></tr>`).join('')}</tbody></table></div>` : '<div class="vazio">Nenhuma proposta, contrato ou confissão para este cliente.</div>';
+}
+
+Object.assign(VIEWS, {
+  clienteForm(){
+    const C = S.CF, aba = S.cfAba || 'emp', q = (C.receita && C.receita.qsa) || [], ctx = S._aposContratante, falta = cttValida(cliCtt(C));
+    const rf = k => C.receita && C.receita.campos && C.receita.campos.includes(k) ? '<span class="rf">Receita Federal</span>' : '';
+    const campo = (k, rot, cls, extra) => `<div class="campo ${cls||''}"><label for="cf_${k}">${rot}</label><input type="text" id="cf_${k}" data-cf="${k}" value="${esc(k==='documento' ? docFmt(C[k]) : (C[k] ?? ''))}">${extra === undefined ? rf(k) : extra}</div>`;
+    const sel = (k, rot, mapa, cls, vazio) => `<div class="campo ${cls||'c1'}"><label for="cf_${k}">${rot}</label><select id="cf_${k}" data-cf="${k}">${vazio!==undefined ? `<option value="">${esc(vazio)}</option>` : ''}${Object.entries(mapa).map(([v,t]) => `<option value="${v}" ${C[k]===v ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select></div>`;
+    const temFiliais = C.id && ativos(S.clientes).some(x => x.matriz_id===C.id);
+    const matrizes = cliMatrizes(C);
+    const abas = [['emp','Empresa'],['cont','Contatos para envio'],['hon','Atendimento e honorário'],['enq','Enquadramento'],['hist','Histórico']];
+    const sub = [C.documento ? docFmt(C.documento) : 'sem CNPJ/CPF', C.matriz_id ? 'filial' : temFiliais ? 'matriz' : '', C.codigo_questor ? 'código Questor ' + C.codigo_questor : ''].filter(Boolean).join(' · ');
+    let corpo = '';
+    if(aba==='emp') corpo = `
+    <div class="painel"><h2>Dados da empresa ${C.receita_em ? `<span class="rf">dados da Receita em ${esc(dataBR(String(C.receita_em).slice(0,10)))}</span>` : ''}</h2><div class="grade">
+      <div class="campo"><label for="cf_documento">CNPJ / CPF</label><div style="display:flex;gap:8px;flex-wrap:wrap"><input type="text" id="cf_documento" data-cf="documento" value="${esc(docFmt(C.documento))}" style="flex:1;min-width:170px"><button class="btn" data-act="cliReceita" style="white-space:nowrap">Buscar na Receita Federal</button></div></div>
+      <div class="campo" style="align-self:end">${C.situacao_receita ? `<div class="chip-aviso" style="margin:0"><span>Situação na Receita: <b>${esc(C.situacao_receita)}</b></span></div>` : '<span class="dica">A busca traz razão social, endereço, CNAE e sócios da base pública do CNPJ. Tudo continua editável.</span>'}</div>
+      ${campo('nome','Razão social ou nome *')}${campo('nome_fantasia','Nome fantasia')}
+      ${campo('endereco','Logradouro e número')}${campo('complemento','Complemento','c1')}${campo('cep','CEP','c1')}
+      ${campo('bairro','Bairro')}${campo('municipio','Município','c1')}${campo('uf','UF','c1')}
+      ${campo('cnae','Atividade principal (CNAE)','c4')}
+      <div class="campo"><label for="cf_matriz_id">Matriz / filial</label><select id="cf_matriz_id" data-cf="matriz_id" ${temFiliais ? 'disabled' : ''}><option value="">${temFiliais ? 'Matriz (tem filiais ligadas)' : 'Matriz ou empresa única'}</option>${temFiliais ? '' : matrizes.map(m => cliOpcaoMatriz(m, C)).join('')}</select></div>
+      ${campo('codigo_questor','Código no Questor','c1','')}
+    </div></div>
+    <div class="painel"><h2>Perfil tributário</h2><div class="grade">
+      ${sel('regime','Regime tributário *',REGIMES,'c1','— escolha —')}${sel('atividade','Atividade',ATIVIDADES,'c1','— não informada —')}${sel('apuracao','Apuração',APURACOES,'c1','— não informada —')}${sel('situacao','Situação',SITUACOES,'c1')}
+    </div><p class="dica" style="margin:8px 0 0">O regime é o filtro principal dos lotes de propostas. Vem da planilha do S3D na importação e pode ser corrigido aqui.</p></div>
+    <div class="painel"><h2>Representante que assina (contratos e confissões)</h2>
+      ${q.length ? `<p style="margin:0 0 8px">Sócios na Receita Federal — escolha quem assina:</p><div class="socios">${q.map((s,i) => `<label class="marcar"><input type="radio" name="socio" data-socio="${i}" ${C.rep_socio===i ? 'checked' : ''}> <b>${esc(s.nome)}</b> — ${esc(s.qualificacao)}${s.cpf ? ' · CPF ' + esc(s.cpf) : ''}</label>`).join('')}<label class="marcar"><input type="radio" name="socio" data-socio="-1" ${C.rep_socio===-1 ? 'checked' : ''}> Outra pessoa (procurador)</label></div>` : ''}
+      <div class="grade" style="margin-top:12px">${campo('rep_nome','Nome completo','', '')}${campo('rep_cpf','CPF completo','c1', q.length ? '<span class="dica">A Receita publica o CPF mascarado: complete aqui.</span>' : '')}${campo('rep_qualidade','Qualidade','c1','')}
+      ${campo('rep_profissao','Profissão','','')}${campo('rep_email','E-mail do representante','c1','')}${campo('rep_celular','Celular (WhatsApp)','c1','')}</div>
+      ${falta.length ? `<div class="aviso ambar" style="margin:12px 0 0"><span>${ctx ? '<b>Obrigatório para o contrato:</b> ' : 'Para fazer contrato ou confissão, falta: '}${esc(falta.map(x => x.replace(/\.$/,'').replace(/^Informe (a |o )?/,'')).join('; '))}.</span></div>` : '<div class="chip-aviso" style="margin:12px 0 0"><span>Dados completos para contrato e confissão de dívida.</span></div>'}
+    </div>`;
+    if(aba==='cont') corpo = `
+    <div class="painel"><h2>Aos cuidados de (sai na proposta)</h2><div class="grade">
+      <div class="campo c1"><label for="cf_tratamento">Tratamento</label><select id="cf_tratamento" data-cf="tratamento">${['','Sr.','Sra.','Dr.','Dra.'].map(t => `<option ${C.tratamento===t ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
+      ${campo('contato','Nome','', '')}</div></div>
+    <div class="painel"><h2>Contatos para envio</h2>
+      <div class="rolagem"><table class="lista tab-edit"><thead><tr><th>Nome</th><th>Função</th><th>E-mail</th><th>Celular</th><th>Recebe e-mail</th><th>Recebe WhatsApp</th><th>Assina</th><th></th></tr></thead><tbody>
+      ${C.contatos.map((k,i) => k._tirar ? '' : `<tr><td><input type="text" data-cfk="${i}" data-k="nome" value="${esc(k.nome)}" aria-label="Nome do contato ${i+1}"></td><td><input type="text" data-cfk="${i}" data-k="funcao" value="${esc(k.funcao)}" aria-label="Função do contato ${i+1}"></td>
+        <td><input type="email" data-cfk="${i}" data-k="email" value="${esc(k.email)}" aria-label="E-mail do contato ${i+1}"></td><td><input type="text" data-cfk="${i}" data-k="celular" value="${esc(k.celular ? fmtCel(k.celular) : '')}" aria-label="Celular do contato ${i+1}"></td>
+        ${['recebe_email','recebe_whatsapp','assina'].map(x => `<td class="marca"><input type="checkbox" data-cfk="${i}" data-k="${x}" ${k[x] ? 'checked' : ''} aria-label="${x} ${i+1}"></td>`).join('')}
+        <td><button class="btn mini" data-act="cliContatoTirar" data-i="${i}">Remover</button>${k.origem && k.origem!=='manual' ? `<br><small class="dica">${k.origem==='cobranca' ? 'do Cobrança Pro' : 'da instalação'}</small>` : ''}</td></tr>`).join('') || ''}
+      </tbody></table></div>
+      ${C.contatos.some(k => !k._tirar) ? '' : '<p class="vazio" style="padding:14px">Nenhum contato. Sem e-mail, o cliente não entra nos envios em massa.</p>'}
+      <button class="btn" data-act="cliContatoAdd" style="margin-top:8px">+ Adicionar contato</button>
+      <p class="dica" style="margin-top:10px">Os envios em massa vão para quem está marcado em "Recebe"; o pedido de assinatura vai para quem está marcado em "Assina". Contatos vindos do Cobrança Pro chegam marcados como "Recebe e-mail".</p></div>`;
+    if(aba==='hon') corpo = `
+    <div class="painel"><h2>Atendimento atual</h2><div class="grade">
+      <div class="campo c4"><span class="rotulo">Departamentos contratados</span><div class="marcas">${Object.entries(DEPTOS).map(([k,t]) => `<label><input type="checkbox" data-cfd="${k}" ${(C.departamentos || []).includes(k) ? 'checked' : ''}> ${esc(t)}</label>`).join('')}</div></div>
+      <div class="campo c1"><label for="cf_honorario">Honorário mensal atual (R$)</label><input type="text" id="cf_honorario" data-cfv="honorario_atual" value="${C.honorario_atual!=null ? esc(num2(C.honorario_atual)) : ''}"></div>
+      <div class="campo"><label for="cf_hon_origem">Origem do valor</label><input type="text" id="cf_hon_origem" value="${esc([C.honorario_origem, C.honorario_ref ? 'em ' + dataBR(C.honorario_ref) : ''].filter(Boolean).join(' ') || 'não informado')}" disabled></div>
+      ${sel('nivel_atual','Nível atual (novo modelo)',NIVEIS,'c1','— ainda no modelo antigo —')}
+    </div><p class="dica" style="margin:8px 0 0">O honorário atual é a base do lote de reajuste anual e da comparação com a tabela nova. Alterado aqui, a origem passa a "Informado no cadastro".</p></div>
+    <div class="painel"><h2>Anotações internas</h2><textarea id="cf_obs" data-cf="observacoes" rows="3" style="width:100%">${esc(C.observacoes || '')}</textarea></div>`;
+    if(aba==='enq'){ const E = C.enquadramento || {}; corpo = `
+    <div class="painel"><h2>Enquadramento ${E.periodo ? `<span class="rf">${esc(E.periodo)}${E.importado_em ? ' · importado em ' + esc(dataBR(E.importado_em)) : ''}</span>` : ''}</h2><div class="grade">
+      ${ENQ_CAMPOS.map(([k,t]) => `<div class="campo c1"><label for="cfe_${k}">${esc(t)}</label><input type="number" min="0" step="1" id="cfe_${k}" data-cfe="${k}" value="${E[k]!=null && E[k]!=='' ? esc(E[k]) : ''}"></div>`).join('')}
+      <div class="campo"><label for="cfe_periodo">Período de referência</label><input type="text" id="cfe_periodo" data-cfe="periodo" placeholder="ex.: média de jan a ago/2026" value="${esc(E.periodo || '')}"></div>
+    </div><p class="dica" style="margin:8px 0 0">Média mensal de lançamentos por departamento (Fiscal e Contábil contados separados). Será usado pela proposta por níveis (v2.6), que também traz a importação dos relatórios do Questor. Por enquanto, preencha aqui.</p></div>`; }
+    if(aba==='hist') corpo = `<div class="painel"><h2>Propostas, contratos e confissões</h2>${cliHistoricoHTML(C.id)}</div>`;
+    $('conteudo').innerHTML = topo(C.id ? (C.nome || 'Cliente') : 'Novo cliente', sub, `<button class="btn" data-act="cliCancelar">${ctx ? 'Voltar ao documento' : 'Voltar'}</button>${C.id ? `<button class="btn" data-act="nova" data-cliente="${C.id}">Nova proposta</button>` : ''}<button class="btn primario" data-act="cliSalvar">${ctx ? 'Salvar e continuar' : 'Salvar'}</button>`) + cadAviso() +
+      (ctx ? `<div class="chip-aviso"><span>${ctx.proposta_id ? 'Para gerar o contrato da proposta, complete o cadastro do cliente (endereço e representante). Ao salvar, o contrato abre já preenchido.' : 'Ao salvar, você volta ao documento que estava preenchendo.'}</span></div>` : '') + `
+      <div id="errosCF"></div>
+      <div class="abas-tipo">${abas.map(([k,t]) => `<button class="${aba===k ? 'on' : ''}" data-act="cliAba" data-aba="${k}">${esc(t)}</button>`).join('')}</div>
+      ${corpo}
+      <div class="barra-salvar"><button class="btn primario" data-act="cliSalvar">${ctx ? 'Salvar e continuar' : 'Salvar cliente'}</button></div>`;
+  },
+
+  importar(){
+    const I = S.IMP || (S.IMP = { origem:MODO_NUVEM ? 'cobranca' : 's3d', campos:{ contatos:true, honorario:true, razao:false, perfil:true, situacao:true, codigo:true }, dados:null, decisoes:{} });
+    const org = (k, tit, txt, desab) => `<button class="origem ${I.origem===k ? 'on' : ''}" data-act="impOrigem" data-org="${k}" ${desab ? 'disabled' : ''}><b>${tit}</b><span>${txt}</span></button>`;
+    let passo2 = '';
+    if(I.origem==='cobranca') passo2 = `<p>Lê do Cobrança Pro (mesmo banco) os clientes, os contatos (e-mail e celular) e os boletos dos últimos 4 meses, para o honorário atual. Nada é gravado antes da conferência.</p><button class="btn primario" data-act="impCobranca">${I.dados ? 'Ler de novo' : 'Ler do Cobrança Pro'}</button>`;
+    if(I.origem==='s3d') passo2 = `<p>Use o relatório "Relação de Empresas e seus Regimes" do S3D, em Excel (.xlsx). Colunas usadas: Razão social, ID, CNPJ e Regime.</p><label class="btn primario" for="impArquivo" style="display:inline-block">Escolher a planilha</label> <input type="file" id="impArquivo" accept=".xlsx,.xls,.csv" style="display:none"> <span class="dica">${I.arquivo ? esc(I.arquivo) : ''}</span>`;
+    $('conteudo').innerHTML = topo('Importar clientes','Junta tudo no cadastro único pelo CNPJ/CPF. Nada é gravado antes da conferência.','<button class="btn" data-ir="clientes">Voltar</button>') + cadAviso() + `
+    <div class="painel"><h2>1. De onde vêm os dados</h2><div class="origens">
+      ${org('cobranca','Cobrança Pro', MODO_NUVEM ? 'Clientes, contatos e honorário atual pelos boletos. Mesmo banco: não precisa de arquivo.' : 'Disponível só no modo nuvem.', !MODO_NUVEM)}
+      ${org('s3d','Planilha do S3D','Lista de empresas com CNPJ, código e regime tributário.')}
+      ${org('questor','Relatórios do Questor','Lançamentos contábeis e fiscais e folha, para o enquadramento. Entra na v2.6.', true)}
+      ${org('migracao','Clientes da proposta e Contratantes','Os dois cadastros antigos já viraram um só na instalação da v2.2.0.', true)}
+    </div></div>
+    <div class="painel"><h2>2. Leitura</h2>${passo2}<div id="impProg" class="imp-prog"></div></div>
+    <div id="impConf"></div>`;
+    impDesenha();
+  }
+});
+
+/* ----- importação: monta a conferência ----- */
+function impContatosCob(c){
+  const out = [], vistos = new Set(), mais = (nome, email, cel, zap) => { email = String(email || '').trim().toLowerCase(); cel = String(cel || '').replace(/\D/g,'');
+    email = emailOk(email) ? email : ''; cel = celularOk(cel) ? cel : ''; if(!email && !cel) return; const ch = email || cel; if(vistos.has(ch)) return; vistos.add(ch);
+    out.push({ nome:nome || null, funcao:null, email:email || null, celular:cel || null, recebe_email:!!email, recebe_whatsapp:!!(cel && zap), assina:false, origem:'cobranca' }); };
+  (c.contatos || []).forEach(k => k.tipo==='email' ? mais(k.nome || c.contato, k.valor, '', false) : mais(k.nome || c.contato, '', k.valor, k.whatsapp));
+  mais(c.contato, c.email, '', false); mais(c.contato, '', c.telefone, false);
+  return out;
+}
+function impMonta(){
+  const I = S.IMP; if(!I || !I.dados) return null;
+  const lista = ativos(S.clientes), porDoc = {}; lista.forEach(c => { if(c.documento) porDoc[c.documento] = c; });
+  const ix = cliIndiceContatos(), linhas = [], vistos = new Set(), hoje = hojeISO();
+  const nova = (doc, nome, base) => ({ doc, nome, cli:porDoc[doc] || null, patch:{}, contatos:[], conflitos:[], ...base });
+  const conflito = (L, campo, rot, atual, novo, valor, padrao) => { const ch = L.doc + ':' + campo; L.conflitos.push({ ch, campo, rot, atual, novo, valor, escolha:I.decisoes[ch] || padrao }); };
+  const contatosNovos = (L, ks) => { const ja = new Set((L.cli ? ix[L.cli.id] || [] : []).flatMap(k => [k.email, k.celular]).filter(Boolean)); L.contatos = ks.filter(k => !ja.has(k.email) && !ja.has(k.celular)); };
+  const valido = doc => (doc.length===14 || doc.length===11) && docValido(doc);
+  if(I.origem==='cobranca'){ const meses = I.dados.meses || [];
+    (I.dados.clientes || []).forEach(c => { const doc = soDoc(c.cnpj);
+      if(!doc || !valido(doc)){ linhas.push({ doc, nome:c.razao_social, motivo:'sem CNPJ/CPF válido' }); return; }
+      if(vistos.has(doc)){ linhas.push({ doc, nome:c.razao_social, motivo:'CNPJ/CPF repetido no Cobrança Pro' }); return; } vistos.add(doc);
+      const L = nova(doc, c.razao_social), hon = honorarioDosBoletos(c.boletos), ms = (c.boletos || []).filter(b => +b.soma > 0).map(b => b.mes);
+      const origem = hon!=null ? `Cobrança Pro — boletos de ${mesAbrev(ms[0])} a ${mesAbrev(ms[ms.length-1])}` : null, ks = I.campos.contatos ? impContatosCob(c) : [];
+      if(!L.cli){ L.novo = { nome:String(c.razao_social || '').trim() || doc, documento:doc, situacao:'ativa', cob_cliente_id:c.id, departamentos:[], enquadramento:{} };
+        if(I.campos.honorario && hon!=null) Object.assign(L.novo, { honorario_atual:hon, honorario_ref:hoje, honorario_origem:origem }); L.contatos = ks; }
+      else { const cli = L.cli; if(cli.cob_cliente_id!==c.id) L.patch.cob_cliente_id = c.id; contatosNovos(L, ks);
+        if(I.campos.honorario && hon!=null && r2(cli.honorario_atual)!==hon){ const p = { honorario_atual:hon, honorario_ref:hoje, honorario_origem:origem };
+          if(cli.honorario_atual==null || /^Cobrança Pro/.test(cli.honorario_origem || '')) Object.assign(L.patch, p);
+          else conflito(L, 'honorario', 'Honorário', brl(cli.honorario_atual) + (cli.honorario_origem ? ' (' + cli.honorario_origem + ')' : ''), brl(hon) + ' — ' + meses.length + ' meses', p, 'novo'); }
+        if(I.campos.razao && semAcento(cli.nome).trim()!==semAcento(c.razao_social).trim()) conflito(L, 'razao', 'Razão social', cli.nome, c.razao_social, { nome:String(c.razao_social).trim() }, 'atual'); }
+      linhas.push(L); }); }
+  if(I.origem==='s3d'){ const arq = I.dados.linhas || [], porRaiz = {}, cadRaiz = {};
+    arq.forEach(x => { if(cnpjOrdem(x.documento)==='0001') porRaiz[cnpjRaiz(x.documento)] = x; });
+    lista.forEach(c => { if(cnpjOrdem(c.documento)==='0001') cadRaiz[cnpjRaiz(c.documento)] = c; });
+    arq.forEach(x => { const doc = x.documento;
+      if(!doc || !valido(doc)){ linhas.push({ doc, nome:x.nome, motivo:'sem CNPJ/CPF válido' }); return; }
+      if(vistos.has(doc)){ linhas.push({ doc, nome:x.nome, motivo:'CNPJ/CPF repetido na planilha' }); return; } vistos.add(doc);
+      const L = nova(doc, x.nome), p = s3dRegime(x.regimeTxt), mz = p.filial ? porRaiz[cnpjRaiz(doc)] : null, mzCad = p.filial ? cadRaiz[cnpjRaiz(doc)] : null;
+      const regime = p.regime || (p.filial ? (mz && s3dRegime(mz.regimeTxt).regime) || (mzCad && mzCad.regime) || null : null);
+      const codMz = (mz && mz.codigo) || (mzCad && mzCad.codigo_questor) || '', codigo = p.filial ? (codMz && cnpjOrdem(doc) ? codMz + '/' + parseInt(cnpjOrdem(doc), 10) : '') : x.codigo;
+      const perfil = { regime, atividade:p.atividade, apuracao:p.apuracao };
+      if(!L.cli){ L.novo = { nome:x.nome, documento:doc, regime, atividade:p.atividade, apuracao:p.apuracao, situacao:p.situacao, codigo_questor:codigo || null, departamentos:[], enquadramento:{} }; }
+      else { const cli = L.cli;
+        if(I.campos.perfil){ const dif = Object.keys(perfil).filter(k => perfil[k] && cli[k]!==perfil[k]);
+          if(dif.length){ const soVazios = dif.every(k => !cli[k]), vals = Object.fromEntries(dif.map(k => [k, perfil[k]]));
+            if(soVazios) Object.assign(L.patch, vals);
+            else conflito(L, 'perfil', 'Perfil tributário', [REG_CURTO[cli.regime], ATIVIDADES[cli.atividade], APURACOES[cli.apuracao]].filter(Boolean).join(' · ') || '—', [REG_CURTO[regime], ATIVIDADES[p.atividade], APURACOES[p.apuracao]].filter(Boolean).join(' · '), vals, 'novo'); } }
+        if(I.campos.situacao && cli.situacao!==p.situacao) L.patch.situacao = p.situacao;
+        if(I.campos.codigo && codigo && cli.codigo_questor!==codigo) L.patch.codigo_questor = codigo; }
+      linhas.push(L); }); }
+  const tipo = L => L.motivo ? 'ignora' : L.novo ? 'novo' : L.conflitos.length ? 'decisao' : (Object.keys(L.patch).length || L.contatos.length) ? 'atualiza' : 'igual';
+  linhas.forEach(L => { L.tipo = tipo(L); });
+  return linhas;
+}
+function impDesenha(){
+  const I = S.IMP, el = $('impConf'); if(!el) return;
+  const L = impMonta(); if(!L){ el.innerHTML = ''; return; }
+  const g = t => L.filter(x => x.tipo===t), novos = g('novo'), atual = g('atualiza'), dec = g('decisao'), ign = g('ignora'), igual = g('igual');
+  const marca = (k, t) => `<label><input type="checkbox" data-impc="${k}" ${I.campos[k] ? 'checked' : ''}> ${t}</label>`;
+  const campos = I.origem==='cobranca' ? marca('contatos','contatos') + marca('honorario','honorário atual') + marca('razao','razão social') : marca('perfil','regime, atividade e apuração') + marca('situacao','situação') + marca('codigo','código do Questor');
+  const desc = x => [x.patch.honorario_atual!=null ? 'honorário ' + brl(x.patch.honorario_atual) : '', x.patch.regime ? 'regime ' + REG_CURTO[x.patch.regime] : '', x.patch.atividade ? 'atividade' : '', x.patch.apuracao ? 'apuração' : '', x.patch.situacao ? 'situação ' + SITUACOES[x.patch.situacao] : '', x.patch.codigo_questor ? 'código ' + x.patch.codigo_questor : '', x.patch.cob_cliente_id ? 'ligado ao Cobrança Pro' : '', x.contatos.length ? x.contatos.length + ' contato' + (x.contatos.length>1 ? 's' : '') : ''].filter(Boolean).join(', ');
+  const lista = (arr, f) => `<div class="rolagem"><table class="lista"><tbody>${arr.slice(0,400).map(x => `<tr><td><b>${esc(x.nome)}</b><br><small>${esc(docFmt(x.doc) || 'sem documento')}</small></td><td>${esc(f(x))}</td></tr>`).join('')}</tbody></table></div>${arr.length>400 ? `<p class="dica">… e mais ${arr.length-400}.</p>` : ''}`;
+  const total = novos.length + atual.length + dec.length;
+  el.innerHTML = `<div class="painel"><h2>3. Conferência</h2>
+    <div class="resumo-topo r4">
+      <div class="ind"><div class="rot">Novos</div><b>${novos.length}</b><div class="rot">entram no cadastro</div></div>
+      <div class="ind"><div class="rot">Atualizados</div><b>${atual.length}</b><div class="rot">só os campos marcados · ${igual.length} sem mudança</div></div>
+      <div class="ind alerta-ind"><div class="rot">Precisam de decisão</div><b>${dec.length}</b><div class="rot">dado diferente do cadastro</div></div>
+      <div class="ind"><div class="rot">Ignorados</div><b>${ign.length}</b><div class="rot">sem CNPJ/CPF válido ou repetidos</div></div>
+    </div>
+    <p class="marcas"><b>Atualizar nos clientes existentes:</b> ${campos}</p>
+    ${dec.length ? `<h3>Precisam de decisão</h3><div class="rolagem"><table class="lista"><thead><tr><th>Cliente</th><th>Campo</th><th>No cadastro</th><th>Na importação</th><th>Usar</th></tr></thead><tbody>${dec.flatMap(x => x.conflitos.map(k => `<tr><td><b>${esc(x.nome)}</b><br><small>${esc(docFmt(x.doc))}</small></td><td>${esc(k.rot)}</td><td>${esc(k.atual)}</td><td>${esc(k.novo)}</td>
+      <td><select data-impd="${esc(k.ch)}" aria-label="Decisão ${esc(k.rot)} ${esc(x.nome)}"><option value="novo" ${k.escolha==='novo' ? 'selected' : ''}>${I.origem==='cobranca' ? 'Usar o do Cobrança' : 'Usar o da planilha'}</option><option value="atual" ${k.escolha==='atual' ? 'selected' : ''}>Manter o do cadastro</option></select></td></tr>`)).join('')}</tbody></table></div>` : ''}
+    ${novos.length ? `<details class="imp"><summary>Novos (${novos.length})</summary>${lista(novos, x => [REG_CURTO[x.novo.regime], x.novo.honorario_atual!=null ? brl(x.novo.honorario_atual) : '', x.contatos.length ? x.contatos.length + ' contato(s)' : ''].filter(Boolean).join(' · ') || '—')}</details>` : ''}
+    ${atual.length ? `<details class="imp"><summary>Atualizados (${atual.length})</summary>${lista(atual, desc)}</details>` : ''}
+    ${ign.length ? `<details class="imp"><summary>Ignorados (${ign.length})</summary>${lista(ign, x => x.motivo)}</details>` : ''}
+    <div class="botoes-fim" style="display:flex;justify-content:space-between;margin-top:14px"><button class="btn" data-ir="clientes">Cancelar</button><button class="btn primario" data-act="impGravar" ${total ? '' : 'disabled'}>Importar ${total} cliente${total===1 ? '' : 's'}</button></div></div>`;
+}
+async function carregaXlsx(){
+  if(window.XLSX) return window.XLSX;
+  await new Promise((ok, erro) => { const s = document.createElement('script'); s.src = XLSX_JS; s.onload = ok; s.onerror = () => erro(new Error('Não foi possível carregar o leitor de planilhas. Verifique a internet.')); document.head.appendChild(s); });
+  return window.XLSX;
+}
+async function impLePlanilha(arquivo){
+  const X = await carregaXlsx(), wb = X.read(await arquivo.arrayBuffer(), { type:'array' }), ws = wb.Sheets[wb.SheetNames[0]];
+  return s3dLinhas(X.utils.sheet_to_json(ws, { header:1, raw:false, defval:'' }));
+}
+// filiais importadas ficam ligadas à matriz (mesma raiz do CNPJ, estabelecimento 0001)
+async function impLigaFiliais(docs){
+  const lista = ativos(S.clientes), matriz = {}; lista.forEach(c => { if(cnpjOrdem(c.documento)==='0001' && !c.matriz_id) matriz[cnpjRaiz(c.documento)] = c; });
+  let n = 0; for(const c of lista){ if(!docs.has(c.documento) || c.matriz_id) continue; const o = cnpjOrdem(c.documento), m = matriz[cnpjRaiz(c.documento)];
+    if(o && o!=='0001' && m && m.id!==c.id && !lista.some(f => f.matriz_id===c.id)){ await DB.alterar('clientes', c.id, { matriz_id:m.id }); n++; } }
+  return n;
+}
+async function emLotes(itens, n, fn){ for(let i = 0; i < itens.length; i += n) await Promise.all(itens.slice(i, i+n).map(fn)); }
+
+Object.assign(ACOES, {
+  cliente(el){ if(!exigeCad()) return; const c = el.dataset.id ? S.clientes.find(x => x.id===el.dataset.id) : null; S._aposContratante = null; S.cfAba = 'emp'; abreCliForm(c ? cliParaForm(c) : cliVazio()); },
+  cliAba(el){ S.cfAba = el.dataset.aba; VIEWS.clienteForm(); },
+  cliChip(el){ S.cliChip = el.dataset.chip; cliListar(); },
+  cliReceita(){ cttAplicaReceita(false); },
+  cliContatoAdd(){ S.CF.contatos.push({ id:null, nome:'', funcao:'', email:'', celular:'', recebe_email:true, recebe_whatsapp:false, assina:!S.CF.contatos.some(k => !k._tirar && k.assina), origem:'manual' }); VIEWS.clienteForm(); },
+  cliContatoTirar(el){ const k = S.CF.contatos[+el.dataset.i]; if(!k) return; if(k.id) k._tirar = true; else S.CF.contatos.splice(+el.dataset.i, 1); VIEWS.clienteForm(); },
+  cliCancelar(){ const d = S._aposContratante;
+    if(d && d.voltarForm && S.CTF){ if(!ctSujo() || confirm('Sair sem salvar o cliente?')){ const F = S.CTF; S._aposContratante = null; S.CF = null; S._CFbase = null; S.view = 'x'; abreCtForm(F); } return; }
+    if(d && d.voltarCd && S.CDF){ if(!ctSujo() || confirm('Sair sem salvar o cliente?')){ const F = S.CDF; S._aposContratante = null; S.CF = null; S._CFbase = null; S.view = 'x'; abreCdForm(F); } return; }
+    ir('clientes'); },
+  async cliSalvar(){
+    if(!exigeCad()) return;
+    const C = S.CF, ctx = S._aposContratante, er = cliValida(C, !!ctx);
+    if(er.length){ $('errosCF').innerHTML = `<div class="erros" role="alert"><b>Não foi possível salvar:</b><ul>${er.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>`; window.scrollTo(0,0); return; }
+    const base = C.id ? S.clientes.find(x => x.id===C.id) : null, vivos = C.contatos.filter(k => !k._tirar), nul = v => (v===undefined || v===null || String(v).trim()==='') ? null : String(v).trim();
+    const pri = vivos.find(k => k.assina && k.email) || vivos.find(k => k.email) || {}, cel = vivos.find(k => String(k.celular || '').replace(/\D/g,''));
+    const row = {}; CLI_TEXTO.forEach(k => { row[k] = nul(C[k]); });
+    Object.assign(row, { nome:C.nome.trim().replace(/\s+/g,' '), documento:soDoc(C.documento) || null, uf:row.uf ? row.uf.toUpperCase() : null, rep_cpf:soDoc(C.rep_cpf) || null, rep_celular:String(C.rep_celular || '').replace(/\D/g,'') || null,
+      rep_nome:row.rep_nome ? row.rep_nome.replace(/\s+/g,' ') : null, receita:C.receita || null, receita_em:C.receita_em || null, regime:C.regime || null, atividade:C.atividade || null, apuracao:C.apuracao || null, situacao:C.situacao || 'ativa',
+      matriz_id:C.matriz_id || null, nivel_atual:C.nivel_atual || null, departamentos:Object.keys(DEPTOS).filter(k => (C.departamentos || []).includes(k)), enquadramento:C.enquadramento || {},
+      honorario_atual:C.honorario_atual!=null && C.honorario_atual!=='' ? r2(C.honorario_atual) : null,
+      email:pri.email ? String(pri.email).trim().toLowerCase() : (base && !vivos.length ? base.email : null), telefone:cel ? fmtCel(String(cel.celular).replace(/\D/g,'')) : (base && !vivos.length ? base.telefone : null) });
+    if((base ? (base.honorario_atual==null ? null : r2(base.honorario_atual)) : null) !== row.honorario_atual){ row.honorario_origem = row.honorario_atual==null ? null : 'Informado no cadastro'; row.honorario_ref = row.honorario_atual==null ? null : hojeISO(); }
+    await tenta(async () => {
+      const r = C.id ? await DB.alterar('clientes', C.id, row) : await DB.inserir('clientes', row); C.id = r.id;
+      for(const k of C.contatos){
+        const lin = { nome:nul(k.nome), funcao:nul(k.funcao), email:nul(k.email) ? String(k.email).trim().toLowerCase() : null, celular:String(k.celular || '').replace(/\D/g,'') || null, recebe_email:!!k.recebe_email, recebe_whatsapp:!!k.recebe_whatsapp, assina:!!k.assina };
+        if(k._tirar){ if(k.id) await DB.alterar('contatos', k.id, { excluido_em:new Date().toISOString() }); continue; }
+        if(!k.id){ const n = await DB.inserir('contatos', { ...lin, cliente_id:r.id, origem:'manual' }); k.id = n.id; continue; }
+        const o = S.contatos.find(x => x.id===k.id); if(o && Object.keys(lin).some(x => (o[x] ?? null) !== lin[x])) await DB.alterar('contatos', k.id, lin); }
+      C.contatos = C.contatos.filter(k => !k._tirar);
+      toast('Cliente salvo.'); S.CF = null; S._CFbase = null; S._aposContratante = null;
+      if(ctx && ctx.proposta_id){ const p = S.propostas.find(x => x.id===ctx.proposta_id); S.view = 'x'; return abreCtForm(ctNovoForm(r.id, p)); }
+      if(ctx && ctx.voltarForm && S.CTF){ const F = S.CTF; F.contratante_id = r.id; S.view = 'x'; return abreCtForm(F); }
+      if(ctx && ctx.voltarCd && S.CDF){ const F = S.CDF; F.contratante_id = r.id; S.view = 'x'; return abreCdForm(F); }
+      ir('clientes'); });
+  },
+  async cliExcluir(el){ const c = S.clientes.find(x => x.id===el.dataset.id); if(!c) return;
+    if(ativos(S.contratos || []).some(k => k.contratante_id===c.id && ['rascunho','enviado','vigente','aviso'].includes(k.status))){ toast('Cliente com contrato em andamento não pode ser excluído.', true); return; }
+    if(ativos(S.confissoes || []).some(k => k.contratante_id===c.id && ['rascunho','enviado','assinado','inadimplente'].includes(k.status))){ toast('Cliente com confissão de dívida em andamento não pode ser excluído.', true); return; }
+    if(ativos(S.clientes).some(k => k.matriz_id===c.id)){ toast('Cliente é matriz de filiais ativas: exclua ou desvincule as filiais antes.', true); return; }
+    if(!confirm(`Excluir o cliente ${c.nome}? As propostas e os contratos encerrados dele continuam guardados.`)) return;
+    await tenta(async () => { await DB.alterar('clientes', c.id, { excluido_em:new Date().toISOString() }); toast('Cliente excluído.'); ir('clientes'); }); },
+
+  // contratos e confissões: o contratante/devedor é o cliente do cadastro único
+  cttNovo(){ if(!exigeCad()) return; S._aposContratante = S.view==='ctForm' ? { voltarForm:true } : S.view==='cdForm' ? { voltarCd:true } : null; S.cfAba = 'emp'; abreCliForm(cliVazio()); },
+  cttEditar(el){ const c = S.clientes.find(x => x.id===el.dataset.id); if(!c || !exigeCad()) return; S._aposContratante = S.view==='ctForm' ? { voltarForm:true } : S.view==='cdForm' ? { voltarCd:true } : null; S.cfAba = 'emp'; abreCliForm(cliParaForm(c)); },
+  async gerarContrato(el){ if(!exigeCt() || !exigeCad()) return; const p = S.propostas.find(x => x.id===el.dataset.id); if(!p) return; if($('dlg').open) $('dlg').close();
+    const ja = ativos(S.contratos).find(c => c.proposta_id===p.id); if(ja){ toast('Esta proposta já tem o contrato ' + ctNumero(ja) + '.'); S.ctId = ja.id; S.ctPrevia = null; return ir('contrato'); }
+    const doc = soDoc(p.cliente_documento), lista = ativos(S.clientes), cli = (p.cliente_id && lista.find(c => c.id===p.cliente_id)) || (doc && lista.find(c => c.documento===doc));
+    if(cli && !cttValida(cliCtt(cli)).length && cli.regime) return abreCtForm(ctNovoForm(cli.id, p));
+    const C = cli ? cliParaForm(cli) : Object.assign(cliVazio(), { nome:p.cliente_nome || '', documento:doc, contato:p.contato || '', tratamento:p.tratamento || '' });
+    if(MODO_NUVEM){ const ass = await DB.assinaturas(p.id).catch(() => []), a = (ass || []).find(x => x.papel!=='escritorio' && x.papel!=='testemunha');
+      if(a){ C.rep_nome = C.rep_nome || a.nome || ''; if(!C.rep_cpf && /^\d{11}$/.test(a.cpf || '')) C.rep_cpf = a.cpf; C.rep_qualidade = C.rep_qualidade || a.cargo || ''; C.rep_email = C.rep_email || a.email || ''; } }
+    S._aposContratante = { proposta_id:p.id }; S.cfAba = 'emp'; toast('Primeiro complete o cadastro do cliente para o contrato. Depois o contrato abre já preenchido.');
+    abreCliForm(C); if(/^\d{14}$/.test(C.documento) && !C.receita_em) cttAplicaReceita(true); },
+
+  // importação
+  impOrigem(el){ const I = S.IMP; if(!I || I.origem===el.dataset.org) return; S.IMP = { ...I, origem:el.dataset.org, dados:null, decisoes:{}, arquivo:null }; VIEWS.importar(); },
+  async impCobranca(){ if(!exigeCad()) return; const I = S.IMP; $('impProg').textContent = 'Lendo o Cobrança Pro…';
+    await tenta(async () => { I.dados = await DB.cobrancaClientes(); I.decisoes = {}; $('impProg').textContent = `${(I.dados.clientes || []).length} clientes lidos do Cobrança Pro (boletos de ${(I.dados.meses || []).map(mesAbrev).join(', ')}).`; impDesenha(); });
+    if(!I.dados) $('impProg').textContent = ''; },
+  async impGravar(el){
+    const L = impMonta(); if(!L) return;
+    const novos = L.filter(x => x.tipo==='novo'), muda = L.filter(x => x.tipo==='atualiza' || x.tipo==='decisao');
+    if(!confirm(`Gravar ${novos.length} cliente(s) novo(s) e atualizar ${muda.length}?`)) return;
+    el.disabled = true; const prog = t => { const p = $('impProg'); if(p) p.textContent = t; };
+    await tenta(async () => {
+      prog('Gravando os clientes novos…'); const criados = await DB.inserirVarios('clientes', novos.map(x => x.novo)), id = {}; criados.forEach(c => { id[c.documento] = c.id; });
+      let feitos = 0; prog(`Atualizando ${muda.length} cliente(s)…`);
+      await emLotes(muda, 5, async x => { const patch = { ...x.patch }; x.conflitos.forEach(k => { if(k.escolha==='novo') Object.assign(patch, k.valor); });
+        if(Object.keys(patch).length) await DB.alterar('clientes', x.cli.id, patch); feitos++; if(feitos % 20===0) prog(`Atualizando… ${feitos} de ${muda.length}`); });
+      const contatos = [...novos, ...muda].flatMap(x => x.contatos.map(k => ({ ...k, cliente_id:x.cli ? x.cli.id : id[x.doc] }))).filter(k => k.cliente_id);
+      if(contatos.length){ prog(`Gravando ${contatos.length} contato(s)…`); await DB.inserirVarios('contatos', contatos); }
+      prog('Ligando filiais às matrizes…'); const fil = await impLigaFiliais(new Set(L.filter(x => x.tipo!=='ignora').map(x => x.doc)));
+      toast(`Importação concluída: ${criados.length} novo(s), ${muda.length} atualizado(s), ${contatos.length} contato(s)${fil ? ', ' + fil + ' filial(is) ligada(s) à matriz' : ''}.`);
+      S.IMP = null; ir('clientes'); });
+    el.disabled = false; }
+});
+
+/* ----- digitação na ficha, na lista e na importação ----- */
+document.addEventListener('input', ev => {
+  const el = ev.target;
+  if(el.id==='cliBusca'){ S.cliBusca = el.value; cliListar(); return; }
+  if(!S.CF) return;
+  if(el.dataset.cfk!==undefined && el.type!=='checkbox'){ const k = S.CF.contatos[+el.dataset.cfk]; if(k) k[el.dataset.k] = el.dataset.k==='celular' ? el.value.replace(/\D/g,'') : el.value; return; }
+  if(el.dataset.cfv){ const v = String(el.value).trim(); S.CF[el.dataset.cfv] = v ? parseValor(v) : null; return; }
+  if(el.dataset.cfe){ const E = S.CF.enquadramento = { ...(S.CF.enquadramento || {}) }, v = String(el.value).trim(); if(el.dataset.cfe==='periodo') E.periodo = v; else if(v==='') delete E[el.dataset.cfe]; else E[el.dataset.cfe] = Math.max(0, parseInt(v, 10) || 0); }
+});
+document.addEventListener('change', async ev => {
+  const el = ev.target;
+  if(el.id==='cliFSit' || el.id==='cliFAtv' || el.id==='cliFDep'){ S.cliFiltro = { ...(S.cliFiltro || {}), [{ cliFSit:'sit', cliFAtv:'atv', cliFDep:'dep' }[el.id]]:el.value }; cliListar(); return; }
+  if(el.dataset.impc && S.IMP){ S.IMP.campos[el.dataset.impc] = el.checked; impDesenha(); return; }
+  if(el.dataset.impd && S.IMP){ S.IMP.decisoes[el.dataset.impd] = el.value; return; }
+  if(el.id==='impArquivo' && S.IMP && el.files && el.files[0]){ const I = S.IMP, f = el.files[0]; $('impProg').textContent = 'Lendo a planilha…';
+    await tenta(async () => { const linhas = await impLePlanilha(f); I.dados = { linhas }; I.arquivo = f.name; I.decisoes = {}; VIEWS.importar(); $('impProg').textContent = `${linhas.length} empresa(s) na planilha ${f.name}.`; });
+    if(!I.dados && $('impProg')) $('impProg').textContent = ''; return; }
+  if(!S.CF) return;
+  if(el.dataset.cf==='documento' && S.view==='clienteForm'){ cliAtualizaMatrizes(); return; }
+  if(el.dataset.cfk!==undefined && el.type==='checkbox'){ const k = S.CF.contatos[+el.dataset.cfk]; if(k) k[el.dataset.k] = el.checked; return; }
+  if(el.dataset.cfk!==undefined && el.dataset.k==='celular'){ const k = S.CF.contatos[+el.dataset.cfk]; if(k && k.celular) el.value = fmtCel(k.celular); return; }
+  if(el.dataset.cfd){ const a = new Set(S.CF.departamentos || []); el.checked ? a.add(el.dataset.cfd) : a.delete(el.dataset.cfd); S.CF.departamentos = Object.keys(DEPTOS).filter(k => a.has(k)); return; }
+  if(el.dataset.cfv){ const v = S.CF[el.dataset.cfv]; el.value = v!=null ? num2(v) : ''; return; }
+});
+
+/* ----- consulta da Receita Federal na ficha do cliente ----- */
+async function cttAplicaReceita(auto){
+  const C = S.CF; if(!C) return;
+  const b = document.querySelector('[data-act="cliReceita"]'); if(b){ b.disabled = true; b.textContent = 'Consultando…'; }
+  try{ const r = await consultaReceita(C.documento), de = { razao_social:'nome' };
+    const campos = ['razao_social','nome_fantasia','endereco','complemento','bairro','cep','municipio','uf','cnae'].filter(k => r[k]);
+    campos.forEach(k => { C[de[k] || k] = r[k]; }); C.situacao_receita = r.situacao; if(!C.regime) C.regime = regimeDeTexto(r.regime) || '';
+    C.receita = { qsa:r.qsa, campos:campos.map(k => de[k] || k), fonte:'Receita Federal — base pública do CNPJ (BrasilAPI)' }; C.receita_em = new Date().toISOString();
+    if(!C.rep_nome && r.qsa.length){ const s = r.qsa.find(x => /administrador/i.test(x.qualificacao)) || r.qsa[0]; C.rep_socio = r.qsa.indexOf(s); C.rep_nome = nomeProprio(s.nome); C.rep_qualidade = s.qualificacao.toLowerCase(); }
+    else if(C.rep_nome){ const pal = semAcento(C.rep_nome).split(/\s+/).filter(w => w.length>2);
+      const i = r.qsa.findIndex(x => pal.length && pal.every(w => semAcento(x.nome).split(/\s+/).includes(w)));
+      if(i>=0){ C.rep_socio = i; C.rep_nome = nomeProprio(r.qsa[i].nome); C.rep_qualidade = C.rep_qualidade || r.qsa[i].qualificacao.toLowerCase(); } }
+    if(r.email && !C.contatos.some(k => !k._tirar && k.email===r.email)) C.contatos.push({ id:null, nome:'', funcao:'e-mail da Receita Federal', email:r.email, celular:'', recebe_email:false, recebe_whatsapp:false, assina:false, origem:'manual' });
+    if(S.view==='clienteForm') VIEWS.clienteForm();
+    toast(`Dados da Receita Federal carregados${/ativa/i.test(r.situacao) ? '' : ' — atenção: situação ' + r.situacao}.`, !/ativa/i.test(r.situacao));
+  }catch(e){ if(!auto || !/14 números/.test(e.message)) toast(e.message, true); }
+  finally{ const b2 = document.querySelector('[data-act="cliReceita"]'); if(b2){ b2.disabled = false; b2.textContent = 'Buscar na Receita Federal'; } }
+}
 
 /* ===================== PÁGINA DO CLIENTE (só a proposta, sem login) ===================== */
 const Cliente = { sb:null, token:null, dados:null,
