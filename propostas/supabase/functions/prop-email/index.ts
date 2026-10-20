@@ -1,5 +1,5 @@
 // =====================================================================
-// Artecon Propostas — Edge Function  prop-email   (v1.6.3 — endereço novo: gestao-financeiro/propostas/)
+// Artecon Propostas — Edge Function  prop-email   (v1.6.4 — chave da central no cofre do banco)
 // Projeto Supabase: cobranca-pro (yeujqjtjqtegsnzwwazb)
 //
 // O que faz: esvazia a fila public.prop_fila_email e envia cada mensagem pelo hub Artecon Mail (mail-send), no padrão visual Artecon.
@@ -11,12 +11,14 @@
 // Quem chama: o banco (pg_net, a cada mensagem nova na fila) e o pg_cron (a cada 5 min, para novas tentativas).
 //
 // SECRETS (Edge Functions > prop-email > Secrets):
-//   MAIL_API_KEY        a MESMA chave do hub que já está no mail-proxy
+//   (v1.6.4: a chave da central não é mais secret: fica no cofre do banco, mail_hub_key_propostas)
 //   PROP_EMAIL_SECRET   segredo longo, o MESMO gravado em prop_priv.config pelo 10_config_fila.sql
 //   (SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY já existem em toda Edge Function; não precisa criar)
 // Opcionais: MAIL_HUB_URL, PROP_APP_URL, PROP_LOGO_URL
 // v1.6.3 (18/10/2026): app e logo no endereço novo (repositório gestao-financeiro). Os links já enviados com o
 //   endereço antigo continuam valendo: /propostas/ virou aviso que leva ao novo com o mesmo #/c/<token>.
+// v1.6.4 (20/10/2026): chave própria da central de e-mail no cofre do banco (a antiga, MAIL_API_KEY, ficou no histórico
+//   público e só vale na transição). {"verificar_hub": true} (com x-prop-secret) confere a chave sem enviar nada.
 //
 // Teste manual (Invoke/Test da função):  {"teste": true, "para": "cleiver@artecon.cnt.br"}  com o cabeçalho x-prop-secret.
 // =====================================================================
@@ -82,10 +84,29 @@ function montar(f: any, urlVia?: string): { assunto: string; html: string } {
   }
 }
 
+// v1.6.4: chave própria da central de e-mail, guardada no cofre do banco (mail_hub_key_propostas; só a chave de serviço lê).
+//   O secret MAIL_API_KEY (a chave antiga, vazada) fica só de reserva até a central parar de aceitá-la.
+let _chaveHub = "";
+async function chaveHub(): Promise<string> {
+  if (_chaveHub) return _chaveHub;
+  const url = Deno.env.get("SUPABASE_URL") ?? "", srk = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+  try {
+    const r = await fetch(`${url}/rest/v1/rpc/segredo_servico`, {
+      method: "POST", signal: AbortSignal.timeout(10000),
+      headers: { "Content-Type": "application/json", apikey: srk, Authorization: `Bearer ${srk}` },
+      body: JSON.stringify({ p_nome: "mail_hub_key_propostas" }),
+    });
+    const v = r.ok ? await r.json() : null;
+    if (typeof v === "string" && v) return (_chaveHub = v);
+    console.warn(`chave da central: cofre respondeu ${r.status}`);
+  } catch (e) { console.warn("chave da central: cofre indisponível", String(e)); }
+  return Deno.env.get("MAIL_API_KEY") ?? "";
+}
+
 async function enviar(to: string, assunto: string, html: string) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 25000);
   try {
-    const r = await fetch(HUB, { method: "POST", signal: ctl.signal, headers: { "Content-Type": "application/json", "x-api-key": Deno.env.get("MAIL_API_KEY") ?? "" }, body: JSON.stringify({ to, assunto, html, app: "propostas" }) });
+    const r = await fetch(HUB, { method: "POST", signal: ctl.signal, headers: { "Content-Type": "application/json", "x-api-key": await chaveHub() }, body: JSON.stringify({ to, assunto, html, app: "propostas" }) });
     if (!r.ok) throw new Error(`hub ${r.status}: ${(await r.text()).slice(0, 160)}`);
   } finally { clearTimeout(t); }
 }
@@ -94,8 +115,16 @@ Deno.serve(async (req) => {
   const J = (o: unknown, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { "Content-Type": "application/json" } });
   const segredo = Deno.env.get("PROP_EMAIL_SECRET") ?? "";
   if (!segredo || req.headers.get("x-prop-secret") !== segredo) return J({ ok: false, erro: "nao autorizado" }, 401);
-  if (!Deno.env.get("MAIL_API_KEY")) return J({ ok: false, erro: "secret MAIL_API_KEY ausente" }, 500);
+  if (!(await chaveHub())) return J({ ok: false, erro: "chave da central de e-mail ausente (cofre mail_hub_key_propostas)" }, 500);
   let corpo: any = {}; try { corpo = await req.json(); } catch (_) { /* sem corpo */ }
+
+  if (corpo.verificar_hub === true) {   // v1.6.4: confere a chave na central, sem enviar nada
+    try {
+      const r = await fetch(HUB, { method: "POST", signal: AbortSignal.timeout(15000), headers: { "Content-Type": "application/json", "x-api-key": await chaveHub() }, body: JSON.stringify({ verificar: true }) });
+      const j = await r.json().catch(() => ({}));
+      return J({ ok: r.ok && j.ok === true, chave: j.chave ?? null }, r.ok ? 200 : 502);
+    } catch (e) { return J({ ok: false, erro: String(e) }, 502); }
+  }
 
   if (corpo.teste) {   // confere secrets, hub e o visual, sem tocar na fila
     const para = String(corpo.para || ""); if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(para)) return J({ ok: false, erro: 'informe "para"' }, 400);

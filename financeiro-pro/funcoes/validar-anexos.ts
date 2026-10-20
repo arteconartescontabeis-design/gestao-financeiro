@@ -1,5 +1,8 @@
 // ============================================================
-// cobranca-pro · Edge Function  validar-anexos  (código "claude-proxy") — v3.1.0 (18/10/2026)
+// cobranca-pro · Edge Function  validar-anexos  (código "claude-proxy") — v3.2.0 (20/10/2026)
+// v3.2.0 — o token do Financeiro na IA Central fica no COFRE do banco (ia_gateway_token_financeiro), gerado lá dentro
+//   em 20/10/2026 (ninguém vê o valor; o Portal guarda só o sha256). O secret IA_GATEWAY_TOKEN continua aceito como
+//   alternativa. Nada mais mudou.
 // v3.1.0 — mesma função que estava no agenda-pro, agora no projeto do Financeiro (cobranca-pro, banco da Gestão
 //   Empresarial e Financeiro), onde fica o login dele. Código igual ao da v3.0.0. Precisa do secret IA_GATEWAY_TOKEN
 //   NESTE projeto (token do Financeiro no Portal → Consumo de IA) — no agenda-pro ele nunca chegou a ser cadastrado.
@@ -55,6 +58,27 @@ const JANELA_MS = 60_000, MAX_POR_JANELA = 30;
 const chamadas = new Map<string, number[]>();
 const GATEWAY_URL = Deno.env.get('IA_GATEWAY_URL') ||
   'https://fbxelwhdiisfmnwrerbl.supabase.co/functions/v1/ia-gateway';
+
+// v3.2.0: token do Financeiro lido do cofre do banco (só a chave de serviço lê); cache enquanto a instância viver
+let tokenCofre = '';
+async function tokenIA(): Promise<string> {
+  const env = (Deno.env.get('IA_GATEWAY_TOKEN') || '').trim();
+  if (env) return env;
+  if (tokenCofre) return tokenCofre;
+  const url = Deno.env.get('SUPABASE_URL') || '';
+  const srk = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/segredo_servico', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', apikey: srk, authorization: 'Bearer ' + srk },
+      body: JSON.stringify({ p_nome: 'ia_gateway_token_financeiro' }),
+      signal: AbortSignal.timeout(10_000),
+    });
+    const v = r.ok ? await r.json() : null;
+    if (typeof v === 'string' && v.startsWith('iagw_')) tokenCofre = v.trim();
+  } catch (_e) { /* sem cofre: segue sem token e o erro explica */ }
+  return tokenCofre;
+}
 
 function limiteOk(chave: string): boolean {
   const agora = Date.now();
@@ -395,14 +419,14 @@ serve(async (req) => {
     const body = JSON.parse(bruto);
 
     // v3.0.0: token do Financeiro na IA Central (a chave vinda do corpo continua não aceita)
-    const apiKey = (Deno.env.get('IA_GATEWAY_TOKEN') || '').trim();
+    const apiKey = await tokenIA();
 
     if (!apiKey.startsWith('iagw_')) {
       return jsonResponse({
         status: 'erro',
         etapa: 'apikey',
         error:
-          'Falta o secret IA_GATEWAY_TOKEN (token do Financeiro gerado no Portal → Consumo de IA).',
+          'Falta o token do Financeiro na IA Central (cofre ia_gateway_token_financeiro ou secret IA_GATEWAY_TOKEN).',
       });
     }
 

@@ -1,5 +1,5 @@
 // ============================================================
-// COBRANÇA PRO — Edge Function: mail-proxy  (v2 · app v2.17.0)
+// COBRANÇA PRO — Edge Function: mail-proxy  (v2.1 · app v2.17.0)
 // Ponte segura entre o app (navegador) e o hub Artecon Mail.
 // O MAIL_API_KEY vive só aqui, como secret (nunca no index.html).
 //
@@ -10,11 +10,12 @@
 //   • um endereço @artecon.cnt.br (relatórios internos).
 // A conferência usa o token do próprio usuário, então o RLS do banco
 // limita a busca aos clientes do escritório dele.
-// Secrets: MAIL_API_KEY (SUPABASE_URL e SUPABASE_ANON_KEY já existem)
+// v2.1 (20/10/2026): a chave da central sai do cofre do banco (mail_hub_key_cobranca), não mais do secret
+//   MAIL_API_KEY (a antiga ficou no histórico público). ?verificar_hub=1 só confere a chave na central (nada é enviado).
+// Secrets: nenhum novo (SUPABASE_URL, SUPABASE_ANON_KEY e SUPABASE_SERVICE_ROLE_KEY já existem)
 // ============================================================
 
 const MAIL_SEND_URL = "https://tjnqloycikukvvnconqn.supabase.co/functions/v1/mail-send";
-const MAIL_API_KEY  = Deno.env.get("MAIL_API_KEY")!;
 const SB_URL        = Deno.env.get("SUPABASE_URL")!;
 const SB_ANON       = Deno.env.get("SUPABASE_ANON_KEY")!;
 
@@ -33,6 +34,25 @@ function resposta(obj: unknown, status = 200): Response {
     status,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
+}
+
+// v2.1: chave própria da central de e-mail, guardada no cofre do banco (mail_hub_key_cobranca; só a chave de serviço lê).
+//   O secret MAIL_API_KEY (a chave antiga, vazada) fica só de reserva até a central parar de aceitá-la.
+let _chaveHub = "";
+async function chaveHub(): Promise<string> {
+  if (_chaveHub) return _chaveHub;
+  const url = Deno.env.get("SUPABASE_URL") ?? "", srk = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+  try {
+    const r = await fetch(`${url}/rest/v1/rpc/segredo_servico`, {
+      method: "POST", signal: AbortSignal.timeout(10000),
+      headers: { "Content-Type": "application/json", apikey: srk, Authorization: `Bearer ${srk}` },
+      body: JSON.stringify({ p_nome: "mail_hub_key_cobranca" }),
+    });
+    const v = r.ok ? await r.json() : null;
+    if (typeof v === "string" && v) return (_chaveHub = v);
+    console.warn(`chave da central: cofre respondeu ${r.status}`);
+  } catch (e) { console.warn("chave da central: cofre indisponível", String(e)); }
+  return Deno.env.get("MAIL_API_KEY") ?? "";
 }
 
 const EMAIL_OK = /^[^\s@<>(),;:"]+@[^\s@<>(),;:"]+\.[^\s@<>(),;:"]+$/;
@@ -69,6 +89,16 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (req.method !== "POST") return resposta({ ok: false, erro: "método não permitido" }, 405);
 
+  // v2.1: conferência da chave na central, sem enviar nada (responde só ok/erro)
+  if (new URL(req.url).searchParams.get("verificar_hub") === "1") {
+    try {
+      const r = await fetch(MAIL_SEND_URL, { method: "POST", signal: AbortSignal.timeout(15000),
+        headers: { "Content-Type": "application/json", "x-api-key": await chaveHub() }, body: JSON.stringify({ verificar: true }) });
+      const j = await r.json().catch(() => ({}));
+      return resposta({ ok: r.ok && j.ok === true, chave: j.chave ?? null }, r.ok ? 200 : 502);
+    } catch (e) { return resposta({ ok: false, erro: String(e) }, 502); }
+  }
+
   try {
     // 1) usuário logado (a anon key sozinha é recusada)
     const auth = req.headers.get("Authorization") ?? "";
@@ -104,7 +134,7 @@ Deno.serve(async (req) => {
     // 4) repassa ao hub Artecon Mail com a chave secreta
     const r = await fetch(MAIL_SEND_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json", "x-api-key": MAIL_API_KEY },
+      headers: { "Content-Type": "application/json", "x-api-key": await chaveHub() },
       body: JSON.stringify({ app: "cobranca-pro", to: Array.isArray(p.to) ? destinos : destinos[0], assunto: p.assunto, html: p.html, replyTo }),
     });
     const j = await r.json().catch(() => ({ ok: false, erro: "resposta invalida do mail-send" }));
