@@ -364,6 +364,18 @@ table.tab-edit td.marca{text-align:center}table.tab-edit input[type=checkbox]{wi
 details.imp{margin-top:10px}details.imp summary{cursor:pointer;font-weight:700;color:var(--cinza);padding:6px 0}
 .imp-prog{font-weight:700;color:#056a90;margin:8px 0}
 @media (max-width:1000px){.resumo-topo.r4{grid-template-columns:repeat(2,1fr)}.filtros4 select{width:100%}.abas-tipo{flex-wrap:wrap}}
+/* v2.3.0: lotes */
+.passos{display:flex;gap:0;margin:0 0 16px;border:1px solid var(--linha);background:#fff}
+.passos span{flex:1;padding:10px 14px;font-weight:600;color:var(--suave);border-right:1px solid var(--linha)}
+.passos span:last-child{border-right:0}.passos span.on{color:var(--vermelho);border-bottom:3px solid var(--vermelho)}.passos span.feito{color:var(--verde)}
+.grupo-filtro{display:flex;gap:16px;flex-wrap:wrap;align-items:center;padding:8px 0;border-bottom:1px solid var(--linha)}
+.grupo-filtro b{width:150px;color:var(--cinza)}.grupo-filtro:last-child{border-bottom:0}.grupo-filtro label{display:flex;gap:6px;align-items:center}
+input.mini-in{width:100px;padding:4px 6px}
+.contador{font:600 13px var(--texto);color:#056a90;background:#e4f5fd;padding:2px 8px;margin-left:8px}
+.pend{margin:6px 0 8px;padding-left:18px;color:#8e1015}.pend li{margin:3px 0}
+tr.desab td{opacity:.55}
+.botoes-fim{display:flex;justify-content:space-between;gap:10px;margin:4px 0 18px}
+@media (max-width:1000px){.passos{flex-direction:column}.grupo-filtro b{width:100%}.grupo-filtro label{flex-wrap:wrap}input.mini-in{width:80px}}
 @media (max-width:1000px){.grupo-menu{font-size:0;padding:4px 0;border-bottom:2px solid var(--vermelho)}.barra-empresa{grid-template-columns:1fr;margin-top:-6px}.barra-empresa>span{display:none}.barra-empresa>div:last-child{text-align:center!important}}
 @media print{.barra-empresa{display:none!important}.ct-folha{box-shadow:none;margin:0}.doc-area .ct-folha{zoom:1}.ct-pe img{position:fixed;left:0;bottom:1.5mm}.falta{background:none;color:#000}}
 @media print{
@@ -697,10 +709,19 @@ function porSituacao(props){
 const CFG = { SUPABASE_URL:'https://yeujqjtjqtegsnzwwazb.supabase.co', SUPABASE_ANON_KEY:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlldWpxanRqcXRlZ3Nuend3YXpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU1NDE0OTksImV4cCI6MjEwMTExNzQ5OX0.5p1_wJ_aApJpRrN6tFu8qmAytK5FMXWt1soCubpzqao' };
 const SUPABASE_JS = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js';
 
-const APP_VERSION = '2.2.0';
+const APP_VERSION = '2.3.0';
 const LOGO_EMAIL = 'https://arteconartescontabeis-design.github.io/gestao-financeiro/propostas/logo_artecon.png';
 const PORTAL_URL = 'https://arteconartescontabeis-design.github.io/portal/';
 const CHANGELOG = [
+  { v:'2.3.0', data:'20/10/2026', itens:[
+    'Lotes de propostas (novo item no menu Propostas): você cria o lote e gera várias propostas de uma vez, em rascunho e numeradas normalmente.',
+    'Reajuste anual: proposta com aceite, com o honorário atual de cada cliente mais o percentual informado no lote, índice, data de início do novo valor e arredondamento (centavos, R$ 1 ou R$ 5).',
+    'Serviço avulso: um serviço do catálogo com preço único, pago junto com o boleto mensal, na aceitação ou parcelado.',
+    'Quem recebe: filtros por regime, situação, atividade, departamento, faixa de honorário, só quem tem e-mail e sem proposta aberta de outro lote, com a lista para marcar e desmarcar clientes.',
+    'Prévia antes de gerar: honorários hoje e depois do reajuste, clientes que não geram (ex.: sem honorário atual) e alertas de quem está sem e-mail ou sem contato que assina.',
+    'Tela do lote: andamento por situação, pendências para assinatura e envio, as propostas do lote, "Novo lote com base neste" (o próximo reajuste só pede o percentual) e "Descartar lote" enquanto tudo estiver em rascunho (só diretor). A lista de propostas mostra o lote de cada proposta.',
+    'Banco: migração 22 (22_migracao_v2_3_0_lotes.sql; reversão 91). Precisa da migração 21 antes. A assinatura em lote e o envio em massa chegam na v2.4.0.'
+  ]},
   { v:'2.2.0', data:'20/10/2026', itens:[
     'Cadastro único de clientes: "Clientes da proposta" e "Contratantes" viraram um só cadastro, no grupo Clientes do menu. O mesmo cliente serve para propostas, contratos e confissões de dívida.',
     'Ficha do cliente em abas: Empresa (dados da Receita Federal, matriz/filial, código do Questor, perfil tributário e representante que assina), Contatos para envio (quem recebe por e-mail e WhatsApp e quem assina), Atendimento e honorário (departamentos, honorário atual e nível), Enquadramento (lançamentos e folha) e Histórico (propostas, contratos e confissões).',
@@ -871,14 +892,14 @@ const CHANGELOG = [
 
 const MODO_NUVEM = !!(CFG.SUPABASE_URL && CFG.SUPABASE_ANON_KEY);
 const CFG_INCOMPLETA = !MODO_NUVEM && !!(CFG.SUPABASE_URL || CFG.SUPABASE_ANON_KEY);
-const TAB = { clientes:'prop_clientes', servicos:'prop_servicos', propostas:'prop_propostas', contatos:'prop_clientes_contatos', contratos:'prop_contratos', confissoes:'prop_confissoes' };
+const TAB = { clientes:'prop_clientes', servicos:'prop_servicos', propostas:'prop_propostas', contatos:'prop_clientes_contatos', lotes:'prop_lotes', contratos:'prop_contratos', confissoes:'prop_confissoes' };
 const ESCRITORIO_PADRAO = { endereco:'R. Livorno, nº 15 - Sala 101, Pagani, Palhoça/SC.', cidade:'Palhoça/SC', telefone:'(48) 3242-0530', site:'www.artecon.cnt.br', instagram:'@arteconartescontábeis', frase:'O sucesso da sua empresa depende das escolhas que você faz hoje', responsavel:'Cleiver Gonçalves', registro:'CRC/SC 030.315/O-2', dia_vencimento:20, indice:'IGP-M/FGV', valor_funcionario:70.96, validade_dias:10, ct_razao:'ARTECON ARTES CONTÁBEIS SOCIEDADE SIMPLES', ct_cnpj:'79876769000128', ct_endereco:'Rua Livorno, nº 15, Sala 101', ct_cep:'88.132-274', ct_bairro:'Parque Residencial Pagani', ct_cidade:'Palhoça', ct_uf:'SC', ct_foro:'Palhoça, em Santa Catarina', adm_profissao:'contador', valor_inativa:250, retrabalho_pct:50 };
 const ABERTURA = {
   recorrente:'Conforme tratativas prévias, apresentamos nossa proposta de trabalho para a escrituração de uma empresa do tipo jurídico Limitada, com regime de tributação pelo Simples Nacional.',
   pontual:'Conforme tratativas prévias, apresentamos nossa proposta de trabalho para a execução dos serviços descritos a seguir.' };
 const ASSUNTO = { recorrente:'escrituração contábil', pontual:'Planejamento Tributário' };
 
-const S = { view:'painel', tenant:null, perfil:null, email:'', clientes:[], contatos:[], servicos:[], propostas:[], busca:'', filtroStatus:'', F:null, errosForm:[], docId:null, hist:[] };
+const S = { view:'painel', tenant:null, perfil:null, email:'', clientes:[], contatos:[], lotes:[], servicos:[], propostas:[], busca:'', filtroStatus:'', F:null, errosForm:[], docId:null, hist:[] };
 // desde a v2.2.0 o contratante é o próprio cliente: a lista é derivada do cadastro único (o código de contratos e confissões continua lendo razao_social)
 Object.defineProperty(S, 'contratantes', { get(){ return (S.clientes || []).map(cliCtt); }, set(){ /* derivado de S.clientes */ }, enumerable:false });
 const $ = id => document.getElementById(id);
@@ -918,7 +939,7 @@ const Local = {
     return db;
   },
   async carregar(){ S.email = 'modo local'; S.empresas = [{ ...this.db.tenant, perfil:'diretor' }]; return S.empresas; },
-  async entrarEmpresa(){ const d = this.db; this.migraV220(); S.tenant = { ...d.tenant, escritorio:escritorioCompleto(d.tenant.escritorio) }; S.perfil = 'diretor'; S.clientes = d.clientes; S.contatos = d.contatos; S.cadOk = true; S.servicos = d.servicos; S.propostas = d.propostas; await this.ctCarregar(); await this.cdCarregar(); },
+  async entrarEmpresa(){ const d = this.db; this.migraV220(); S.tenant = { ...d.tenant, escritorio:escritorioCompleto(d.tenant.escritorio) }; S.perfil = 'diretor'; S.clientes = d.clientes; S.contatos = d.contatos; S.cadOk = true; d.lotes = d.lotes || []; S.lotes = d.lotes; S.loteOk = true; S.servicos = d.servicos; S.propostas = d.propostas; await this.ctCarregar(); await this.cdCarregar(); },
   async inserir(tab, row){
     const r = { ...row, id:uid(), tenant_id:'local', criado_em:new Date().toISOString(), atualizado_em:new Date().toISOString(), excluido_em:null };
     if(tab==='clientes' && r.documento && this.db.clientes.some(c => !c.excluido_em && c.documento===r.documento)) throw new Error('Já existe cliente ativo com este CNPJ/CPF.');
@@ -931,6 +952,8 @@ const Local = {
       if(r.contrato_id && !this.db.contratos.some(c => c.id===r.contrato_id && c.contratante_id===r.contratante_id)) throw new Error('O contrato de origem precisa ser do mesmo devedor.');
       r.ano = +String(r.data_documento || hojeISO()).slice(0,4); this.db.cd_num[r.ano] = (this.db.cd_num[r.ano] || 0) + 1; r.numero = this.db.cd_num[r.ano]; r.pagamentos = []; if(!['rascunho','enviado'].includes(r.status)) r.status = 'rascunho';
       this.cdHist(r.id, 'criado', null, r.status); }
+    if(tab==='lotes'){ r.status = 'rascunho'; r.total_propostas = 0; r.descartado_em = null; }
+    if(tab==='propostas' && r.lote_id && !(this.db.lotes || []).some(l => l.id===r.lote_id && l.status!=='descartado')) throw new Error('O lote não pertence a este escritório ou já foi descartado.');
     if(tab==='propostas'){ r.ano = +r.data_proposta.slice(0,4); this.db.numeradores[r.ano] = (this.db.numeradores[r.ano]||0) + 1; r.numero = this.db.numeradores[r.ano];
       this.db.historico.push({ id:uid(), proposta_id:r.id, de:null, para:r.status, usuario_email:'modo local', criado_em:r.criado_em }); }
     this.db[tab].push(r); this.grava(); return r;
@@ -962,6 +985,10 @@ const Local = {
     Object.assign(r, patch, { atualizado_em:new Date().toISOString() }); this.grava(); return r;
   },
   async inserirVarios(tab, rows){ const out = []; for(const r of rows) out.push(await this.inserir(tab, r)); return out; },
+  async loteDescartar(id){ const L = (this.db.lotes || []).find(x => x.id===id); if(!L || L.status==='descartado') throw new Error('Este lote já foi descartado.');
+    const ps = this.db.propostas.filter(p => p.lote_id===id && !p.excluido_em);
+    if(ps.some(p => p.status!=='rascunho')) throw new Error('Só dá para descartar lote com todas as propostas em rascunho e sem assinatura.');
+    const agora = new Date().toISOString(); ps.forEach(p => { p.excluido_em = agora; }); Object.assign(L, { status:'descartado', descartado_em:agora, atualizado_em:agora }); this.grava(); return ps.length; },
   // v2.2.0 no modo local: contratantes viram clientes (mesma regra da migração 21 do banco)
   migraV220(){
     const d = this.db; d.contatos = d.contatos || [];
@@ -1005,7 +1032,7 @@ const Nuvem = {
   erro(e){
     const m = (e && e.message) || String(e);
     if(/Failed to fetch|NetworkError|Load failed|fetch failed/i.test(m)){ const x = new Error('Sem conexão com o banco de dados. Verifique a internet e tente de novo.'); x.semRede = true; return x; }
-    if(/PROP0\d\d/.test(m)){ const t = m.replace(/^.*PROP0\d\d:\s*/,''); return new Error(t.charAt(0).toUpperCase() + t.slice(1) + '.'); }
+    if(/PROP[01]\d\d/.test(m)){ const t = m.replace(/^.*PROP[01]\d\d:\s*/,''); return new Error(t.charAt(0).toUpperCase() + t.slice(1) + '.'); }
     if(e && e.code==='PGRST116') return new Error('Registro não encontrado ou sem permissão para alterá-lo.');
     if(e && e.code==='23505') return new Error(/contratant/i.test(m + ' ' + (e.details||'')) ? 'Já existe contratante ativo com este CNPJ/CPF neste escritório.' : /client/i.test(m + ' ' + (e.details||'')) ? 'Já existe cliente ativo com este CNPJ/CPF.' : 'Já existe um registro com estes dados.');
     if(e && e.code==='42501') return new Error('Sem permissão para esta operação (RLS). Confira se o usuário está vinculado ao escritório.');
@@ -1035,6 +1062,8 @@ const Nuvem = {
     [S.clientes, S.servicos, S.propostas] = await Promise.all([ this.todos('prop_clientes','nome'), this.todos('prop_servicos','ordem'), this.todos('prop_propostas','criado_em') ]);
     try{ S.contatos = await this.todos('prop_clientes_contatos','criado_em'); S.cadOk = true; }
     catch(e){ if(!semTabela(e)) throw e; S.contatos = []; S.cadOk = false; }   // banco ainda sem a migração 21
+    try{ S.lotes = await this.todos('prop_lotes','criado_em'); S.loteOk = true; }
+    catch(e){ if(!semTabela(e)) throw e; S.lotes = []; S.loteOk = false; }     // banco ainda sem a migração 22
     await this.ctCarregar(); await this.cdCarregar();
   },
   async inserir(tab, row){ const { data, error } = await this.sb.from(TAB[tab]).insert({ ...row, tenant_id:S.tenant.id }).select().single(); if(error) throw this.erro(error); S[tab].push(data); return data; },
@@ -1042,6 +1071,10 @@ const Nuvem = {
   async inserirVarios(tab, rows){ const out = [];
     for(let i = 0; i < rows.length; i += 200){ const { data, error } = await this.sb.from(TAB[tab]).insert(rows.slice(i, i+200).map(r => ({ ...r, tenant_id:S.tenant.id }))).select(); if(error) throw this.erro(error); S[tab].push(...data); out.push(...data); }
     return out; },
+  async loteDescartar(id){ const { error } = await this.sb.rpc('prop_lote_descartar', { p_lote:id }); if(error) throw this.erro(error);
+    S.propostas = await this.todos('prop_propostas','criado_em');
+    const { data, error:e2 } = await this.sb.from('prop_lotes').select('*').eq('id', id).single(); if(e2) throw this.erro(e2);
+    const i = S.lotes.findIndex(x => x.id===id); if(i>=0) S.lotes[i] = data; },
   async cobrancaClientes(){ const { data, error } = await this.sb.rpc('prop_cobranca_clientes', { p_tenant:S.tenant.id, p_meses:4 });
     if(error){ if(semTabela(error)) throw new Error('Rode antes no banco a migração 21 (21_migracao_v2_2_0_cadastro_unico.sql).'); throw this.erro(error); } return data; },
   async historico(id){ const { data, error } = await this.sb.from('prop_historico').select('*').eq('proposta_id', id).order('criado_em'); if(error) throw this.erro(error); return data; },
@@ -1087,11 +1120,11 @@ const selo = s => `<span class="selo ${esc(s)}">${esc(STATUS[s] || s)}</span>`;
 const esc_ = () => (S.tenant && S.tenant.escritorio) || ESCRITORIO_PADRAO;
 
 /* ===================== MOLDURA ===================== */
-const MENU = [['g','Propostas'],['painel','▦','Visão geral'],['propostas','▤','Propostas'],
+const MENU = [['g','Propostas'],['painel','▦','Visão geral'],['propostas','▤','Propostas'],['lotes','▥','Lotes'],
   ['g','Clientes'],['clientes','◉','Clientes'],
   ['g','Contratos'],['cpainel','▦','Visão geral'],['contratos','▣','Prestação de serviços'],['confissoes','◆','Confissão de dívida'],['modelo','✎','Modelos dos contratos'],
   ['g','Configurações'],['servicos','☰','Serviços'],['escritorio','⚙','Escritório'],['versoes','↻','Versões']];
-const MENU_DE = { form:'propostas', documento:'propostas', ctForm:'contratos', contrato:'contratos', clienteForm:'clientes', importar:'clientes', cdForm:'confissoes', confissao:'confissoes' };
+const MENU_DE = { form:'propostas', documento:'propostas', ctForm:'contratos', contrato:'contratos', clienteForm:'clientes', importar:'clientes', loteNovo:'lotes', lote:'lotes', cdForm:'confissoes', confissao:'confissoes' };
 function barraEmpresa(){ const e = esc_(), t = S.tenant || {};
   return `<div class="barra-empresa"><span></span><div class="empresa-centro"><b>${esc(t.nome || '')}</b><small>${esc([e.ct_cnpj ? 'CNPJ ' + docFmt(e.ct_cnpj) : '', [e.ct_cidade, e.ct_uf].filter(Boolean).join('/') || e.cidade || ''].filter(Boolean).join(' · '))}</small></div><div style="text-align:right">${(S.empresas || []).length > 1 ? '<button class="btn mini" data-act="trocarEmpresa">⇄ Trocar empresa</button>' : ''}</div></div>`; }
 function moldura(){
@@ -1108,7 +1141,7 @@ function moldura(){
   </aside>
   <main class="principal">${barraEmpresa()}<div id="conteudo"></div></main></div>`;
 }
-function hashDe(view){ if(view==='documento') return (S.docId && !S.docPrevia) ? '#/proposta/' + S.docId : null; if(view==='contrato') return (S.ctId && !S.ctPrevia) ? '#/contrato/' + S.ctId : null; if(view==='confissao') return (S.cdId && !S.cdPrevia) ? '#/confissao/' + S.cdId : null; if(['form','ctForm','clienteForm','cdForm'].includes(view)) return null; return '#/' + view; }
+function hashDe(view){ if(view==='documento') return (S.docId && !S.docPrevia) ? '#/proposta/' + S.docId : null; if(view==='contrato') return (S.ctId && !S.ctPrevia) ? '#/contrato/' + S.ctId : null; if(view==='confissao') return (S.cdId && !S.cdPrevia) ? '#/confissao/' + S.cdId : null; if(['form','ctForm','clienteForm','cdForm','loteNovo','lote'].includes(view)) return null; return '#/' + view; }
 function rota(){
   const h = location.hash;
   if(S._hashInterno === h){ S._hashInterno = null; return; }
@@ -1122,7 +1155,7 @@ function rota(){
   if(md){ const c = (S.confissoes || []).find(x => x.id===md[1].toLowerCase() && !x.excluido_em);
     if(c){ S.cdPrevia = null; S.cdId = c.id; ir('confissao'); } else { ir('confissoes'); toast('Confissão não encontrada nesta empresa.', true); } return; }
   const v0 = h.replace(/^#\//,''), v = v0==='contratantes' ? 'clientes' : v0;   // endereço antigo da tela de contratantes
-  ir(VIEWS[v] && !['form','documento','ctForm','contrato','clienteForm','cdForm','confissao'].includes(v) ? v : 'painel');
+  ir(VIEWS[v] && !['form','documento','ctForm','contrato','clienteForm','cdForm','confissao','loteNovo','lote'].includes(v) ? v : 'painel');
 }
 window.addEventListener('hashchange', () => { if(S.modoCliente || !document.querySelector('.app')) return; if(/^#\/c\//.test(location.hash)){ location.reload(); return; } if(S.tenant && S.view!=='form') rota(); else if(S.tenant && S.view==='form' && S._hashInterno!==location.hash){ if(!formAlterado() || confirm('Sair do formulário? O que não foi salvo será perdido.')){ S._Fbase = null; S.F = null; rota(); } } });
 window.addEventListener('beforeunload', ev => { if(((S.view==='form' || (S.view==='documento' && S.docPrevia)) && formAlterado()) || (['ctForm','clienteForm','contrato','cdForm','confissao'].includes(S.view) && ctSujo())){ ev.preventDefault(); ev.returnValue = ''; } });
@@ -1137,6 +1170,8 @@ function ir(view){
   if(!paraCt){ S.CTF = null; S._CTFbase = null; S.ctPrevia = null; S.CDF = null; S._CDFbase = null; S.cdPrevia = null; }
   if(view!=='clienteForm'){ S.CF = null; S._CFbase = null; if(view!=='ctForm' && view!=='cdForm') S._aposContratante = null; }
   if(view!=='importar') S.IMP = null;
+  if(S.view==='loteNovo' && view!=='loteNovo' && S.LT && (S.LT.nome || S.LT.passo > 1) && !confirm('Sair sem gerar o lote?')){ document.querySelectorAll('.menu button').forEach(b => b.classList.toggle('ativo', b.dataset.ir==='lotes')); return; }
+  if(view!=='loteNovo') S.LT = null;
   S.view = view; document.querySelectorAll('.menu button').forEach(b => b.classList.toggle('ativo', b.dataset.ir === (MENU_DE[view] || view))); VIEWS[view](); window.scrollTo(0,0); const h = hashDe(S.view); if(h && location.hash !== h){ S._hashInterno = h; location.hash = h; } }
 function topo(titulo, sub, botoes){ return `<div class="topo"><div><h1>${esc(titulo)}</h1><p>${esc(sub)}</p></div><div class="acoes">${botoes || ''}</div></div>`; }
 
@@ -1623,7 +1658,7 @@ function tabelaPropostas(arr, compacta){
   return `<div class="rolagem"><table class="lista lista-prop"><thead><tr><th>Nº</th><th>Cliente</th><th class="num">Valores</th><th>Situação e assinaturas</th><th>Validade</th><th></th></tr></thead><tbody>${arr.map(p => {
     const f = faseProp(p), [pz, pzc] = prazoTxt(p), na = (S.naoAbertos || []).filter(x => x.proposta_id===p.id);
     return `<tr><td><b>${esc(numeroFmt(p))}</b><br><small class="dica">criada ${esc(dataBR(String(p.criado_em || '').slice(0,10)) || dataBR(p.data_proposta))}</small></td>
-    <td><b>${esc(p.cliente_nome)}</b><br><small class="dica">${esc(docFmt(p.cliente_documento) || p.contato || 'sem CNPJ/CPF')}</small></td>
+    <td><b>${esc(p.cliente_nome)}</b><br><small class="dica">${esc(docFmt(p.cliente_documento) || p.contato || 'sem CNPJ/CPF')}</small>${p.lote_id ? `<br><small class="dica">lote: ${esc(((S.lotes || []).find(l => l.id===p.lote_id) || {}).nome || '—')}</small>` : ''}</td>
     <td class="num">${+p.total_mensal ? brl(p.total_mensal) + '<small class="dica">por mês</small>' : '—'}${+p.total_pontual ? `<small class="dica">+ ${brl(p.total_pontual)} pontual</small>` : ''}</td>
     <td>${selo(p.status)}${p.assinada_em ? ' <span class="selo aprovada">Assinada por todos</span>' : ''}
       <div class="prog">${f.barras.map(x => `<i class="${x ? 'ok' : ''}"></i>`).join('')}</div>
@@ -1999,7 +2034,7 @@ const ACOES = {
     if(e.cpf_responsavel && !cpfValido(e.cpf_responsavel)){ toast('CPF de quem assina pelo escritório está inválido.', true); return; }
     await tenta(async () => { await DB.salvarEscritorio(e); S.tenant.escritorio = escritorioCompleto(e); const t = (S.empresas || []).find(x => x.id===S.tenant.id); if(t) t.escritorio = e; toast('Dados do escritório salvos.'); moldura(); ir('escritorio'); });
   },
-  backup(){ baixar(`backup_propostas_${hojeISO()}.json`, JSON.stringify({ app:'artecon-propostas', versao:APP_VERSION, gerado_em:new Date().toISOString(), tenant:S.tenant, clientes:S.clientes, contatos:S.contatos, servicos:S.servicos, propostas:S.propostas, contratos:S.contratos, modelo_contrato:S.ctModelo, confissoes:S.confissoes, modelo_confissao:S.cdModelo }, null, 2), 'application/json'); },
+  backup(){ baixar(`backup_propostas_${hojeISO()}.json`, JSON.stringify({ app:'artecon-propostas', versao:APP_VERSION, gerado_em:new Date().toISOString(), tenant:S.tenant, clientes:S.clientes, contatos:S.contatos, lotes:S.lotes, servicos:S.servicos, propostas:S.propostas, contratos:S.contratos, modelo_contrato:S.ctModelo, confissoes:S.confissoes, modelo_confissao:S.cdModelo }, null, 2), 'application/json'); },
   async sair(){ await DB.sair(); location.reload(); }
 };
 
@@ -2440,7 +2475,7 @@ function telaEmpresas(emps, msg){
   document.querySelectorAll('[data-emp]').forEach(b => b.onclick = () => { if($('lembrarEmp').checked){ try{ localStorage.setItem(CHAVE_EMPRESA(), b.dataset.emp); }catch(e){} } entrarEmpresa(b.dataset.emp); });
   if($('sairEmp')) $('sairEmp').onclick = async () => { await DB.sair(); location.reload(); };
 }
-function limpaEstado(){ Object.assign(S, { cliBusca:'', cliChip:'', cliFiltro:{}, cfAba:'emp', IMP:null, _aposContratante:null, F:null, _Fbase:null, CF:null, _CFbase:null, CTF:null, _CTFbase:null, doc:null, docId:null, docPrevia:null, ctId:null, ctPrevia:null, CDF:null, _CDFbase:null, cdId:null, cdPrevia:null, cdBusca:'', cdChip:'', filtroExtra:null, filtroStatus:'', chip:'', busca:'', ctBusca:'', ctChip:'', naoAbertos:null, ops15:null, opsFiltro:null, modeloRascunho:null, modeloTipo:null }); }
+function limpaEstado(){ Object.assign(S, { LT:null, loteId:null, cliBusca:'', cliChip:'', cliFiltro:{}, cfAba:'emp', IMP:null, _aposContratante:null, F:null, _Fbase:null, CF:null, _CFbase:null, CTF:null, _CTFbase:null, doc:null, docId:null, docPrevia:null, ctId:null, ctPrevia:null, CDF:null, _CDFbase:null, cdId:null, cdPrevia:null, cdBusca:'', cdChip:'', filtroExtra:null, filtroStatus:'', chip:'', busca:'', ctBusca:'', ctChip:'', naoAbertos:null, ops15:null, opsFiltro:null, modeloRascunho:null, modeloTipo:null }); }
 async function entrarEmpresa(id){
   $('raiz').innerHTML = '<div class="login"><div class="cx"><p style="text-align:center">Carregando…</p></div></div>';
   try{ await DB.entrarEmpresa(id); }
@@ -3520,6 +3555,260 @@ async function cttAplicaReceita(auto){
   }catch(e){ if(!auto || !/14 números/.test(e.message)) toast(e.message, true); }
   finally{ const b2 = document.querySelector('[data-act="cliReceita"]'); if(b2){ b2.disabled = false; b2.textContent = 'Buscar na Receita Federal'; } }
 }
+
+/* ===================== v2.3.0: LOTES DE PROPOSTAS ===================== */
+const LOTE_TIPOS = { reajuste:'Reajuste anual', avulso:'Serviço avulso', mensal:'Mensal — 3 níveis' };
+const LOTE_SIT = { rascunho:'Em montagem', gerado:'Gerado', descartado:'Descartado' };
+const LOTE_ARRED = { centavos:'Centavos', '1':'R$ 1,00', '5':'R$ 5,00' };
+const LOTE_PGTO = { boleto_mensal:'Junto com o boleto mensal', aceitacao:'Na aceitação da proposta', parcelas:'Parcelado' };
+const LOTE_ABERTURA = {
+  reajuste:'Informamos o reajuste anual dos honorários, conforme a cláusula de reajuste do contrato de prestação de serviços. Pedimos a gentileza de confirmar o aceite pelo link de assinatura.',
+  avulso:'Conforme tratativas prévias, apresentamos nossa proposta de trabalho para a execução do serviço descrito a seguir.' };
+
+/* ----- lógica pura (sem DOM) ----- */
+function loteArredonda(v, modo){ const x = +v || 0; return modo==='5' ? Math.round(x / 5) * 5 : modo==='1' ? Math.round(x) : r2(x); }
+function loteReajuste(atual, pct, modo){ return loteArredonda((+atual || 0) * (1 + (+pct || 0) / 100), modo); }
+function pctFmt(p){ return new Intl.NumberFormat('pt-BR',{ minimumFractionDigits:2, maximumFractionDigits:4 }).format(+p || 0); }
+const listaE = a => a.length > 1 ? a.slice(0,-1).join(', ') + ' e ' + a[a.length-1] : (a[0] || '');
+// clientes que entram no lote pelos filtros (a seleção manual vem depois); lista vazia num filtro = todos
+function loteCandidatos(clientes, contatos, propostas, F){
+  const ix = {}, aberto = new Set((propostas || []).filter(p => !p.excluido_em && p.lote_id && ['rascunho','enviada','negociacao'].includes(p.status)).map(p => p.cliente_id));
+  (contatos || []).filter(k => !k.excluido_em).forEach(k => { (ix[k.cliente_id] = ix[k.cliente_id] || []).push(k); });
+  const tem = (arr, v) => !(arr && arr.length) || arr.includes(v), num = v => v!==null && v!==undefined && String(v).trim()!=='';
+  return (clientes || []).filter(c => !c.excluido_em
+    && tem(F.regimes, c.regime || '') && tem(F.situacoes, c.situacao || 'ativa') && tem(F.atividades, c.atividade || '')
+    && (!(F.departamentos || []).length || F.departamentos.some(d => (c.departamentos || []).includes(d)))
+    && (!F.so_email || (ix[c.id] || []).some(k => k.email && k.recebe_email))
+    && (!F.sem_lote_aberto || !aberto.has(c.id))
+    && (!num(F.hon_min) || (+c.honorario_atual || 0) >= +F.hon_min)
+    && (!num(F.hon_max) || (c.honorario_atual!=null && +c.honorario_atual <= +F.hon_max)));
+}
+// parcelas do serviço avulso: a última absorve os centavos
+function loteParcelas(total, n, primeira){
+  const base = Math.floor(r2(total) * 100 / n) / 100, out = [];
+  for(let i = 0; i < n; i++) out.push({ valor:i===n-1 ? r2(total - base * (n-1)) : base, data:primeira ? somaMesesDia(primeira, i) : '', descricao:primeira ? '' : `${i+1}ª parcela junto com o boleto mensal` });
+  return out;
+}
+// a proposta que o lote gera para um cliente (mesmo formato da proposta feita à mão)
+function lotePropostaDe(L, c, ctx){
+  const P = L.parametros || {}, cond = { ...(ctx.condBase || {}), aceite:true };
+  const base = { cliente_id:c.id, cliente_nome:c.nome, cliente_documento:c.documento || null, contato:c.contato || null, tratamento:c.tratamento || null,
+    abertura:String(L.abertura || '').trim() || null, status:'rascunho', data_proposta:L.data_proposta, validade:somaDias(L.data_proposta, parseInt(L.validade_dias) || 10),
+    lote_id:L.id || null, observacoes:`Gerada pelo lote "${L.nome}".` };
+  if(L.tipo==='reajuste'){
+    const atual = r2(c.honorario_atual), novo = loteReajuste(atual, P.percentual, P.arredondamento), dep = (c.departamentos || []).map(d => DEPTOS[d]).filter(Boolean);
+    cond.adicionais = `O novo valor de R$ ${num2(novo)} mensais vigora a partir de ${P.vigencia ? dataBR(P.vigencia) : 'a próxima competência'}, em substituição ao valor atual de R$ ${num2(atual)}, com reajuste de ${pctFmt(P.percentual)}%${P.indice ? ' (' + P.indice + ')' : ''}.`;
+    return { ...base, modelo:'recorrente', assunto:P.assunto || 'a prestação de serviços contábeis',
+      itens:[{ nome:'Honorários mensais', descricao:(dep.length ? 'departamentos ' + listaE(dep) + '; ' : '') + `valor atual R$ ${num2(atual)}, reajustado em ${pctFmt(P.percentual)}%`, tipo:'mensal', valor:novo, qtd:0 }],
+      condicoes:cond, total_mensal:novo, total_pontual:0 };
+  }
+  const s = ctx.servico || {}, preco = r2(P.preco);
+  Object.assign(cond, { pagamento_pontual:P.pagamento || 'boleto_mensal', vencimento_pontual:'', parcelas:[], adicional_anual:false, revisao_bimestral:false, taxas_abertura:false });
+  if(cond.pagamento_pontual==='parcelas') cond.parcelas = loteParcelas(preco, Math.max(2, parseInt(P.parcelas) || 2), P.primeiro_vencimento || '');
+  return { ...base, modelo:'pontual', assunto:s.nome || P.servico_nome || 'serviço', itens:[{ nome:s.nome || P.servico_nome || 'Serviço', descricao:s.descricao || '', tipo:'pontual', valor:preco, qtd:0 }],
+    condicoes:cond, total_mensal:0, total_pontual:preco };
+}
+// o que impede a proposta (bloqueia) e o que vai atrapalhar a assinatura e o envio (avisos)
+function lotePendencias(L, c, ks){
+  const bloqueia = [], avisos = [];
+  if(L.tipo==='reajuste' && !(+c.honorario_atual > 0)) bloqueia.push('sem honorário atual');
+  if(!(ks || []).some(k => k.email && k.recebe_email)) avisos.push('sem e-mail para envio');
+  if(!(ks || []).some(k => k.assina)) avisos.push('sem contato que assina');
+  return { bloqueia, avisos };
+}
+
+/* ----- utilidades de tela ----- */
+function loteAviso(){
+  if(S.loteOk === false) return '<div class="aviso ambar"><span>Os lotes ainda não estão no banco. Rode no SQL Editor do projeto <b>cobranca-pro</b> a migração <b>22_migracao_v2_3_0_lotes.sql</b> (depois da 21) e recarregue a página.</span></div>';
+  return cadAviso();
+}
+function exigeLote(){ if(S.loteOk === false){ toast('Rode antes no banco a migração 22 (22_migracao_v2_3_0_lotes.sql).', true); return false; } return exigeCad(); }
+const lotePropostas = id => ativos(S.propostas).filter(p => p.lote_id===id);
+function loteResumoTxt(L){ const P = L.parametros || {};
+  if(L.tipo==='reajuste') return `Reajuste anual de ${pctFmt(P.percentual)}%` + (P.vigencia ? ' a partir de ' + dataBR(P.vigencia) : '');
+  if(L.tipo==='avulso') return `Serviço avulso: ${P.servico_nome || '—'} por ${brl(P.preco)}`;
+  return LOTE_TIPOS[L.tipo] || L.tipo; }
+function loteSelecaoTxt(F){ F = F || {}; const rot = (arr, mapa, vazio) => (arr && arr.length) ? arr.map(k => mapa[k] || vazio).join(', ') : '';
+  return [rot(F.regimes, REG_CURTO, 'sem regime'), rot(F.situacoes, SITUACOES, ''), rot(F.atividades, ATIVIDADES, 'sem atividade'), rot(F.departamentos, DEPTOS, '')].filter(Boolean).join(' · ') || 'todos os clientes'; }
+function loteVazio(base){
+  const e = esc_(), hoje = hojeISO(), ano = +hoje.slice(0,4);
+  const L = { passo:1, nome:'', tipo:'reajuste', data_proposta:hoje, validade_dias:parseInt(e.validade_dias) || 10, abertura:LOTE_ABERTURA.reajuste,
+    parametros:{ percentual:'', indice:e.indice || 'IGP-M/FGV', vigencia:`${ano+1}-01-01`, arredondamento:'centavos', assunto:'a prestação de serviços contábeis', exige_foto:true, servico_id:'', servico_nome:'', preco:'', pagamento:'boleto_mensal', parcelas:3, primeiro_vencimento:'' },
+    filtros:{ regimes:[], situacoes:['ativa'], atividades:[], departamentos:[], so_email:false, sem_lote_aberto:true, hon_min:'', hon_max:'' }, fora:[], tirados:[] };
+  if(base){ Object.assign(L, { nome:base.nome + ' (novo)', tipo:base.tipo, validade_dias:base.validade_dias, abertura:base.abertura || L.abertura,
+    parametros:{ ...L.parametros, ...JSON.parse(JSON.stringify(base.parametros || {})) }, filtros:{ ...L.filtros, ...JSON.parse(JSON.stringify(base.filtros || {})) } });
+    if(L.tipo==='reajuste'){ L.parametros.percentual = ''; L.parametros.vigencia = `${ano+1}-01-01`; } }   // próximo reajuste: só falta o percentual novo
+  return L;
+}
+function loteValidaPasso1(L){
+  const er = [], P = L.parametros;
+  if(!String(L.nome || '').trim()) er.push('Dê um nome ao lote.');
+  if(!L.data_proposta) er.push('Informe a data das propostas.');
+  if(!(parseInt(L.validade_dias) >= 1 && parseInt(L.validade_dias) <= 365)) er.push('Validade entre 1 e 365 dias.');
+  if(L.tipo==='reajuste'){ if(!(+P.percentual > 0 && +P.percentual <= 100)) er.push('Informe o percentual do reajuste (maior que zero).'); if(!P.vigencia) er.push('Informe a data de início do novo valor.'); }
+  if(L.tipo==='avulso'){ if(!P.servico_id) er.push('Escolha o serviço do catálogo.'); if(!(+P.preco > 0)) er.push('Informe o preço do serviço.');
+    if(P.pagamento==='parcelas' && !(parseInt(P.parcelas) >= 2 && parseInt(P.parcelas) <= 24)) er.push('Parcelado: de 2 a 24 parcelas.'); }
+  if(L.tipo==='mensal') er.push('O lote mensal com 3 níveis chega com a tabela de preços (v2.5/v2.6).');
+  return er;
+}
+function loteContexto(L){ return { condBase:novaF().condicoes, servico:L.tipo==='avulso' ? S.servicos.find(s => s.id===L.parametros.servico_id) : null }; }
+function loteSelecionados(L){ const fora = new Set(L.fora); return loteCandidatos(S.clientes, S.contatos, S.propostas, L.filtros).filter(c => !fora.has(c.id)).sort((a,b) => a.nome.localeCompare(b.nome,'pt-BR')); }
+function loteLinhas(L){
+  const ix = cliIndiceContatos(), ctx = loteContexto(L), tirados = new Set(L.tirados);
+  return loteSelecionados(L).map(c => { const pd = lotePendencias(L, c, ix[c.id]), row = pd.bloqueia.length ? null : lotePropostaDe(L, c, ctx);
+    const er = row ? validarProposta(row) : []; return { c, row, bloqueia:[...pd.bloqueia, ...er], avisos:pd.avisos, gera:!!row && !er.length && !tirados.has(c.id), tirado:tirados.has(c.id) }; });
+}
+
+Object.assign(VIEWS, {
+  lotes(){
+    const arr = (S.lotes || []).filter(l => !l.excluido_em).slice().sort((a,b) => String(b.criado_em) < String(a.criado_em) ? -1 : 1);
+    const linha = L => { const ps = lotePropostas(L.id), n = ps.length, f = s => ps.filter(p => s.includes(p.status)).length, sai = n - f(['rascunho']);
+      return `<tr class="${L.status==='descartado' ? 'desab' : ''}"><td><b>${esc(L.nome)}</b><br><small class="dica">criado em ${esc(dataBR(String(L.criado_em || '').slice(0,10)))} · ${esc(LOTE_SIT[L.status] || L.status)}</small></td>
+        <td>${esc(loteResumoTxt(L))}</td><td><small>${esc(loteSelecaoTxt(L.filtros))}</small></td><td class="num">${L.status==='descartado' ? '—' : n}</td>
+        <td>${L.status==='descartado' ? '<small class="dica">descartado</small>' : `<div class="barra"><i style="width:${n ? Math.round(sai*100/n) : 0}%"></i></div><small class="dica">${f(['rascunho'])} em rascunho · ${f(['enviada','negociacao'])} enviadas · ${f(['aprovada'])} aprovadas${f(['perdida']) ? ' · ' + f(['perdida']) + ' perdidas' : ''}</small>`}</td>
+        <td class="acoes-linha"><button class="btn mini" data-act="loteAbrir" data-id="${L.id}">Abrir</button></td></tr>`; };
+    $('conteudo').innerHTML = topo('Lotes','Gere várias propostas de uma vez: reajuste anual ou serviço avulso. Você monta o lote do jeito que quiser.','<button class="btn primario" data-act="loteNovo">Novo lote</button>') + loteAviso() +
+      `<div class="painel rolagem">${arr.length ? `<table class="lista"><thead><tr><th>Lote</th><th>Cobrança</th><th>Seleção</th><th class="num">Propostas</th><th>Andamento</th><th></th></tr></thead><tbody>${arr.map(linha).join('')}
+        <tr class="desab"><td><b>Readequação ao novo modelo</b><br><small class="dica">disponível com a tabela de preços (v2.5/v2.6)</small></td><td>Mensal — 3 níveis</td><td></td><td class="num">—</td><td></td><td></td></tr></tbody></table>`
+        : '<div class="vazio">Nenhum lote ainda. Em "Novo lote", escolha o que oferecer (reajuste anual ou serviço avulso), filtre os clientes por regime, situação, atividade e departamento, confira a prévia e gere as propostas em rascunho.</div>'}</div>`;
+  },
+
+  loteNovo(){
+    const L = S.LT, P = L.parametros, F = L.filtros, passo = L.passo;
+    const passos = ['1. O que oferecer','2. Quem recebe','3. Prévia','4. Gerar'].map((t,i) => `<span class="${i+1===passo ? 'on' : i+1 < passo ? 'feito' : ''}">${t}</span>`).join('');
+    const inp = (k, rot, cls, tipo, val, attr) => `<div class="campo ${cls||''}"><label for="lt_${k}">${rot}</label><input type="${tipo||'text'}" id="lt_${k}" ${attr} value="${esc(val ?? '')}"></div>`;
+    let corpo = '';
+    if(passo===1){ const servs = ativos(S.servicos).slice().sort((a,b) => a.ordem - b.ordem);
+      const org = (k, tit, txt, desab) => `<button class="origem ${L.tipo===k ? 'on' : ''}" data-act="loteTipo" data-tipo="${k}" ${desab ? 'disabled' : ''}><b>${tit}</b><span>${txt}</span></button>`;
+      corpo = `<div class="painel"><h2>Lote</h2><div class="grade">
+        ${inp('nome','Nome do lote *','','text',L.nome,'data-lt="nome" placeholder="ex.: Reajuste 2027 — Simples Nacional"')}
+        ${inp('data','Data das propostas','c1','date',L.data_proposta,'data-lt="data_proposta"')}${inp('validade','Validade (dias)','c1','number',L.validade_dias,'data-lt="validade_dias" min="1" max="365"')}</div></div>
+      <div class="painel"><h2>Como cobra</h2><div class="origens">
+        ${org('reajuste','Reajuste anual','Proposta com aceite: honorário atual de cada cliente + o percentual que você informa neste lote.')}
+        ${org('avulso','Serviço avulso','Um serviço do catálogo com preço único (ex.: análise tributária, IRPF, certificado digital).')}
+        ${org('mensal','Mensal — 3 níveis','Essencial, Gestão e Estratégico pelo enquadramento. Disponível com a tabela de preços (v2.5/v2.6).', true)}</div>
+        ${L.tipo==='reajuste' ? `<div class="grade" style="margin-top:12px">
+          ${inp('pct','Percentual do reajuste (%) *','c1','text',P.percentual==='' ? '' : pctFmt(P.percentual),'data-ltp="percentual" data-num="1" placeholder="ex.: 4,50"')}
+          ${inp('indice','Índice (texto do documento)','','text',P.indice,'data-ltp="indice"')}
+          ${inp('vig','Novo valor a partir de *','c1','date',P.vigencia,'data-ltp="vigencia"')}
+          <div class="campo c1"><label for="lt_arred">Arredondamento</label><select id="lt_arred" data-ltp="arredondamento">${Object.entries(LOTE_ARRED).map(([k,t]) => `<option value="${k}" ${P.arredondamento===k ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select></div>
+          ${inp('assunto','Assunto (sai em "O valor dos honorários para …")','c4','text',P.assunto,'data-ltp="assunto"')}</div>` : ''}
+        ${L.tipo==='avulso' ? `<div class="grade" style="margin-top:12px">
+          <div class="campo"><label for="lt_serv">Serviço do catálogo *</label><select id="lt_serv" data-ltp="servico_id"><option value="">— escolha —</option>${servs.map(s => `<option value="${s.id}" ${P.servico_id===s.id ? 'selected' : ''}>${esc(s.nome)}${+s.valor_padrao ? ' — ' + esc(brl(s.valor_padrao)) : ''}</option>`).join('')}</select></div>
+          ${inp('preco','Preço (R$) *','c1','text',P.preco==='' ? '' : num2(P.preco),'data-ltp="preco" data-num="1"')}
+          <div class="campo c1"><label for="lt_pgto">Pagamento</label><select id="lt_pgto" data-ltp="pagamento">${Object.entries(LOTE_PGTO).map(([k,t]) => `<option value="${k}" ${P.pagamento===k ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select></div>
+          ${P.pagamento==='parcelas' ? inp('npar','Número de parcelas','c1','number',P.parcelas,'data-ltp="parcelas" min="2" max="24"') + inp('venc1','1º vencimento (opcional)','c1','date',P.primeiro_vencimento,'data-ltp="primeiro_vencimento"') : ''}</div>
+          ${servs.length ? '' : '<p class="dica">O catálogo está vazio: cadastre o serviço em Configurações › Serviços.</p>'}` : ''}
+        <div class="campo" style="margin-top:12px"><label for="lt_abert">Texto de abertura</label><textarea id="lt_abert" rows="3" data-lt="abertura">${esc(L.abertura || '')}</textarea></div>
+        <label class="marcar"><input type="checkbox" data-ltpc="exige_foto" ${P.exige_foto!==false ? 'checked' : ''}> Exigir foto com documento na assinatura do cliente</label>
+        <p class="dica" style="margin:6px 0 0">Para o próximo ano, abra este lote e use "Novo lote com base neste": tudo vem preenchido e só falta o percentual novo.</p></div>
+      <div class="botoes-fim" style="display:flex;justify-content:space-between"><button class="btn" data-act="loteCancelar">Cancelar</button><button class="btn primario" data-act="lotePasso" data-p="2">Próximo: quem recebe</button></div>`;
+    }
+    if(passo===2){ const sel = loteSelecionados(L), cand = loteCandidatos(S.clientes, S.contatos, S.propostas, F), fora = new Set(L.fora), ix = cliIndiceContatos();
+      const marcas = (k, mapa, extra) => Object.entries(mapa).concat(extra || []).map(([v,t]) => `<label><input type="checkbox" data-ltf="${k}" value="${v}" ${(F[k] || []).includes(v) ? 'checked' : ''}> ${esc(t)}</label>`).join('');
+      corpo = `<div class="painel"><h2>Filtros <small class="dica">(nada marcado num grupo = todos)</small></h2>
+        <div class="grupo-filtro"><b>Regime tributário</b>${marcas('regimes', REGIMES, [['','sem regime']])}</div>
+        <div class="grupo-filtro"><b>Situação</b>${marcas('situacoes', SITUACOES)}</div>
+        <div class="grupo-filtro"><b>Atividade</b>${marcas('atividades', ATIVIDADES, [['','não informada']])}</div>
+        <div class="grupo-filtro"><b>Departamentos</b>${marcas('departamentos', DEPTOS)}</div>
+        <div class="grupo-filtro"><b>Outros</b><label><input type="checkbox" data-ltfc="so_email" ${F.so_email ? 'checked' : ''}> só quem tem e-mail para envio</label><label><input type="checkbox" data-ltfc="sem_lote_aberto" ${F.sem_lote_aberto ? 'checked' : ''}> sem proposta aberta de outro lote</label>
+          <label>Honorário de <input class="mini-in" type="text" data-ltfv="hon_min" value="${F.hon_min==='' || F.hon_min==null ? '' : esc(num2(F.hon_min))}" aria-label="Honorário mínimo"> a <input class="mini-in" type="text" data-ltfv="hon_max" value="${F.hon_max==='' || F.hon_max==null ? '' : esc(num2(F.hon_max))}" aria-label="Honorário máximo"></label></div></div>
+      <div class="painel"><h2>Clientes <span class="contador">${sel.length} de ${cand.length} selecionados</span></h2>
+        ${cand.length ? `<div class="rolagem"><table class="lista"><thead><tr><th><input type="checkbox" data-ltseltodos="1" ${sel.length===cand.length ? 'checked' : ''} aria-label="Marcar todos"></th><th>Cliente</th><th>Regime</th><th>Situação</th><th class="num">Honorário atual</th><th>Envio</th></tr></thead><tbody>
+          ${cand.slice().sort((a,b) => a.nome.localeCompare(b.nome,'pt-BR')).map(c => `<tr class="${fora.has(c.id) ? 'desab' : ''}"><td><input type="checkbox" data-ltsel="${c.id}" ${fora.has(c.id) ? '' : 'checked'} aria-label="Incluir ${esc(c.nome)}"></td><td><b>${esc(c.nome)}</b><br><small>${esc(docFmt(c.documento) || 'sem CNPJ/CPF')}</small></td>
+            <td>${regSelo(c.regime)}</td><td>${esc(SITUACOES[c.situacao] || 'Ativa')}</td><td class="num">${c.honorario_atual!=null ? brl(c.honorario_atual) : '—'}</td><td>${cliTemEmail(c, ix) ? '<span class="ok-tag">e-mail</span>' : '<span class="al-tag">sem e-mail</span>'}</td></tr>`).join('')}</tbody></table></div>`
+          : '<div class="vazio">Nenhum cliente com estes filtros.</div>'}</div>
+      <div class="botoes-fim" style="display:flex;justify-content:space-between"><button class="btn" data-act="lotePasso" data-p="1">Voltar</button><button class="btn primario" data-act="lotePasso" data-p="3">Próximo: prévia</button></div>`;
+    }
+    if(passo===3){ const ls = loteLinhas(L), gera = ls.filter(x => x.gera), blo = ls.filter(x => x.bloqueia.length), avi = ls.filter(x => x.gera && x.avisos.length);
+      const hoje = r2(gera.reduce((a,x) => a + (+x.c.honorario_atual || 0), 0)), depois = r2(gera.reduce((a,x) => a + (x.row.total_mensal || 0) + (x.row.total_pontual || 0), 0));
+      corpo = `<div class="painel"><h2>Prévia do lote</h2>
+        <div class="resumo-topo r4">
+          <div class="ind"><div class="rot">Propostas</div><b>${gera.length}</b><div class="rot">uma por cliente${blo.length ? ' · ' + blo.length + ' não geram' : ''}</div></div>
+          ${L.tipo==='reajuste' ? `<div class="ind"><div class="rot">Honorários hoje</div><b>${brl(hoje)}</b><div class="rot">por mês</div></div><div class="ind"><div class="rot">Depois do reajuste</div><b>${brl(depois)}</b><div class="rot">por mês · +${brl(r2(depois - hoje))}</div></div>`
+            : `<div class="ind"><div class="rot">Serviço</div><b style="font-size:16px">${esc(L.parametros.servico_nome || '—')}</b><div class="rot">${esc(brl(L.parametros.preco))} cada</div></div><div class="ind"><div class="rot">Total do lote</div><b>${brl(depois)}</b><div class="rot">${esc(LOTE_PGTO[L.parametros.pagamento] || '')}</div></div>`}
+          <div class="ind alerta-ind"><div class="rot">Com alerta</div><b>${avi.length}</b><div class="rot">geram, mas falta e-mail ou quem assina</div></div></div>
+        <div class="rolagem"><table class="lista"><thead><tr><th></th><th>Cliente</th>${L.tipo==='reajuste' ? '<th class="num">Atual</th><th class="num">Novo</th>' : '<th class="num">Valor</th>'}<th>Alerta</th></tr></thead><tbody>
+          ${ls.map(x => `<tr class="${x.gera ? '' : 'desab'}"><td>${x.bloqueia.length ? '' : `<input type="checkbox" data-lttira="${x.c.id}" ${x.tirado ? '' : 'checked'} aria-label="Gerar para ${esc(x.c.nome)}">`}</td><td><b>${esc(x.c.nome)}</b></td>
+            ${L.tipo==='reajuste' ? `<td class="num">${x.c.honorario_atual!=null ? brl(x.c.honorario_atual) : '—'}</td><td class="num">${x.row ? brl(x.row.total_mensal) : '—'}</td>` : `<td class="num">${x.row ? brl(x.row.total_pontual) : '—'}</td>`}
+            <td>${x.bloqueia.map(t => `<span class="al-tag">não gera: ${esc(t)}</span>`).join('')}${x.avisos.map(t => `<span class="al-tag" style="background:#fffbc2;color:#5c5600">${esc(t)}</span>`).join('')}${!x.bloqueia.length && !x.avisos.length ? '<span class="ok-tag">pronta</span>' : ''}</td></tr>`).join('')}</tbody></table></div>
+        <p class="dica" style="margin-top:8px">As propostas saem em <b>rascunho</b>, numeradas normalmente, e podem ser abertas e ajustadas uma a uma. Enquanto todas estiverem em rascunho, o lote inteiro pode ser descartado. Assinatura em lote e envio em massa chegam na v2.4.</p></div>
+      <div id="ltProg" class="imp-prog"></div>
+      <div class="botoes-fim" style="display:flex;justify-content:space-between"><button class="btn" data-act="lotePasso" data-p="2">Voltar</button><button class="btn primario" data-act="loteGerar" ${gera.length ? '' : 'disabled'}>Gerar ${gera.length} proposta${gera.length===1 ? '' : 's'} em rascunho</button></div>`;
+    }
+    $('conteudo').innerHTML = topo('Novo lote','Monte o lote, escolha os clientes e confira antes de gerar.','<button class="btn" data-act="loteCancelar">Cancelar</button>') + loteAviso() + `<div class="passos">${passos}</div><div id="errosLT"></div>` + corpo;
+  },
+
+  lote(){
+    const L = (S.lotes || []).find(x => x.id===S.loteId); if(!L){ ir('lotes'); return; }
+    const ps = lotePropostas(L.id).sort((a,b) => (a.ano - b.ano) || (a.numero - b.numero)), n = ps.length, f = s => ps.filter(p => s.includes(p.status)).length;
+    const ix = cliIndiceContatos(), porId = Object.fromEntries(S.clientes.map(c => [c.id, c]));
+    const pend = ps.map(p => ({ p, c:porId[p.cliente_id] })).filter(x => x.c).map(x => ({ ...x, a:lotePendencias(L, x.c, ix[x.c.id]).avisos })).filter(x => x.a.length);
+    const podeDescartar = L.status!=='descartado' && ps.every(p => p.status==='rascunho' && !temAssinatura(p));
+    const ind = (rot, v, sub) => `<div class="ind"><div class="rot">${rot}</div><b>${v}</b>${sub ? `<div class="rot">${sub}</div>` : ''}</div>`;
+    $('conteudo').innerHTML = topo(L.nome, `${loteResumoTxt(L)} · ${loteSelecaoTxt(L.filtros)} · criado em ${dataBR(String(L.criado_em || '').slice(0,10))}`,
+      `<button class="btn" data-ir="lotes">Voltar</button><button class="btn" data-act="loteBase" data-id="${L.id}">Novo lote com base neste</button>${n ? `<button class="btn" data-act="loteVerLista" data-id="${L.id}">Ver na lista de propostas</button>` : ''}${podeDescartar ? `<button class="btn" data-act="loteDescartar" data-id="${L.id}">Descartar lote</button>` : ''}`) + loteAviso() +
+      (L.status==='descartado' ? `<div class="aviso"><span>Lote descartado em ${esc(dataBR(String(L.descartado_em || L.atualizado_em || '').slice(0,10)))}: as propostas dele foram excluídas.</span></div>` : '') + `
+      <div class="resumo-topo">${ind('Propostas', n)}${ind('Rascunho', f(['rascunho']))}${ind('Enviadas', f(['enviada','negociacao']))}${ind('Aprovadas', f(['aprovada']), ps.filter(p => p.assinada_em).length + ' assinadas por todos')}${ind('Perdidas', f(['perdida']))}</div>
+      ${pend.length ? `<div class="painel"><h2>Pendências para assinar e enviar <span class="contador">${pend.length}</span></h2><ul class="pend" style="margin:0;padding-left:18px">${pend.slice(0,60).map(x => `<li>${esc(x.c.nome)} — ${esc(x.a.join(', '))} <button class="elo" data-act="cliente" data-id="${x.c.id}">abrir cadastro</button></li>`).join('')}</ul>${pend.length>60 ? `<p class="dica">… e mais ${pend.length-60}.</p>` : ''}
+        <p class="dica" style="margin:8px 0 0">Corrija no cadastro do cliente (aba Contatos para envio). A assinatura em lote e o envio em massa (v2.4) deixam de fora quem tiver pendência.</p></div>` : ''}
+      <div class="painel"><h2>Propostas do lote</h2>${tabelaPropostas(ps)}</div>`;
+  }
+});
+
+Object.assign(ACOES, {
+  loteNovo(){ if(!exigeLote()) return; S.LT = loteVazio(); ir('loteNovo'); },
+  loteBase(el){ if(!exigeLote()) return; const L = (S.lotes || []).find(x => x.id===el.dataset.id); if(!L) return; S.LT = loteVazio(L); ir('loteNovo'); toast('Lote novo com os dados do anterior. Confira e informe o que mudou.'); },
+  loteAbrir(el){ S.loteId = el.dataset.id; ir('lote'); },
+  loteCancelar(){ if(S.LT && (S.LT.nome || S.LT.passo > 1) && !confirm('Sair sem gerar o lote?')) return; S.LT = null; ir('lotes'); },
+  loteTipo(el){ const L = S.LT, t = el.dataset.tipo; if(L.tipo===t) return; if(L.abertura===LOTE_ABERTURA[L.tipo]) L.abertura = LOTE_ABERTURA[t] || ''; L.tipo = t; VIEWS.loteNovo(); },
+  lotePasso(el){ const L = S.LT, p = +el.dataset.p;
+    if(p > L.passo){ const er = L.passo===1 ? loteValidaPasso1(L) : L.passo===2 && !loteSelecionados(L).length ? ['Selecione pelo menos um cliente.'] : [];
+      if(er.length){ $('errosLT').innerHTML = `<div class="erros" role="alert"><b>Antes de seguir:</b><ul>${er.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>`; window.scrollTo(0,0); return; } }
+    L.passo = p; VIEWS.loteNovo(); window.scrollTo(0,0); },
+  async loteGerar(el){
+    if(!exigeLote()) return; const L = S.LT, linhas = loteLinhas(L).filter(x => x.gera); if(!linhas.length) return;
+    if(!confirm(`Gerar ${linhas.length} proposta(s) em rascunho no lote "${L.nome.trim()}"?`)) return;
+    el.disabled = true; const prog = t => { const p = $('ltProg'); if(p) p.textContent = t; };
+    await tenta(async () => {
+      prog('Criando o lote…');
+      const lote = await DB.inserir('lotes', { nome:L.nome.trim(), tipo:L.tipo, parametros:L.parametros, filtros:L.filtros, data_proposta:L.data_proposta, validade_dias:parseInt(L.validade_dias) || 10, abertura:String(L.abertura || '').trim() || null });
+      const ctx = loteContexto(L), foto = L.parametros.exige_foto!==false;
+      const rows = linhas.map(x => ({ ...lotePropostaDe({ ...L, id:lote.id }, x.c, ctx), ...(MODO_NUVEM ? { exige_foto:foto } : {}) }));
+      prog(`Gerando ${rows.length} proposta(s)…`); const criadas = await DB.inserirVarios('propostas', rows);
+      await DB.alterar('lotes', lote.id, { status:'gerado', total_propostas:criadas.length });
+      toast(`Lote gerado: ${criadas.length} proposta(s) em rascunho, de ${numeroFmt(criadas[0])} a ${numeroFmt(criadas[criadas.length-1])}.`);
+      S.LT = null; S.loteId = lote.id; ir('lote'); });
+    if(S.LT) el.disabled = false; },
+  async loteDescartar(el){ const L = (S.lotes || []).find(x => x.id===el.dataset.id); if(!L) return;
+    if(S.perfil!=='diretor'){ toast('Só o diretor descarta lotes.', true); return; }
+    const n = lotePropostas(L.id).length;
+    if(!confirm(`Descartar o lote "${L.nome}"? As ${n} proposta(s) em rascunho dele serão excluídas. Não dá para desfazer.`)) return;
+    await tenta(async () => { await DB.loteDescartar(L.id); toast('Lote descartado.'); VIEWS.lote(); }); },
+  loteVerLista(el){ const L = (S.lotes || []).find(x => x.id===el.dataset.id); if(!L) return; S.chip = ''; S.filtroStatus = ''; S.busca = ''; S.filtroExtra = { rotulo:'lote ' + L.nome, fn:p => p.lote_id===L.id }; ir('propostas'); }
+});
+
+/* ----- digitação no assistente do lote ----- */
+document.addEventListener('input', ev => {
+  const el = ev.target, L = S.LT; if(!L || S.view!=='loteNovo') return;
+  if(el.dataset.lt){ L[el.dataset.lt] = el.value; return; }
+  if(el.dataset.ltp && el.tagName!=='SELECT'){ L.parametros[el.dataset.ltp] = el.dataset.num ? (String(el.value).trim()==='' ? '' : parseValor(el.value)) : el.value; return; }
+  if(el.dataset.ltfv){ L.filtros[el.dataset.ltfv] = String(el.value).trim()==='' ? '' : parseValor(el.value); }
+});
+document.addEventListener('change', ev => {
+  const el = ev.target, L = S.LT; if(!L || S.view!=='loteNovo') return;
+  if(el.dataset.ltp && el.tagName==='SELECT'){ const k = el.dataset.ltp; L.parametros[k] = el.value;
+    if(k==='servico_id'){ const s = S.servicos.find(x => x.id===el.value); L.parametros.servico_nome = s ? s.nome : ''; if(s && +s.valor_padrao) L.parametros.preco = r2(s.valor_padrao); }
+    if(k==='servico_id' || k==='pagamento') VIEWS.loteNovo(); return; }
+  if(el.dataset.ltp && el.dataset.num){ const v = L.parametros[el.dataset.ltp]; el.value = v==='' ? '' : (el.dataset.ltp==='percentual' ? pctFmt(v) : num2(v)); return; }
+  if(el.dataset.ltpc){ L.parametros[el.dataset.ltpc] = el.checked; return; }
+  if(el.dataset.ltf){ const a = new Set(L.filtros[el.dataset.ltf] || []); el.checked ? a.add(el.value) : a.delete(el.value); L.filtros[el.dataset.ltf] = [...a]; L.fora = []; VIEWS.loteNovo(); return; }
+  if(el.dataset.ltfc){ L.filtros[el.dataset.ltfc] = el.checked; L.fora = []; VIEWS.loteNovo(); return; }
+  if(el.dataset.ltfv){ L.fora = []; VIEWS.loteNovo(); return; }
+  if(el.dataset.ltseltodos){ L.fora = el.checked ? [] : loteCandidatos(S.clientes, S.contatos, S.propostas, L.filtros).map(c => c.id); VIEWS.loteNovo(); return; }
+  if(el.dataset.ltsel){ const a = new Set(L.fora); el.checked ? a.delete(el.dataset.ltsel) : a.add(el.dataset.ltsel); L.fora = [...a]; VIEWS.loteNovo(); return; }
+  if(el.dataset.lttira){ const a = new Set(L.tirados); el.checked ? a.delete(el.dataset.lttira) : a.add(el.dataset.lttira); L.tirados = [...a]; VIEWS.loteNovo(); }
+});
 
 /* ===================== PÁGINA DO CLIENTE (só a proposta, sem login) ===================== */
 const Cliente = { sb:null, token:null, dados:null,

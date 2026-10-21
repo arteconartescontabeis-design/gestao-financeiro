@@ -43,11 +43,19 @@ App de propostas de honorários, contratos e confissões de dívida da **Artecon
   - Importação com conferência: Cobrança Pro e planilha "Relação de Empresas e seus Regimes" do S3D (xlsx, lida com SheetJS do cdnjs).
     Honorário atual = valor mensal que se repete nos boletos; empate, o menor; sem repetição, a mediana.
     Filial S3D "Regime Normal" herda o regime da matriz; código do Questor da filial = `código da matriz/nº do estabelecimento`.
+- **v2.3.0 — lotes de propostas** (migração `sql/22_migracao_v2_3_0_lotes.sql`, reversão `sql/91_reversao_v2_3_0.sql`; exige a 21):
+  - `prop_lotes` (tipo reajuste | avulso | mensal; situação rascunho → gerado → descartado; `parametros` e `filtros` em jsonb) e
+    `prop_propostas.lote_id` (não muda depois de criada; gatilho `prop_propostas_lote`, PROP103).
+  - Guarda `prop_lotes_guarda` (PROP101/102): escritório, autoria e tipo não mudam; descartar só pela RPC
+    `prop_lote_descartar` (só diretor, todas as propostas em rascunho e sem assinatura; exclui as propostas, PROP104).
+  - Assistente em 4 passos (`VIEWS.loteNovo`, estado em `S.LT`): o que oferecer, quem recebe (filtros + seleção), prévia, gerar.
+    As propostas saem pelo mesmo formato da proposta manual (`lotePropostaDe`), em rascunho, com aceite, e passam em `validarProposta`.
+  - Reajuste: honorário atual × (1 + %), arredondamento centavos/R$ 1/R$ 5 (para o mais próximo); vigência e índice entram como
+    cláusula adicional da seção 2. Serviço avulso: item pontual do catálogo, pagamento junto com o boleto, na aceitação ou parcelado.
+  - "Mensal — 3 níveis" fica desabilitado até a tabela de preços (v2.5/v2.6).
 - v2.1.x (contratos e confissões) e anteriores: ver aba Versões do app.
 
 ## Próximas entregas (decididas em 20/10/2026)
-- v2.3.0 lotes (o usuário cria o lote; nada pré-criado): reajuste anual (proposta com aceite, percentual informado no lote),
-  serviço avulso e mensal (sempre com os 3 níveis). Seleção por regime, situação, atividade, departamento e faixa de honorário.
 - v2.4.0 envio em massa por e-mail (fila do app, aos poucos) e WhatsApp pela fila do robô do Cobrança Pro, com assinatura do
   escritório em lote (mesma trilha da assinatura individual).
 - v2.5.0 tabela de preços e catálogo (o app e os documentos mostram só os valores finais).
