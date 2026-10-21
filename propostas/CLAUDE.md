@@ -59,8 +59,9 @@ App de propostas de honorários, contratos e confissões de dívida da **Artecon
 - **Proposta:** pode ser assinada só com CPF (nome, CPF, e-mail, cargo e declaração de poderes). A foto com documento é
   opcional e vem desmarcada (`exige_foto` false na proposta nova e no lote).
 - **Contrato:** quando houver assinatura pelo link, a foto com o documento é **obrigatória**, sem opção de desligar.
-- Pendente: quem recebe o pedido de assinatura quando o cliente não tem contato marcado como "Assina"
-  (opções apresentadas em 21/10: envio automático para quem recebe e-mail, regra estrita, ou o lote decide).
+- **Quem assina quando o cliente não tem contato marcado como "Assina"** (decidido em 21/10/2026): o pedido vai para o
+  contato que recebe e-mail (opção "automático"), **mas só sai depois que o usuário autorizar** — a tela do lote lista esses
+  clientes e o envio para eles exige uma autorização explícita (v2.4.0). Sem autorização, ficam como pendência.
 
 ## Próximas entregas (decididas em 20/10/2026)
 - v2.4.0 envio em massa por e-mail (fila do app, aos poucos) e WhatsApp pela fila do robô do Cobrança Pro, com assinatura do
