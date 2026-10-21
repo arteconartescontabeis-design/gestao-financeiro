@@ -714,6 +714,7 @@ const LOGO_EMAIL = 'https://arteconartescontabeis-design.github.io/gestao-financ
 const PORTAL_URL = 'https://arteconartescontabeis-design.github.io/portal/';
 const CHANGELOG = [
   { v:'2.3.1', data:'21/10/2026', itens:[
+    'Assinatura da proposta só com CPF: a foto com documento deixa de vir marcada na proposta nova e no lote (continua opcional). Para contratos, quando a assinatura pelo link chegar, a foto com documento será obrigatória.',
     'Importação do Cobrança Pro: CNPJ/CPF guardado sem os zeros à esquerda (ex.: 5346567000138) passa a ser recomposto (05346567000138) e aceito quando os dígitos verificadores conferem. Antes esses clientes ficavam como "ignorados". Rode a importação de novo para trazê-los: quem já está no cadastro não é duplicado.'
   ]},
   { v:'2.3.0', data:'20/10/2026', itens:[
@@ -1252,7 +1253,7 @@ const VIEWS = {
 
     <div class="painel"><h2>Condições</h2><div id="condicoes"></div>
       <div class="campo c4" style="margin-top:12px"><label for="f_adic">Cláusulas adicionais de valor (uma por linha; entram numeradas na seção 2)</label><textarea id="f_adic" data-c="adicionais" rows="3" placeholder="Ex.: Os valores consideram o regime de Lucro Presumido; havendo mudança de regime, os honorários serão revistos.">${esc(c.adicionais||'')}</textarea></div>
-      <label class="marcar"><input type="checkbox" id="f_foto" ${F.exige_foto?'checked':''}> Exigir foto do signatário segurando o documento para assinar pelo link</label>
+      <label class="marcar"><input type="checkbox" id="f_foto" ${F.exige_foto?'checked':''}> Exigir também foto do signatário segurando o documento (opcional: a proposta pode ser assinada só com CPF)</label>
       <label class="marcar"><input type="checkbox" data-c="aceite" ${c.aceite?'checked':''}> Incluir termo de aceite para assinatura do cliente (não existe nos modelos atuais)</label>
       <div class="campo c4" style="margin-top:8px"><label for="f_obs">Anotações internas (não saem no documento)</label><textarea id="f_obs" data-f="observacoes" rows="2">${esc(F.observacoes||'')}</textarea></div>
     </div>
@@ -1720,7 +1721,7 @@ async function carregaAlertasLista(){
 function novaF(clienteId){
   const e = esc_(), hoje = hojeISO(), c = clienteId ? S.clientes.find(x => x.id===clienteId) : null;
   return { id:null, cliente_id:c ? c.id : null, cliente_nome:c ? c.nome : '', cliente_documento:c ? (c.documento||'') : '', contato:c ? (c.contato||'') : '', tratamento:c ? (c.tratamento||'') : '',
-    modelo:'recorrente', exige_foto:true, assunto:ASSUNTO.recorrente, abertura:ABERTURA.recorrente, itens:[], data_proposta:hoje, validade:somaDias(hoje, parseInt(e.validade_dias)||10), observacoes:'', status:'rascunho',
+    modelo:'recorrente', exige_foto:false, assunto:ASSUNTO.recorrente, abertura:ABERTURA.recorrente, itens:[], data_proposta:hoje, validade:somaDias(hoje, parseInt(e.validade_dias)||10), observacoes:'', status:'rascunho',
     condicoes:{ dia_vencimento:parseInt(e.dia_vencimento)||20, indice:e.indice||'IGP-M/FGV', adicional_anual:true, revisao_bimestral:true, taxas_abertura:true, prolabore_sem_custo:true, pagamento_pontual:'boleto_mensal', vencimento_pontual:'', parcelas:[], prazo_dias:'', prazo_marco:'contados da assinatura do contrato', adicionais:'', aceite:false } };
 }
 function copiaF(p, duplicar){
@@ -3642,7 +3643,7 @@ function loteSelecaoTxt(F){ F = F || {}; const rot = (arr, mapa, vazio) => (arr 
 function loteVazio(base){
   const e = esc_(), hoje = hojeISO(), ano = +hoje.slice(0,4);
   const L = { passo:1, nome:'', tipo:'reajuste', data_proposta:hoje, validade_dias:parseInt(e.validade_dias) || 10, abertura:LOTE_ABERTURA.reajuste,
-    parametros:{ percentual:'', indice:e.indice || 'IGP-M/FGV', vigencia:`${ano+1}-01-01`, arredondamento:'centavos', assunto:'a prestação de serviços contábeis', exige_foto:true, servico_id:'', servico_nome:'', preco:'', pagamento:'boleto_mensal', parcelas:3, primeiro_vencimento:'' },
+    parametros:{ percentual:'', indice:e.indice || 'IGP-M/FGV', vigencia:`${ano+1}-01-01`, arredondamento:'centavos', assunto:'a prestação de serviços contábeis', exige_foto:false, servico_id:'', servico_nome:'', preco:'', pagamento:'boleto_mensal', parcelas:3, primeiro_vencimento:'' },
     filtros:{ regimes:[], situacoes:['ativa'], atividades:[], departamentos:[], so_email:false, sem_lote_aberto:true, hon_min:'', hon_max:'' }, fora:[], tirados:[] };
   if(base){ Object.assign(L, { nome:base.nome + ' (novo)', tipo:base.tipo, validade_dias:base.validade_dias, abertura:base.abertura || L.abertura,
     parametros:{ ...L.parametros, ...JSON.parse(JSON.stringify(base.parametros || {})) }, filtros:{ ...L.filtros, ...JSON.parse(JSON.stringify(base.filtros || {})) } });
@@ -3709,7 +3710,7 @@ Object.assign(VIEWS, {
           ${P.pagamento==='parcelas' ? inp('npar','Número de parcelas','c1','number',P.parcelas,'data-ltp="parcelas" min="2" max="24"') + inp('venc1','1º vencimento (opcional)','c1','date',P.primeiro_vencimento,'data-ltp="primeiro_vencimento"') : ''}</div>
           ${servs.length ? '' : '<p class="dica">O catálogo está vazio: cadastre o serviço em Configurações › Serviços.</p>'}` : ''}
         <div class="campo" style="margin-top:12px"><label for="lt_abert">Texto de abertura</label><textarea id="lt_abert" rows="3" data-lt="abertura">${esc(L.abertura || '')}</textarea></div>
-        <label class="marcar"><input type="checkbox" data-ltpc="exige_foto" ${P.exige_foto!==false ? 'checked' : ''}> Exigir foto com documento na assinatura do cliente</label>
+        <label class="marcar"><input type="checkbox" data-ltpc="exige_foto" ${P.exige_foto ? 'checked' : ''}> Exigir também foto com documento na assinatura do cliente (opcional: a proposta pode ser assinada só com CPF)</label>
         <p class="dica" style="margin:6px 0 0">Para o próximo ano, abra este lote e use "Novo lote com base neste": tudo vem preenchido e só falta o percentual novo.</p></div>
       <div class="botoes-fim" style="display:flex;justify-content:space-between"><button class="btn" data-act="loteCancelar">Cancelar</button><button class="btn primario" data-act="lotePasso" data-p="2">Próximo: quem recebe</button></div>`;
     }
@@ -3782,7 +3783,7 @@ Object.assign(ACOES, {
     await tenta(async () => {
       prog('Criando o lote…');
       const lote = await DB.inserir('lotes', { nome:L.nome.trim(), tipo:L.tipo, parametros:L.parametros, filtros:L.filtros, data_proposta:L.data_proposta, validade_dias:parseInt(L.validade_dias) || 10, abertura:String(L.abertura || '').trim() || null });
-      const ctx = loteContexto(L), foto = L.parametros.exige_foto!==false;
+      const ctx = loteContexto(L), foto = !!L.parametros.exige_foto;
       const rows = linhas.map(x => ({ ...lotePropostaDe({ ...L, id:lote.id }, x.c, ctx), ...(MODO_NUVEM ? { exige_foto:foto } : {}) }));
       prog(`Gerando ${rows.length} proposta(s)…`); const criadas = await DB.inserirVarios('propostas', rows);
       await DB.alterar('lotes', lote.id, { status:'gerado', total_propostas:criadas.length });

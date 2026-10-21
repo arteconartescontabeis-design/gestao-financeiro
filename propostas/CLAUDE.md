@@ -55,6 +55,13 @@ App de propostas de honorários, contratos e confissões de dívida da **Artecon
   - "Mensal — 3 níveis" fica desabilitado até a tabela de preços (v2.5/v2.6).
 - v2.1.x (contratos e confissões) e anteriores: ver aba Versões do app.
 
+## Decisões do responsável sobre assinatura (21/10/2026)
+- **Proposta:** pode ser assinada só com CPF (nome, CPF, e-mail, cargo e declaração de poderes). A foto com documento é
+  opcional e vem desmarcada (`exige_foto` false na proposta nova e no lote).
+- **Contrato:** quando houver assinatura pelo link, a foto com o documento é **obrigatória**, sem opção de desligar.
+- Pendente: quem recebe o pedido de assinatura quando o cliente não tem contato marcado como "Assina"
+  (opções apresentadas em 21/10: envio automático para quem recebe e-mail, regra estrita, ou o lote decide).
+
 ## Próximas entregas (decididas em 20/10/2026)
 - v2.4.0 envio em massa por e-mail (fila do app, aos poucos) e WhatsApp pela fila do robô do Cobrança Pro, com assinatura do
   escritório em lote (mesma trilha da assinatura individual).
