@@ -10,7 +10,8 @@ App de propostas de honorários, contratos e confissões de dívida da **Artecon
   Modo nuvem (Supabase, quando o `CFG` está preenchido) ou modo local (localStorage, para teste).
   Camada de dados em `Local`/`Nuvem` (`DB.inserir`, `DB.alterar`, `DB.inserirVarios`), estado global em `S`, telas em `VIEWS`, botões em `ACOES` (`data-act`), navegação por `data-ir`/`ir()`.
 - `sql/` — migrações e reversões, **rodadas pelo usuário** no SQL Editor do projeto `cobranca-pro`
-  (numeração continua a dos arquivos antigos: 17 = contratos, 19 = confissões, 21 = cadastro único; reversões 96, 93, 92).
+  (numeração continua a dos arquivos antigos: 17 = contratos, 19 = confissões, 21 = cadastro único, 22 = lotes, 23 = envio em massa;
+  reversões 96, 93, 92, 91, 90 — a próxima migração é a 24 e a próxima reversão a 89).
 - `supabase/functions/prop-email` — Edge Function dos e-mails automáticos (fila `prop_fila_email`).
 - Publicado em `https://arteconartescontabeis-design.github.io/gestao-financeiro/propostas/` (o repositório antigo `propostas` só redireciona).
 - Banco: projeto Supabase `yeujqjtjqtegsnzwwazb` (o mesmo do Cobrança Pro), tabelas `prop_*` com RLS; login compartilhado com o Cobrança Pro.
@@ -25,7 +26,7 @@ App de propostas de honorários, contratos e confissões de dívida da **Artecon
 6. Varredura antes de entregar: eslint (0 erros) + Playwright em todas as telas, no computador e no celular (390 px sem rolagem lateral).
 7. Nunca concluir sobre o estado do banco sem evidência (consulta ou print).
 
-## Estado (20/10/2026)
+## Estado (21/10/2026)
 - **v2.2.0 — cadastro único de clientes** (migração `sql/21_migracao_v2_2_0_cadastro_unico.sql`, reversão `sql/92_reversao_v2_2_0.sql`):
   - "Clientes da proposta" e "Contratantes" viraram um só cadastro (`prop_clientes`), no grupo Clientes do menu.
     Contratos e confissões continuam com a coluna `contratante_id`, que agora aponta para `prop_clientes`.
@@ -53,6 +54,21 @@ App de propostas de honorários, contratos e confissões de dívida da **Artecon
   - Reajuste: honorário atual × (1 + %), arredondamento centavos/R$ 1/R$ 5 (para o mais próximo); vigência e índice entram como
     cláusula adicional da seção 2. Serviço avulso: item pontual do catálogo, pagamento junto com o boleto, na aceitação ou parcelado.
   - "Mensal — 3 níveis" fica desabilitado até a tabela de preços (v2.5/v2.6).
+- **v2.4.0 — assinatura em lote e envio em massa** (migração `sql/23_migracao_v2_4_0_envio_em_massa.sql`, reversão
+  `sql/90_reversao_v2_4_0.sql`; exige a 21, a 22 e o Cobrança Pro com `cob_whats_destino_ok`):
+  - Tela do lote (`VIEWS.lote` → `desenhaLoteEnvio`, estado em `S.LE`, dados de `DB.loteEnvio`) em 4 etapas: quem assina,
+    assinatura do escritório, envio, acompanhamento. Só no modo nuvem.
+  - Quem assina (`loteQuemAssina`): contatos marcados "Assina"; sem nenhum, o contato que recebe e-mail/WhatsApp, só com autorização
+    gravada em `prop_lotes.parametros.autorizados` (`{ cliente_id: { por, em } }`). Os signatários são criados na hora do envio.
+  - Escritório assina em lote pelo `prop_escritorio_assinar` (uma assinatura por proposta). Só sai envio para proposta assinada pelo escritório.
+  - Canal escolhido no envio: só e-mail, só WhatsApp ou os dois. E-mail pelo navegador (`enviarLink`, 1 a cada 2 s, com "Parar").
+    WhatsApp por `prop_whats_agendar` → tabela `prop_whats_envios` → `prop_whats_gotejar` (pg_cron a cada minuto) → `cob_whatsapp_fila`
+    (robô do Cobrança Pro). Ritmo em `prop_tenants.escritorio`: `whats_intervalo_min` 3, `whats_limite_dia` 40, `whats_hora_ini` 8,
+    `whats_hora_fim` 18, `whats_sabado` false. Só para celular cadastrado no Cobrança Pro para o cliente (aceita com ou sem 55).
+  - `prop_link_signatario` agora mantém um link válido por canal; o gatilho `prop_assinatura_fecha_canais` encerra os outros links
+    e cancela o WhatsApp pendente quando a pessoa assina.
+  - Acompanhamento: lembrar quem não abriu (> 2 dias), reenviar/cancelar WhatsApp (`prop_whats_reagendar`/`prop_whats_cancelar`),
+    planilha CSV sem links.
 - v2.1.x (contratos e confissões) e anteriores: ver aba Versões do app.
 
 ## Decisões do responsável sobre assinatura (21/10/2026)
@@ -64,8 +80,6 @@ App de propostas de honorários, contratos e confissões de dívida da **Artecon
   clientes e o envio para eles exige uma autorização explícita (v2.4.0). Sem autorização, ficam como pendência.
 
 ## Próximas entregas (decididas em 20/10/2026)
-- v2.4.0 envio em massa por e-mail (fila do app, aos poucos) e WhatsApp pela fila do robô do Cobrança Pro, com assinatura do
-  escritório em lote (mesma trilha da assinatura individual).
 - v2.5.0 tabela de preços e catálogo (o app e os documentos mostram só os valores finais).
 - v2.6.0 proposta por níveis (Essencial, Gestão, Estratégico) e importação dos relatórios do Questor para o enquadramento.
 - v2.7.0 contrato herdando a proposta.
