@@ -15,7 +15,7 @@
 
 ## 1. O que foi feito hoje
 
-### Robô (servidor ARTEDB01)
+### Robô (servidor ARTEDB01 em 06/10; hoje ARTEAPP01)
 - **Causa da parada encontrada:** alguém clicou dentro da janela preta do robô e ela entrou em "Selecionar". Nesse modo o Windows congela o programa. O robô ficou parado das 22:17 de 05/10 até 08:40 de 06/10. Resolvido com **Esc**.
   **Prevenção:** clique com o botão direito na barra de título da janela → Propriedades → Opções → desmarcar "Modo de Edição Rápida".
 - **Ciclo manual de 06/10** (08:43 a 09:06):

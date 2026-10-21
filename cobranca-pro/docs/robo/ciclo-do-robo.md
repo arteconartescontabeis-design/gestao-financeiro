@@ -1,6 +1,6 @@
 # O que o robô faz — passo a passo do ciclo
 
-O robô roda no servidor **ARTEDB01** (tarefa agendada **"Artecon Robo Cobranca"**, log diário em `C:\Artecon\Robo\logs`).
+O robô roda no servidor **ARTEAPP01** (antes ARTEDB01) (tarefa agendada **"Artecon Robo Cobranca"**, log diário em `C:\Artecon\Robo\logs`).
 Ele tem duas partes:
 
 - **Vigia**: programa leve que fica aberto o tempo todo (janela preta do Python). A cada minuto ele olha se o app pediu

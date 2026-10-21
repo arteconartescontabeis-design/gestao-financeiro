@@ -14,7 +14,7 @@ App de cobrança da **Artecon** (escritório contábil). Tudo em português.
 - **`docs/situacao-e-pendencias-2026-10-06.md` — onde paramos e lista do que falta (comece por aqui ao retomar).**
 
 ## Robô (fora deste repositório)
-- Servidor **ARTEDB01**, tarefa agendada "Artecon Robo Cobranca", Python 3.10, log em `C:\Artecon\Robo\logs`, pastas `C:\Artecon\Cobranca\{entrada,processados,relatorios}`.
+- Servidor **ARTEAPP01** (antes ARTEDB01; conferido em 21/10/2026 pelo sinal do robô, `cob_automacao_config.robo_sinal.maquina`, robô v2.6.0), tarefa agendada "Artecon Robo Cobranca", Python 3.10, log em `C:\Artecon\Robo\logs`, pastas `C:\Artecon\Cobranca\{entrada,processados,relatorios}`.
 - Vigia (`--loop`) sempre aberto + ciclo em processo separado; agenda 08:00 e 20:00; lê pedidos do app (`cob_automacao_config.pedido`) a cada minuto; grava sinal em `robo_sinal`/`robo_sinal_em` e etapas em `cob_automacao_execucoes`.
 - **Clique na janela do vigia congela o robô** (modo "Selecionar" do console do Windows) — aperte Esc; desmarcar "Modo de Edição Rápida".
 - Bug aberto (06/10/2026): etapa "pendentes" recusa o relatório porque o campo "data base juros" do Questor mostra o ano com 2 dígitos (`06/10/20`) → sem CSV, sem confronto, disparos não liberados. Corrigir no `questor.py`.

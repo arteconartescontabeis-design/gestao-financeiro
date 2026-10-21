@@ -1,7 +1,7 @@
 # Serviço artecon-whats: guardar as mensagens recebidas
 
 Para a equipe agendar reuniões mandando mensagem ao WhatsApp da Artecon, o
-serviço `artecon-whats` (servidor ARTEDB01) precisa **gravar o que recebe** na
+serviço `artecon-whats` (servidor ARTEAPP01; antes ARTEDB01) precisa **gravar o que recebe** na
 tabela `cob_whatsapp_recebidas` (projeto Supabase do Cobrança). O resto já
 está pronto: a função `agenda-whats` lê essa tabela a cada 30 s, só considera
 os números da equipe cadastrados no Agenda Pro e responde pela fila de sempre.
@@ -83,7 +83,7 @@ O que muda na v1.4.0:
   saem só em texto, sem o logotipo;
 - erro ao guardar uma mensagem recebida nunca atrapalha o envio (só um aviso no log).
 
-### Como instalar no ARTEDB01
+### Como instalar no servidor (hoje ARTEAPP01)
 1. Parar o serviço (fechar a janela do `node artecon-whats.js` ou parar o que o liga).
 2. Na pasta do serviço, renomear o `artecon-whats.js` atual para `artecon-whats-antigo.js` (cópia de segurança).
 3. Copiar o novo `artecon-whats.js` da pasta do OneDrive para a pasta do serviço.
