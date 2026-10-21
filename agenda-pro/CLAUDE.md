@@ -74,8 +74,10 @@ O número aparece no topo de todas as telas e no login; tocar nele abre o histó
   **Áudio ligado no ARTEAPP01 em 20/10/2026 (22:50 de Brasília):** a pasta `C:\Artecon\WhatsServico` veio do ARTEDB01 sem a chave
   (o cofre do Windows é por usuário e por máquina). O usuário rodou o `guardar-chave-azure.bat` da pasta do serviço e religou o
   serviço pelo mesmo Prompt (`node artecon-whats.js`); "Agenda de hoje." transcrito (1 s), resposta em 8 s, contado no portal.
-  Se o áudio voltar a responder "o áudio ainda não está ligado no serviço", o serviço foi ligado por outro usuário do Windows
-  (ex.: tarefa de inicialização): guardar a chave com esse usuário ou ligar o serviço pelo usuário que tem a chave.
+  No ARTEAPP01 o serviço é ligado pela tarefa agendada **"Artecon Whats"** (usuário `cleiver`, o mesmo da chave): para reiniciar,
+  Agendador de Tarefas → Artecon Whats → Finalizar → Executar (nunca abrir outro `node artecon-whats.js` junto: dois serviços com
+  a mesma sessão se derrubam; conferir 1 `node.exe` no Gerenciador de Tarefas). Religado assim às 23:03 de 20/10: áudio ok.
+  As tarefas do ARTEAPP01 rodam "somente quando o usuário estiver conectado": sair do RDP pelo X (desconectar), nunca "Sair".
 - Minutos de áudio no portal: o serviço (v1.5.1) grava os segundos em `cob_whatsapp_recebidas.audio_seg`; a `agenda-whats`
   lê por `cob_agenda_recebidas2` e informa ao núcleo do portal (`public.ia_fala_registrar`, token do cofre `ia_fala_token`).
   Portal (v1.7.0) → Consumo de IA: um cartão por uso da Azure em "Por aplicativo" e o quadro "Azure — voz e transcrição" com as

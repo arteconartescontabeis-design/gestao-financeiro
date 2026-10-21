@@ -11,6 +11,8 @@ os números da equipe cadastrados no Agenda Pro e responde pela fila de sempre.
 **20/10/2026 (22:50):** áudio ligado no ARTEAPP01 (`C:\Artecon\WhatsServico`): `guardar-chave-azure.bat` rodado na pasta do
 serviço e serviço religado pelo mesmo Prompt (`node artecon-whats.js`), com o mesmo usuário do Windows. "Agenda de hoje."
 transcrito e respondido em 8 s. A chave fica no cofre do usuário: o serviço tem que ser ligado por esse mesmo usuário.
+Depois o serviço voltou a ser ligado pela tarefa agendada **"Artecon Whats"** (usuário `cleiver`) — Finalizar → Executar no
+Agendador de Tarefas — e o áudio seguiu funcionando (23:03). Um serviço só: dois `node.exe` com a mesma `sessao` se derrubam.
 
 Instalada no ARTEDB01 em 11/10/2026 e testada: áudio "agenda de hoje" do Cleiver transcrito pela Azure,
 respondido em ~12 s (`🎤 Ouvi: "Agenda de hoje."` + agenda do dia) e contado no portal (1 s).
