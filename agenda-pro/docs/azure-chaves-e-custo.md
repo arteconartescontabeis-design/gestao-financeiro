@@ -15,7 +15,7 @@ assinatura "Azure subscription 1".
 ## Onde está cada chave
 | Chave | Onde está | Para quê |
 |---|---|---|
-| CHAVE 1 | Servidor do WhatsApp (hoje ARTEAPP01; antes ARTEDB01), cofre do Windows `ArteconRobo` → `AZURE_FALA_CHAVE` — **no ARTEAPP01 ainda não guardada (21/10/2026)** | Transcrever o áudio do WhatsApp |
+| CHAVE 1 | Servidor do WhatsApp (hoje ARTEAPP01; antes ARTEDB01), cofre do Windows `ArteconRobo` → `AZURE_FALA_CHAVE` — guardada no ARTEAPP01 em 20/10/2026 | Transcrever o áudio do WhatsApp |
 | CHAVE 1 | Ambiente "Default" do Claude, segredo de rede "Azure voz" (só o endereço `brazilsouth.tts.speech.microsoft.com`) | Gerar falas (Projeto Criança, Estudo) |
 | CHAVE 2 | Só no portal da Azure | Reservada para o Corretor de Vídeos do Radar (ainda não existe) |
 

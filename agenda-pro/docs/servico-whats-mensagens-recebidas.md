@@ -8,9 +8,9 @@ os números da equipe cadastrados no Agenda Pro e responde pela fila de sempre.
 
 ## Versão instalada: artecon-whats v1.5.1 (11/10/2026)
 
-**21/10/2026:** o serviço roda no ARTEAPP01 **só com texto** — o áudio ainda não foi ligado lá (falta guardar a chave da Azure
-no cofre do Windows do ARTEAPP01 com o `guardar-chave-azure.bat` e reiniciar o serviço; sem a chave, o áudio da equipe recebe
-"mande por texto").
+**20/10/2026 (22:50):** áudio ligado no ARTEAPP01 (`C:\Artecon\WhatsServico`): `guardar-chave-azure.bat` rodado na pasta do
+serviço e serviço religado pelo mesmo Prompt (`node artecon-whats.js`), com o mesmo usuário do Windows. "Agenda de hoje."
+transcrito e respondido em 8 s. A chave fica no cofre do usuário: o serviço tem que ser ligado por esse mesmo usuário.
 
 Instalada no ARTEDB01 em 11/10/2026 e testada: áudio "agenda de hoje" do Cleiver transcrito pela Azure,
 respondido em ~12 s (`🎤 Ouvi: "Agenda de hoje."` + agenda do dia) e contado no portal (1 s).
