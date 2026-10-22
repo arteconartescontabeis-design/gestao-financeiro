@@ -25,6 +25,11 @@ App de propostas de honorários, contratos e confissões de dívida da **Artecon
 5. Soft delete + chave única + upsert do PostgREST não combinam: não usar upsert em tabela com exclusão lógica.
 6. Varredura antes de entregar: eslint (0 erros) + Playwright em todas as telas, no computador e no celular (390 px sem rolagem lateral).
 7. Nunca concluir sobre o estado do banco sem evidência (consulta ou print).
+8. Cópia de cada versão publicada no OneDrive (decidido em 22/10/2026): gerar `propostas-vX.Y.Z.zip` a partir do commit da `main`
+   (pasta `propostas/` inteira + `LEIA-ME.txt` com data, commit, SQL a rodar e itens do changelog) e entregar ao usuário para guardar em
+   OneDrive › `Aplicativo Criado Artecon/Propostas de Honorários/Versões Antigas`. O conector do Microsoft 365 não sobe o pacote
+   (limite de 1 MB e o arquivo precisaria ir inteiro dentro da chamada; o app tem ~1,1 MB, o .zip ~560 KB por causa das imagens
+   embutidas): o usuário salva e depois a pasta é conferida pela listagem do conector.
 
 ## Estado (21/10/2026)
 - **v2.2.0 — cadastro único de clientes** (migração `sql/21_migracao_v2_2_0_cadastro_unico.sql`, reversão `sql/92_reversao_v2_2_0.sql`):
