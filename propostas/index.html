@@ -375,6 +375,13 @@ input.mini-in{width:100px;padding:4px 6px}
 .pend{margin:6px 0 8px;padding-left:18px;color:#8e1015}.pend li{margin:3px 0}
 tr.desab td{opacity:.55}
 .botoes-fim{display:flex;justify-content:space-between;gap:10px;margin:4px 0 18px}
+/* v2.4.0: envio do lote */
+.canais{display:flex;gap:10px;flex-wrap:wrap}
+.canal{display:flex;gap:8px;align-items:center;border:1px solid var(--linha);border-left:5px solid var(--linha);padding:9px 14px;background:#fff;cursor:pointer;font-weight:600}
+.canal.on{border-left-color:var(--ciano);background:#f3fbfe}.canal:has(input:disabled){opacity:.5;cursor:not-allowed}
+.pd-tag{display:inline-block;font-size:11.5px;font-weight:700;padding:1px 7px;margin:0 3px 2px 0;white-space:nowrap;background:#fffbc2;color:#5c5600}
+.acoes-env{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+@media (max-width:1000px){.canal{flex:1 1 100%}.acoes-env .btn{flex:1 1 100%}}
 @media (max-width:1000px){.passos{flex-direction:column}.grupo-filtro b{width:100%}.grupo-filtro label{flex-wrap:wrap}input.mini-in{width:80px}}
 @media (max-width:1000px){.grupo-menu{font-size:0;padding:4px 0;border-bottom:2px solid var(--vermelho)}.barra-empresa{grid-template-columns:1fr;margin-top:-6px}.barra-empresa>span{display:none}.barra-empresa>div:last-child{text-align:center!important}}
 @media print{.barra-empresa{display:none!important}.ct-folha{box-shadow:none;margin:0}.doc-area .ct-folha{zoom:1}.ct-pe img{position:fixed;left:0;bottom:1.5mm}.falta{background:none;color:#000}}
@@ -709,10 +716,19 @@ function porSituacao(props){
 const CFG = { SUPABASE_URL:'https://yeujqjtjqtegsnzwwazb.supabase.co', SUPABASE_ANON_KEY:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlldWpxanRqcXRlZ3Nuend3YXpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU1NDE0OTksImV4cCI6MjEwMTExNzQ5OX0.5p1_wJ_aApJpRrN6tFu8qmAytK5FMXWt1soCubpzqao' };
 const SUPABASE_JS = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js';
 
-const APP_VERSION = '2.3.1';
+const APP_VERSION = '2.4.0';
 const LOGO_EMAIL = 'https://arteconartescontabeis-design.github.io/gestao-financeiro/propostas/logo_artecon.png';
 const PORTAL_URL = 'https://arteconartescontabeis-design.github.io/portal/';
 const CHANGELOG = [
+  { v:'2.4.0', data:'21/10/2026', itens:[
+    'Lotes: assinatura e envio em massa, direto na tela do lote, em 4 etapas: quem assina pelo cliente, assinatura do escritório, envio aos clientes e acompanhamento.',
+    'Quem assina: os contatos marcados como "Assina" no cadastro do cliente viram os signatários da proposta na hora do envio. Cliente sem contato marcado só recebe se você autorizar, na própria tela (o pedido vai para o contato que recebe e-mail/WhatsApp); a autorização fica registrada com usuário, data e hora.',
+    'Assinatura do escritório em lote (só o diretor): nome e CPF uma vez, e cada proposta recebe a sua assinatura registrada separadamente (usuário, data, hora, IP e hash do conteúdo), como na assinatura individual.',
+    'Envio: você escolhe só e-mail, só WhatsApp ou os dois. O e-mail sai na hora, um a cada 2 segundos, com a tela aberta (dá para parar). O WhatsApp entra numa agenda e sai pelo robô do Cobrança Pro aos poucos: 1 a cada 3 minutos, até 40 por dia, em dias úteis das 8h às 18h (o diretor pode mudar o ritmo). Só vai para celular cadastrado no Cobrança Pro para aquele cliente.',
+    'Só recebe quem o escritório já assinou; quem já recebeu por aquele canal não recebe de novo. O link do e-mail e o do WhatsApp valem juntos; quando a pessoa assina por um deles, o outro é encerrado e o WhatsApp que ainda não saiu é cancelado.',
+    'Acompanhamento por proposta (escritório, e-mail, WhatsApp, abriu, assinou), com "Lembrar quem não abriu" (há mais de 2 dias), "Reenviar WhatsApp com erro", "Cancelar WhatsApp que não saiu" e exportação da planilha de situação (sem os links).',
+    'Banco: rode no SQL Editor a migração 23_migracao_v2_4_0_envio_em_massa.sql (reversão: 90_reversao_v2_4_0.sql). Sem ela, o envio em lote funciona só por e-mail.'
+  ]},
   { v:'2.3.1', data:'21/10/2026', itens:[
     'Assinatura da proposta só com CPF: a foto com documento deixa de vir marcada na proposta nova e no lote (continua opcional). Para contratos, quando a assinatura pelo link chegar, a foto com documento será obrigatória.',
     'Importação do Cobrança Pro: CNPJ/CPF guardado sem os zeros à esquerda (ex.: 5346567000138) passa a ser recomposto (05346567000138) e aceito quando os dígitos verificadores conferem. Antes esses clientes ficavam como "ignorados". Rode a importação de novo para trazê-los: quem já está no cadastro não é duplicado.'
@@ -1017,6 +1033,7 @@ const Local = {
   async historico(id){ return this.db.historico.filter(h => h.proposta_id===id).sort((a,b) => a.criado_em < b.criado_em ? -1 : 1); },
   async salvarEscritorio(e){ this.db.tenant.escritorio = e; this.grava(); },
   async linhaDoTempo(id){ return (await this.historico(id)).map(h => ({ quando:h.criado_em, tipo:h.de ? 'status' : 'criada', quem:h.usuario_email, detalhe:{ de:h.de, para:h.para } })); },
+  async loteEnvio(){ return null; }, async recarregarVarias(){}, async criarSignatarios(){ throw new Error('Disponível só com o app ligado ao banco.'); }, async whatsAgendar(){ return { agendados:0, recusados:[] }; }, async whatsCancelar(){ return 0; }, async whatsReagendar(){ return 0; },
   async signatarios(){ return []; }, async linksDe(){ return []; }, async assinaturas(){ return []; }, async guarda(){ return null; }, async descarteResumo(){ return null; }, async filaDe(){ return null; }, async naoAbertos(){ return []; },
   async atividades(dias){ const desde = new Date(Date.now() - dias*864e5).toISOString(), px = Object.fromEntries(this.db.propostas.map(p => [p.id, p]));
     return { completo:true, lista:this.db.historico.filter(h => h.criado_em >= desde && px[h.proposta_id]).map(h => { const p = px[h.proposta_id]; return { quando:h.criado_em, tipo:h.de ? 'status' : 'criada', quem:h.usuario_email, detalhe:{ de:h.de, para:h.para }, proposta_id:p.id, numero:p.numero, ano:p.ano, cliente_nome:p.cliente_nome }; }).sort((a,b) => a.quando < b.quando ? 1 : -1) }; },
@@ -1105,6 +1122,25 @@ const Nuvem = {
   async recarregar(id){ const { data, error } = await this.sb.from('prop_propostas').select('*').eq('id', id).single(); if(error) throw this.erro(error); const i = S.propostas.findIndex(x => x.id===id); if(i>=0) S.propostas[i] = data; return data; },
   async linkSignatario(sid, tipo, canal){ const { data, error } = await this.sb.rpc('prop_link_signatario', { p_signatario:sid, p_tipo:tipo, p_canal:canal }); if(error) throw this.erro(error); return data; },
   async linkEnvio(linkId, ok){ const { error } = await this.sb.rpc('prop_link_envio', { p_link:linkId, p_ok:ok }); if(error) throw this.erro(error); },
+  // v2.4.0: situação de assinatura e envio das propostas de um lote (em pedaços, para a URL não ficar enorme)
+  async loteEnvio(ids, loteId){
+    const partes = []; for(let i = 0; i < ids.length; i += 80) partes.push(ids.slice(i, i+80));
+    const junta = async (tab, campos, f) => (await Promise.all(partes.map(async ch => { const { data, error } = await f(this.sb.from(tab).select(campos).in('proposta_id', ch)); if(error) throw this.erro(error); return data; }))).flat();
+    const [sigs, links] = await Promise.all([ junta('prop_signatarios', 'id,proposta_id,nome,email,celular,qualidade,papel,ordem,criado_em', q => q.is('excluido_em', null)),
+      junta('prop_links', 'id,proposta_id,signatario_id,tipo,canal,criado_em,enviado_em,revogado_em,motivo_revogacao,primeiro_acesso_em,acessos', q => q.eq('tipo', 'assinatura')) ]);
+    const { data:envios, error } = await this.sb.from('prop_whats_envios').select('id,proposta_id,signatario_id,telefone,tipo,status,agendado_para,enfileirado_em,enviado_em,erro,criado_em').eq('lote_id', loteId);
+    if(error && !semTabela(error)) throw this.erro(error);                       // banco ainda sem a migração 23: só e-mail
+    return { sigs, links, envios:error ? [] : envios, whatsOk:!error };
+  },
+  async criarSignatarios(rows){ for(let i = 0; i < rows.length; i += 200){ const { error } = await this.sb.from('prop_signatarios').insert(rows.slice(i, i+200).map(r => ({ ...r, tenant_id:S.tenant.id }))); if(error) throw this.erro(error); } },
+  async recarregarVarias(ids){ for(let i = 0; i < ids.length; i += 80){ const { data, error } = await this.sb.from('prop_propostas').select('*').in('id', ids.slice(i, i+80)); if(error) throw this.erro(error);
+    data.forEach(d => { const k = S.propostas.findIndex(x => x.id===d.id); if(k>=0) S.propostas[k] = d; }); } },
+  async whatsAgendar(sids, tipo){ const out = { agendados:0, recusados:[] };
+    for(let i = 0; i < sids.length; i += 100){ const { data, error } = await this.sb.rpc('prop_whats_agendar', { p_itens:sids.slice(i, i+100).map(id => ({ signatario_id:id })), p_tipo:tipo }); if(error) throw this.erro(error);
+      out.agendados += data.agendados || 0; out.recusados.push(...(data.recusados || [])); }
+    return out; },
+  async whatsCancelar(ids){ const { data, error } = await this.sb.rpc('prop_whats_cancelar', { p_ids:ids }); if(error) throw this.erro(error); return data; },
+  async whatsReagendar(ids){ const { data, error } = await this.sb.rpc('prop_whats_reagendar', { p_ids:ids }); if(error) throw this.erro(error); return data; },
   async revogarUm(sid, tipo){ const { error } = await this.sb.rpc('prop_link_revogar_um', { p_signatario:sid, p_tipo:tipo }); if(error) throw this.erro(error); },
   async escritorioAssinar(id, nome, cpf){ const { data, error } = await this.sb.rpc('prop_escritorio_assinar', { p_proposta:id, p_nome:nome, p_cpf:cpf, p_user_agent:navigator.userAgent }); if(error) throw this.erro(error); await this.recarregar(id); return data; },
   // mesmo canal do Cobrança Pro: a Edge Function mail-proxy valida o login e repassa ao Artecon Mail (a chave fica em secret, nunca no HTML)
@@ -3742,7 +3778,7 @@ Object.assign(VIEWS, {
           ${ls.map(x => `<tr class="${x.gera ? '' : 'desab'}"><td>${x.bloqueia.length ? '' : `<input type="checkbox" data-lttira="${x.c.id}" ${x.tirado ? '' : 'checked'} aria-label="Gerar para ${esc(x.c.nome)}">`}</td><td><b>${esc(x.c.nome)}</b></td>
             ${L.tipo==='reajuste' ? `<td class="num">${x.c.honorario_atual!=null ? brl(x.c.honorario_atual) : '—'}</td><td class="num">${x.row ? brl(x.row.total_mensal) : '—'}</td>` : `<td class="num">${x.row ? brl(x.row.total_pontual) : '—'}</td>`}
             <td>${x.bloqueia.map(t => `<span class="al-tag">não gera: ${esc(t)}</span>`).join('')}${x.avisos.map(t => `<span class="al-tag" style="background:#fffbc2;color:#5c5600">${esc(t)}</span>`).join('')}${!x.bloqueia.length && !x.avisos.length ? '<span class="ok-tag">pronta</span>' : ''}</td></tr>`).join('')}</tbody></table></div>
-        <p class="dica" style="margin-top:8px">As propostas saem em <b>rascunho</b>, numeradas normalmente, e podem ser abertas e ajustadas uma a uma. Enquanto todas estiverem em rascunho, o lote inteiro pode ser descartado. Assinatura em lote e envio em massa chegam na v2.4.</p></div>
+        <p class="dica" style="margin-top:8px">As propostas saem em <b>rascunho</b>, numeradas normalmente, e podem ser abertas e ajustadas uma a uma. Enquanto todas estiverem em rascunho, o lote inteiro pode ser descartado. Depois de gerar, é na tela do lote que o escritório assina e envia aos clientes (e-mail, WhatsApp ou os dois).</p></div>
       <div id="ltProg" class="imp-prog"></div>
       <div class="botoes-fim" style="display:flex;justify-content:space-between"><button class="btn" data-act="lotePasso" data-p="2">Voltar</button><button class="btn primario" data-act="loteGerar" ${gera.length ? '' : 'disabled'}>Gerar ${gera.length} proposta${gera.length===1 ? '' : 's'} em rascunho</button></div>`;
     }
@@ -3760,9 +3796,12 @@ Object.assign(VIEWS, {
       `<button class="btn" data-ir="lotes">Voltar</button><button class="btn" data-act="loteBase" data-id="${L.id}">Novo lote com base neste</button>${n ? `<button class="btn" data-act="loteVerLista" data-id="${L.id}">Ver na lista de propostas</button>` : ''}${podeDescartar ? `<button class="btn" data-act="loteDescartar" data-id="${L.id}">Descartar lote</button>` : ''}`) + loteAviso() +
       (L.status==='descartado' ? `<div class="aviso"><span>Lote descartado em ${esc(dataBR(String(L.descartado_em || L.atualizado_em || '').slice(0,10)))}: as propostas dele foram excluídas.</span></div>` : '') + `
       <div class="resumo-topo">${ind('Propostas', n)}${ind('Rascunho', f(['rascunho']))}${ind('Enviadas', f(['enviada','negociacao']))}${ind('Aprovadas', f(['aprovada']), ps.filter(p => p.assinada_em).length + ' assinadas por todos')}${ind('Perdidas', f(['perdida']))}</div>
-      ${pend.length ? `<div class="painel"><h2>Pendências para assinar e enviar <span class="contador">${pend.length}</span></h2><ul class="pend" style="margin:0;padding-left:18px">${pend.slice(0,60).map(x => `<li>${esc(x.c.nome)} — ${esc(x.a.join(', '))} <button class="elo" data-act="cliente" data-id="${x.c.id}">abrir cadastro</button></li>`).join('')}</ul>${pend.length>60 ? `<p class="dica">… e mais ${pend.length-60}.</p>` : ''}
-        <p class="dica" style="margin:8px 0 0">Corrija no cadastro do cliente (aba Contatos para envio). A assinatura em lote e o envio em massa (v2.4) deixam de fora quem tiver pendência.</p></div>` : ''}
+      ${pend.length && !MODO_NUVEM ? `<div class="painel"><h2>Pendências para assinar e enviar <span class="contador">${pend.length}</span></h2><ul class="pend" style="margin:0;padding-left:18px">${pend.slice(0,60).map(x => `<li>${esc(x.c.nome)} — ${esc(x.a.join(', '))} <button class="elo" data-act="cliente" data-id="${x.c.id}">abrir cadastro</button></li>`).join('')}</ul>${pend.length>60 ? `<p class="dica">… e mais ${pend.length-60}.</p>` : ''}
+        <p class="dica" style="margin:8px 0 0">Corrija no cadastro do cliente (aba Contatos para envio).</p></div>` : ''}
+      ${!n || L.status==='descartado' ? '' : MODO_NUVEM ? '<div id="loteEnvio"><div class="painel"><p class="dica" style="margin:0">Carregando a situação de assinatura e envio…</p></div></div>'
+        : '<div class="aviso"><span>Assinatura do escritório em lote e envio em massa funcionam com o app ligado ao banco (modo nuvem).</span></div>'}
       <div class="painel"><h2>Propostas do lote</h2>${tabelaPropostas(ps)}</div>`;
+    if(MODO_NUVEM && n && L.status!=='descartado') loteEnvioCarregar(L);
   }
 });
 
@@ -3796,6 +3835,284 @@ Object.assign(ACOES, {
     if(!confirm(`Descartar o lote "${L.nome}"? As ${n} proposta(s) em rascunho dele serão excluídas. Não dá para desfazer.`)) return;
     await tenta(async () => { await DB.loteDescartar(L.id); toast('Lote descartado.'); VIEWS.lote(); }); },
   loteVerLista(el){ const L = (S.lotes || []).find(x => x.id===el.dataset.id); if(!L) return; S.chip = ''; S.filtroStatus = ''; S.busca = ''; S.filtroExtra = { rotulo:'lote ' + L.nome, fn:p => p.lote_id===L.id }; ir('propostas'); }
+});
+
+/* ===================== v2.4.0: ASSINATURA EM LOTE E ENVIO EM MASSA ===================== */
+const ENVIO_CANAIS = { email:'Só e-mail', whatsapp:'Só WhatsApp', ambos:'E-mail e WhatsApp' };
+const WE_SIT = { agendado:'agendado', na_fila:'na fila do robô', enviado:'enviado', erro:'erro', cancelado:'cancelado', manual:'enviado pela conversa' };
+const WHATS_CFG = { whats_intervalo_min:3, whats_limite_dia:40, whats_hora_ini:8, whats_hora_fim:18, whats_sabado:false };
+const PAUSA_EMAIL_MS = 2000;
+
+/* ----- lógica pura (sem DOM) ----- */
+// quem assina pelo cliente: os contatos marcados "Assina"; sem nenhum, o contato que recebe e-mail/WhatsApp — só com autorização do usuário
+function loteQuemAssina(c, ks, autorizado){
+  ks = (ks || []).filter(k => !k.excluido_em);
+  const nome = k => { const n = String((k && k.nome) || c.contato || '').trim().replace(/\s+/g,' '); return n.length >= 3 ? n : 'Responsável — ' + c.nome; };
+  const ass = ks.filter(k => k.assina && (k.email || k.celular));
+  if(ass.length) return { modo:'assina', sigs:ass.map(k => ({ nome:nome(k), qualidade:k.funcao || null, email:k.email || null, celular:k.celular || null })) };
+  const em = ks.find(k => k.email && k.recebe_email), zap = ks.find(k => k.celular && k.recebe_whatsapp);
+  if(!em && !zap) return { modo:'nenhum', sigs:[] };
+  const sig = { nome:nome(em || zap), qualidade:null, email:em ? em.email : null, celular:zap ? zap.celular : null };
+  return autorizado ? { modo:'automatico', sigs:[sig] } : { modo:'autorizar', sigs:[], sugestao:sig };
+}
+const maisRecente = arr => arr.slice().sort((a,b) => String(a.criado_em) < String(b.criado_em) ? 1 : -1)[0] || null;
+// situação de uma pessoa que assina, a partir dos links de assinatura e da agenda do WhatsApp
+function loteSituacaoSig(s, links, envios){
+  const ls = links.filter(l => l.signatario_id===s.id && l.tipo==='assinatura');
+  const ue = maisRecente(ls.filter(l => l.canal==='email')), zl = ls.find(l => l.canal==='whatsapp' && !l.revogado_em && l.enviado_em), we = maisRecente(envios.filter(e => e.signatario_id===s.id));
+  return { assinou:ls.some(l => l.motivo_revogacao==='assinado'), abriu:ls.map(l => l.primeiro_acesso_em).filter(Boolean).sort()[0] || null,
+    email:ue && ue.enviado_em ? { st:'enviado', em:ue.enviado_em, ativo:!ue.revogado_em } : ue && ue.motivo_revogacao==='falha_no_envio' ? { st:'erro' } : null,
+    whats:we ? { st:we.status, em:we.enviado_em || we.enfileirado_em || we.agendado_para, erro:we.erro, id:we.id, tipo:we.tipo } : zl ? { st:'manual', em:zl.enviado_em } : null };
+}
+const jaEmail = x => !!(x.email && x.email.ativo);
+const jaZap = x => !!(x.whats && ['agendado','na_fila','enviado','manual'].includes(x.whats.st));
+// uma linha por proposta do lote: quem assina (já cadastrado ou o que será criado) e a situação de cada um
+function loteLinhasEnvio(ps, D, ix, porId, autorizados){
+  const hoje = hojeISO();
+  return ps.map(p => {
+    const c = porId[p.cliente_id] || { id:p.cliente_id, nome:p.cliente_nome }, sigs = D.sigs.filter(s => s.proposta_id===p.id).sort((a,b) => (a.ordem - b.ordem) || (String(a.criado_em) < String(b.criado_em) ? -1 : 1));
+    const plano = sigs.length ? null : loteQuemAssina(c, ix[p.cliente_id], !!(autorizados || {})[p.cliente_id]);
+    const pessoas = sigs.length ? sigs.map(s => ({ s, ...loteSituacaoSig(s, D.links, D.envios) })) : plano.sigs.map(s => ({ s, novo:true, assinou:false, abriu:null, email:null, whats:null }));
+    if(p.assinada_em) pessoas.forEach(x => { x.assinou = true; });
+    return { p, c, plano, pessoas, aberta:['rascunho','enviada','negociacao'].includes(p.status) && !p.assinada_em, vencida:!!(p.validade && p.validade < hoje), esc:!!p.escritorio_assinou_em };
+  });
+}
+// quem recebe agora pelo canal escolhido; o resto fica de fora com o motivo
+function loteAlvos(linhas, canal){
+  const out = { email:[], whats:[], escritorio:0, autorizar:0, semContato:0, vencidas:0, semMeio:0, jaRecebeu:0 }, querE = canal!=='whatsapp', querZ = canal!=='email';
+  linhas.filter(r => r.aberta).forEach(r => {
+    if(!r.esc){ out.escritorio++; return; } if(r.vencida){ out.vencidas++; return; }
+    if(r.plano && r.plano.modo==='autorizar'){ out.autorizar++; return; } if(r.plano && r.plano.modo==='nenhum'){ out.semContato++; return; }
+    r.pessoas.filter(x => !x.assinou).forEach(x => {
+      const e = querE && x.s.email && !jaEmail(x), z = querZ && x.s.celular && !jaZap(x);
+      if(e) out.email.push({ r, x }); if(z) out.whats.push({ r, x });
+      if(!e && !z){ if((querE && jaEmail(x)) || (querZ && jaZap(x))) out.jaRecebeu++; else out.semMeio++; }
+    });
+  });
+  return out;
+}
+// quem recebeu há pelo menos 2 dias e ainda não abriu
+function loteNaoAbertos(linhas){ const lim = new Date(Date.now() - 2*864e5).toISOString(), out = [];
+  linhas.filter(r => r.aberta && !r.vencida).forEach(r => r.pessoas.filter(x => !x.assinou && !x.abriu && !x.novo).forEach(x => {
+    const e = jaEmail(x) && x.email.em <= lim, z = !!(x.whats && ['enviado','manual'].includes(x.whats.st) && x.whats.em && x.whats.em <= lim);
+    if(e || z) out.push({ r, x, e, z }); }));
+  return out; }
+function whatsCfg(e){ e = e || {}; const n = (k, a, b) => Math.min(b, Math.max(a, parseInt(e[k]) || WHATS_CFG[k]));
+  const c = { whats_intervalo_min:n('whats_intervalo_min',1,60), whats_limite_dia:n('whats_limite_dia',1,200), whats_hora_ini:Math.min(23, Math.max(0, parseInt(e.whats_hora_ini ?? 8))), whats_hora_fim:Math.min(24, Math.max(1, parseInt(e.whats_hora_fim ?? 18))), whats_sabado:e.whats_sabado===true || e.whats_sabado==='true' };
+  if(isNaN(c.whats_hora_ini)) c.whats_hora_ini = 8; if(isNaN(c.whats_hora_fim)) c.whats_hora_fim = 18; return c; }
+// quantos dias de envio a agenda do WhatsApp leva para n mensagens
+function whatsDias(n, cfg){ const porDia = Math.max(1, Math.min(cfg.whats_limite_dia, Math.floor(Math.max(0, cfg.whats_hora_fim - cfg.whats_hora_ini) * 60 / cfg.whats_intervalo_min)));
+  return n ? Math.ceil(n / porDia) : 0; }
+function whatsCfgTxt(cfg){ return `1 mensagem a cada ${cfg.whats_intervalo_min} min, até ${cfg.whats_limite_dia} por dia, ${cfg.whats_sabado ? 'de segunda a sábado' : 'em dias úteis'} das ${cfg.whats_hora_ini}h às ${cfg.whats_hora_fim}h`; }
+const csvCampo = v => { const s = String(v ?? ''); return /[";\r\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s; };
+function loteCSV(linhas){
+  const cab = ['Proposta','Cliente','CNPJ/CPF','Situação','Escritório assinou em','Quem assina','E-mail','E-mail','Celular','WhatsApp','WhatsApp em','Erro do WhatsApp','Abriu em','Cliente assinou'];
+  const lin = [cab];
+  linhas.forEach(r => { const base = [numeroFmt(r.p), r.p.cliente_nome, docFmt(r.c.documento || '') || '', STATUS[r.p.status] || r.p.status, dataHora(r.p.escritorio_assinou_em)];
+    if(!r.pessoas.length) lin.push([...base, r.plano && r.plano.modo==='autorizar' ? 'aguarda autorização' : 'sem contato', '', '', '', '', '', '', '', '']);
+    r.pessoas.forEach(x => lin.push([...base, x.s.nome + (x.novo ? ' (a cadastrar no envio)' : ''), x.s.email || '', x.email ? (x.email.st==='erro' ? 'falhou' : 'enviado ' + dataHora(x.email.em)) : '',
+      x.s.celular || '', x.whats ? WE_SIT[x.whats.st] || x.whats.st : '', x.whats ? dataHora(x.whats.em) : '', x.whats && x.whats.st==='erro' ? x.whats.erro || '' : '', dataHora(x.abriu), x.assinou ? 'sim' : 'não'])); });
+  return '﻿' + lin.map(l => l.map(csvCampo).join(';')).join('\r\n');
+}
+
+/* ----- tela ----- */
+const espera = ms => new Promise(ok => setTimeout(ok, ms));
+function loteEnvioDados(L){
+  const ps = lotePropostas(L.id).sort((a,b) => (a.ano - b.ano) || (a.numero - b.numero)), E = S.LE;
+  const ix = cliIndiceContatos(), porId = Object.fromEntries(S.clientes.map(c => [c.id, c]));
+  return { ps, linhas:E && E.D ? loteLinhasEnvio(ps, E.D, ix, porId, (L.parametros || {}).autorizados) : [] };
+}
+async function loteEnvioCarregar(L){
+  if(!S.LE || S.LE.loteId!==L.id) S.LE = { loteId:L.id, D:null, canal:'email', recusados:[], aut:null };
+  const ids = lotePropostas(L.id).map(p => p.id);
+  try{ S.LE.D = ids.length ? await DB.loteEnvio(ids, L.id) : { sigs:[], links:[], envios:[], whatsOk:true }; }
+  catch(e){ S.LE.D = null; if($('loteEnvio')) $('loteEnvio').innerHTML = `<div class="aviso"><span>Não foi possível carregar a situação do envio: ${esc(e.message)}</span></div>`; return; }
+  if(S.LE.D && !S.LE.D.whatsOk && S.LE.canal!=='email') S.LE.canal = 'email';
+  desenhaLoteEnvio();
+}
+function desenhaLoteEnvio(){
+  const el = $('loteEnvio'), L = (S.lotes || []).find(x => x.id===S.loteId); if(!el || !L || !S.LE || !S.LE.D) return;
+  const E = S.LE, D = E.D, { linhas } = loteEnvioDados(L), diretor = S.perfil==='diretor', cfg = whatsCfg(esc_());
+  if(!linhas.length){ el.innerHTML = ''; return; }
+  const abertas = linhas.filter(r => r.aberta), escPend = abertas.filter(r => !r.esc && (r.p.itens || []).length);
+  const aut = abertas.filter(r => r.plano && (r.plano.modo==='autorizar' || r.plano.modo==='automatico')), semC = abertas.filter(r => r.plano && r.plano.modo==='nenhum');
+  const prontas = abertas.filter(r => !r.plano || r.plano.modo==='assina').length + aut.filter(r => r.plano.modo==='automatico').length;
+  const A = loteAlvos(linhas, E.canal), naoAb = loteNaoAbertos(linhas);
+  const todos = linhas.flatMap(r => r.pessoas.filter(x => !x.novo)), cont = f => todos.filter(f).length;
+  const errosZ = todos.filter(x => x.whats && x.whats.st==='erro' && x.whats.id), pendZ = todos.filter(x => x.whats && ['agendado','na_fila'].includes(x.whats.st) && x.whats.id);
+  const enviados = cont(x => x.email || jaZap(x)), ind = (rot, v, sub) => `<div class="ind"><div class="rot">${rot}</div><b>${v}</b>${sub ? `<div class="rot">${sub}</div>` : ''}</div>`;
+  const autorizados = (L.parametros || {}).autorizados || {}, marcados = E.aut || new Set(Object.keys(autorizados));
+  const tag = (ok, t) => `<span class="${ok ? 'ok-tag' : 'al-tag'}">${esc(t)}</span>`, dica = t => `<small class="dica">${esc(t)}</small>`;
+  const celE = x => x.email ? (x.email.st==='erro' ? tag(false, 'falhou') : tag(true, 'enviado ' + dataHora(x.email.em))) : dica(x.s.email ? (x.novo ? x.s.email : 'não enviado') : 'sem e-mail');
+  const celZ = x => x.whats ? (x.whats.st==='erro' ? tag(false, 'erro: ' + (x.whats.erro || '')) : ['enviado','manual'].includes(x.whats.st) ? tag(true, WE_SIT[x.whats.st] + ' ' + dataHora(x.whats.em))
+    : `<span class="pd-tag">${esc(WE_SIT[x.whats.st] || x.whats.st)}${x.whats.tipo==='lembrete' ? ' (lembrete)' : ''}</span>`) : dica(x.s.celular ? (x.novo ? x.s.celular : 'não enviado') : 'sem celular');
+  const celC = x => x.assinou ? tag(true, 'assinou') : x.abriu ? `<span class="pd-tag">abriu ${esc(dataHora(x.abriu))}</span>` : dica('—');
+  const qtdE = A.email.length, qtdZ = A.whats.length, minE = Math.ceil(qtdE * (PAUSA_EMAIL_MS + 1200) / 60000), diasZ = whatsDias(qtdZ, cfg);
+  const fora = [[A.escritorio,'aguardando a assinatura do escritório'],[A.autorizar,'aguardando a sua autorização (quem assina)'],[A.semContato,'sem e-mail nem celular'],[A.vencidas,'com a validade vencida'],
+    [A.semMeio, E.canal==='email' ? 'sem e-mail' : E.canal==='whatsapp' ? 'sem celular' : 'sem e-mail e sem celular'],[A.jaRecebeu,'já receberam por este canal']].filter(x => x[0]);
+  const zapOk = D.whatsOk, canais = Object.entries(ENVIO_CANAIS).map(([k,t]) => `<label class="canal ${E.canal===k ? 'on' : ''}"><input type="radio" name="le_canal" data-lecanal="${k}" ${E.canal===k ? 'checked' : ''} ${k!=='email' && !zapOk ? 'disabled' : ''}> ${esc(t)}</label>`).join('');
+  el.innerHTML = `
+  <div class="painel"><h2>1. Quem assina pelo cliente</h2>
+    <p style="margin:0 0 8px"><b>${prontas}</b> de ${abertas.length} proposta${abertas.length===1 ? '' : 's'} em aberto com quem assina definido (signatário já cadastrado, contato marcado "Assina" ou envio autorizado).</p>
+    ${aut.length ? `<div class="aviso ambar" style="display:block"><b>${aut.length} cliente${aut.length===1 ? '' : 's'} sem contato marcado como "Assina".</b> O pedido de assinatura iria para o contato que recebe e-mail/WhatsApp. Só envio para quem você autorizar aqui (ou marque "Assina" no cadastro do cliente).</div>
+      <div class="rolagem"><table class="lista"><thead><tr><th><input type="checkbox" data-leauttodos="1" ${aut.every(r => marcados.has(r.c.id)) ? 'checked' : ''} aria-label="Marcar todos"></th><th>Cliente</th><th>Vai para</th><th>E-mail</th><th>Celular</th><th></th></tr></thead><tbody>
+      ${aut.map(r => { const s = r.plano.sugestao || r.plano.sigs[0], a = autorizados[r.c.id];
+        return `<tr><td><input type="checkbox" data-leaut="${r.c.id}" ${marcados.has(r.c.id) ? 'checked' : ''} aria-label="Autorizar ${esc(r.c.nome)}"></td><td><b>${esc(r.c.nome)}</b>${a ? `<br><small class="dica">autorizado por ${esc(a.por)} em ${esc(dataHora(a.em))}</small>` : ''}</td>
+          <td>${esc(s.nome)}</td><td>${esc(s.email || '—')}</td><td>${esc(s.celular || '—')}</td><td><button class="elo" data-act="cliente" data-id="${r.c.id}">abrir cadastro</button></td></tr>`; }).join('')}</tbody></table></div>
+      <div class="barra-salvar" style="margin-top:8px"><button class="btn" data-act="loteAutSalvar">Salvar autorização (${aut.filter(r => marcados.has(r.c.id)).length} marcado${aut.filter(r => marcados.has(r.c.id)).length===1 ? '' : 's'})</button></div>` : ''}
+    ${semC.length ? `<p style="margin:10px 0 4px"><b>Sem e-mail nem celular (${semC.length}):</b></p><ul class="pend">${semC.slice(0,40).map(r => `<li>${esc(r.c.nome)} <button class="elo" data-act="cliente" data-id="${r.c.id}">abrir cadastro</button></li>`).join('')}</ul>${semC.length>40 ? `<p class="dica">… e mais ${semC.length-40}.</p>` : ''}` : ''}
+  </div>
+  <div class="painel"><h2>2. Assinatura do escritório</h2>
+    <p style="margin:0 0 8px"><b>${abertas.filter(r => r.esc).length}</b> de ${abertas.length} proposta${abertas.length===1 ? '' : 's'} em aberto já assinada${abertas.length===1 ? '' : 's'} pelo escritório. O envio aos clientes só sai para as propostas que o escritório já assinou.</p>
+    ${escPend.length ? (diretor ? `<button class="btn primario" data-act="loteAssinar">Assinar ${escPend.length} proposta${escPend.length===1 ? '' : 's'} pelo escritório</button>` : '<p class="dica">Só o diretor assina pelo escritório.</p>') : '<span class="ok-tag">todas assinadas</span>'}
+  </div>
+  <div class="painel"><h2>3. Enviar aos clientes</h2>
+    <div class="canais" role="radiogroup" aria-label="Canal de envio">${canais}</div>
+    ${zapOk ? '' : '<p class="dica">O WhatsApp em massa precisa da migração 23 no banco (23_migracao_v2_4_0_envio_em_massa.sql).</p>'}
+    <p style="margin:10px 0 4px">${qtdE || qtdZ ? `Vai ${[qtdE ? `enviar <b>${qtdE}</b> e-mail${qtdE===1 ? '' : 's'} agora (cerca de ${minE} min, com esta tela aberta)` : '', qtdZ ? `agendar <b>${qtdZ}</b> WhatsApp${qtdZ===1 ? '' : 's'} (${esc(whatsCfgTxt(cfg))}: ${diasZ===1 ? 'termina no mesmo dia' : 'cerca de ' + diasZ + ' dias de envio'})` : ''].filter(Boolean).join(' e ')}.` : 'Nada a enviar por este canal agora.'}</p>
+    ${fora.length ? `<p class="dica" style="margin:0 0 8px">Ficam de fora: ${fora.map(x => `${x[0]} ${esc(x[1])}`).join(' · ')}.</p>` : ''}
+    ${zapOk && E.canal!=='email' ? `<p class="dica" style="margin:0 0 8px">WhatsApp pelo robô do Cobrança Pro, só para celular cadastrado lá para o cliente. ${diretor ? '<button class="elo" data-act="whatsCfg">alterar ritmo</button>' : ''}</p>` : ''}
+    <div class="barra-salvar"><button class="btn primario" data-act="loteEnviar" ${qtdE || qtdZ ? '' : 'disabled'} ${E.enviando ? 'disabled' : ''}>Enviar</button>${E.enviando ? '<button class="btn" data-act="loteParar">Parar</button>' : ''}</div>
+    <div id="leProg" class="imp-prog">${esc(E.prog || '')}</div>
+    ${E.recusados.length ? `<div class="aviso"><span><b>WhatsApp não agendado para ${E.recusados.length}:</b> ${E.recusados.slice(0,30).map(x => esc(x.nome + ' — ' + x.motivo)).join('; ')}${E.recusados.length>30 ? '…' : ''}</span></div>` : ''}
+  </div>
+  <div class="painel"><h2>4. Acompanhamento</h2>
+    <div class="resumo-topo r4">${ind('Receberam', enviados, 'por e-mail ou WhatsApp')}${ind('Abriram', cont(x => x.abriu))}${ind('Assinaram', cont(x => x.assinou), linhas.filter(r => r.p.assinada_em).length + ' propostas concluídas')}${ind('Erros', cont(x => (x.email && x.email.st==='erro') || (x.whats && x.whats.st==='erro')))}</div>
+    <div class="acoes-env">
+      <button class="btn" data-act="loteLembrar" ${naoAb.length ? '' : 'disabled'} title="Quem recebeu há mais de 2 dias e ainda não abriu">Lembrar quem não abriu (${naoAb.length})</button>
+      ${zapOk ? `<button class="btn" data-act="loteZapErros" ${errosZ.length ? '' : 'disabled'}>Reenviar WhatsApp com erro (${errosZ.length})</button><button class="btn" data-act="loteZapCancelar" ${pendZ.length ? '' : 'disabled'}>Cancelar WhatsApp que não saiu (${pendZ.length})</button>` : ''}
+      <button class="btn" data-act="loteAtualizar">Atualizar</button><button class="btn" data-act="loteExportar">Exportar planilha</button></div>
+    <div class="rolagem"><table class="lista"><thead><tr><th>Nº</th><th>Cliente</th><th>Escritório</th><th>Quem assina</th><th>E-mail</th><th>WhatsApp</th><th>Cliente</th></tr></thead><tbody>
+    ${linhas.map(r => { const ps = r.pessoas.length ? r.pessoas : [null];
+      return ps.map((x, i) => `<tr class="${r.aberta || r.p.assinada_em ? '' : 'desab'}">${i ? '<td></td><td></td><td></td>' : `<td><button class="elo" data-act="docAss" data-id="${r.p.id}">${esc(numeroFmt(r.p))}</button></td><td><b>${esc(r.p.cliente_nome)}</b><br>${selo(r.p.status)}</td><td>${r.esc ? tag(true, 'assinou') : dica('pendente')}</td>`}
+        <td>${x ? esc(x.s.nome) + (x.novo ? '<br><small class="dica">cadastrado no envio</small>' : '') : dica(r.plano && r.plano.modo==='autorizar' ? 'aguarda autorização' : 'sem contato')}</td><td>${x ? celE(x) : ''}</td><td>${x ? celZ(x) : ''}</td><td>${x ? celC(x) : ''}</td></tr>`).join(''); }).join('')}</tbody></table></div>
+  </div>`;
+}
+function dlgLoteAssinar(L, rs){
+  const e = esc_(), tm = r2(rs.reduce((a,r) => a + (+r.p.total_mensal || 0), 0)), tp = r2(rs.reduce((a,r) => a + (+r.p.total_pontual || 0), 0));
+  $('dlg').innerHTML = `<h2>Assinar pelo escritório em lote</h2><p>Lote <b>${esc(L.nome)}</b>: <b>${rs.length}</b> proposta${rs.length===1 ? '' : 's'} (${esc(numeroFmt(rs[0].p))}${rs.length>1 ? ' a ' + esc(numeroFmt(rs[rs.length-1].p)) : ''}) · mensal ${brl(tm)} · pontual ${brl(tp)}</p><div class="grade">
+    <div class="campo c4"><label for="x_nome">Nome completo de quem assina *</label><input type="text" id="x_nome" value="${esc(e.responsavel||'')}"></div>
+    <div class="campo"><label for="x_cpf">CPF *</label><input type="text" id="x_cpf" inputmode="numeric" value="${esc(docFmt(e.cpf_responsavel||''))}" placeholder="000.000.000-00"></div></div>
+  <label class="marcar" style="margin-top:10px"><input type="checkbox" id="x_ok"> <span>Assino pela ${esc(S.tenant.nome)} cada uma destas ${rs.length} propostas, obrigando o escritório aos seus termos, e reconheço estas assinaturas eletrônicas como válidas (art. 10, § 2º, da MP 2.200-2/2001). Cada assinatura fica registrada separadamente, com meu usuário (${esc(S.email)}), data, hora, IP e o hash do conteúdo de cada proposta.</span></label>
+  <p class="dica">Depois da assinatura o conteúdo das propostas não pode mais ser alterado. Confira a prévia do lote antes.</p>
+  <div id="xProg" class="imp-prog"></div>
+  <div class="barra-salvar" style="margin-top:14px"><button class="btn" data-act="fecharDlg" id="xCancelar">Cancelar</button><button class="btn primario" data-act="loteAssinarOk" id="xAssinar">Assinar ${rs.length} proposta${rs.length===1 ? '' : 's'}</button></div>`;
+  $('dlg').showModal();
+}
+function dlgWhatsCfg(){
+  const c = whatsCfg(esc_()), n = (id, rot, v, a, b) => `<div class="campo c1"><label for="${id}">${rot}</label><input type="number" id="${id}" min="${a}" max="${b}" value="${v}"></div>`;
+  $('dlg').innerHTML = `<h2>Ritmo do WhatsApp em massa</h2><p class="dica" style="margin-top:-4px">Vale para os pedidos de assinatura dos lotes, que saem pelo robô do Cobrança Pro. Mensagens em ritmo lento e em horário comercial reduzem o risco de bloqueio do número.</p><div class="grade">
+    ${n('w_int','Intervalo (minutos)', c.whats_intervalo_min, 1, 60)}${n('w_lim','Limite por dia', c.whats_limite_dia, 1, 200)}${n('w_ini','Das (hora)', c.whats_hora_ini, 0, 23)}${n('w_fim','Até (hora)', c.whats_hora_fim, 1, 24)}</div>
+    <label class="marcar"><input type="checkbox" id="w_sab" ${c.whats_sabado ? 'checked' : ''}> Enviar também aos sábados</label>
+    <div class="barra-salvar" style="margin-top:14px"><button class="btn" data-act="fecharDlg">Cancelar</button><button class="btn primario" data-act="whatsCfgSalvar">Salvar</button></div>`;
+  $('dlg').showModal();
+}
+function dlgLoteLembrar(lista, zapOk){
+  const e = lista.filter(x => x.e).length, z = lista.filter(x => x.z && x.x.s.celular).length;
+  $('dlg').innerHTML = `<h2>Lembrar quem não abriu</h2><p>${lista.length} pessoa${lista.length===1 ? '' : 's'} recebe${lista.length===1 ? 'u' : 'ram'} o pedido há mais de 2 dias e ainda não abri${lista.length===1 ? 'u' : 'ram'} a proposta.</p>
+    <div class="canais" role="radiogroup" aria-label="Canal do lembrete">
+      <label class="canal"><input type="radio" name="lb_canal" value="email" ${e ? 'checked' : 'disabled'}> E-mail de novo (${e})</label>
+      <label class="canal"><input type="radio" name="lb_canal" value="whatsapp" ${zapOk && z ? (e ? '' : 'checked') : 'disabled'}> Lembrete por WhatsApp (${zapOk ? z : 0})</label></div>
+    <p class="dica">O e-mail sai de novo com um link novo (o anterior, que não foi aberto, deixa de valer). O lembrete por WhatsApp entra na agenda do robô.</p>
+    <div class="barra-salvar" style="margin-top:14px"><button class="btn" data-act="fecharDlg">Cancelar</button><button class="btn primario" data-act="loteLembrarOk">Lembrar</button></div>`;
+  $('dlg').showModal();
+}
+// cria os signatários que faltam (contato "Assina" ou, com autorização, o contato de envio) nas propostas que vão ser enviadas
+async function loteCriarSignatarios(linhas){
+  const rows = []; linhas.filter(r => r.aberta && r.esc && !r.vencida && r.plano && r.plano.sigs.length).forEach(r => r.plano.sigs.forEach((s, i) => rows.push({ proposta_id:r.p.id, papel:'parte', ordem:i, nome:s.nome, qualidade:s.qualidade, email:s.email, celular:s.celular })));
+  if(rows.length) await DB.criarSignatarios(rows);
+  return rows.length;
+}
+async function loteEnviarEmails(itens, prog){
+  const falhas = []; let n = 0;
+  for(let i = 0; i < itens.length; i++){
+    if(S.LE && S.LE.parar) break;
+    const { r, x } = itens[i]; prog(`Enviando e-mail ${i+1} de ${itens.length}: ${r.p.cliente_nome}…`);
+    try{ await enviarLink(r.p, x.s, 'assinatura', 'email'); n++; }catch(e){ falhas.push(`${r.p.cliente_nome} (${x.s.nome}): ${e.message}`); }
+    if(i < itens.length-1 && !(S.LE && S.LE.parar)) await espera(PAUSA_EMAIL_MS);
+  }
+  return { n, falhas };
+}
+async function loteZapAgendar(itens, tipo){
+  if(!itens.length) return { agendados:0, recusados:[] };
+  const nomes = Object.fromEntries(itens.map(({ r, x }) => [x.s.id, `${r.p.cliente_nome} (${x.s.nome})`]));
+  const res = await DB.whatsAgendar(itens.map(({ x }) => x.s.id), tipo);
+  return { agendados:res.agendados, recusados:(res.recusados || []).map(z => ({ nome:nomes[z.signatario_id] || 'signatário', motivo:z.motivo })) };
+}
+const naoSair = ev => { ev.preventDefault(); ev.returnValue = ''; };
+
+Object.assign(ACOES, {
+  loteAssinar(){ const L = (S.lotes || []).find(x => x.id===S.loteId); if(!L || !S.LE || !S.LE.D) return;
+    if(S.perfil!=='diretor'){ toast('Só o diretor assina pelo escritório.', true); return; }
+    const rs = loteEnvioDados(L).linhas.filter(r => r.aberta && !r.esc && (r.p.itens || []).length); if(!rs.length) return; dlgLoteAssinar(L, rs); },
+  async loteAssinarOk(){ const L = (S.lotes || []).find(x => x.id===S.loteId); if(!L) return;
+    const nome = $('x_nome').value.trim().replace(/\s+/g,' '), cpf = soDoc($('x_cpf').value);
+    if(nome.length<5 || !nome.includes(' ')){ toast('Informe o nome completo.', true); return; } if(!cpfValido(cpf)){ toast('CPF inválido.', true); return; } if(!$('x_ok').checked){ toast('Marque a declaração para assinar.', true); return; }
+    const rs = loteEnvioDados(L).linhas.filter(r => r.aberta && !r.esc && (r.p.itens || []).length), falhas = []; let n = 0;
+    $('xAssinar').disabled = true; $('xCancelar').disabled = true; window.addEventListener('beforeunload', naoSair);
+    try{ for(let i = 0; i < rs.length; i++){ const p = rs[i].p; if($('xProg')) $('xProg').textContent = `Assinando ${i+1} de ${rs.length}: ${numeroFmt(p)} — ${p.cliente_nome}…`;
+        try{ await DB.escritorioAssinar(p.id, nome, cpf); n++; }catch(e){ falhas.push(`${numeroFmt(p)} ${p.cliente_nome}: ${e.message}`); } } }
+    finally{ window.removeEventListener('beforeunload', naoSair); }
+    if($('dlg').open) $('dlg').close();
+    if(falhas.length) toast(`${n} assinada(s). Não assinadas: ${falhas.slice(0,5).join(' | ')}${falhas.length>5 ? '…' : ''}`, true); else toast(`Escritório assinou ${n} proposta${n===1 ? '' : 's'}. Agora é só enviar aos clientes.`);
+    if(S.view==='lote') VIEWS.lote(); },
+  async loteAutSalvar(){ const L = (S.lotes || []).find(x => x.id===S.loteId); if(!L || !S.LE) return;
+    const antes = (L.parametros || {}).autorizados || {}, marc = S.LE.aut || new Set(Object.keys(antes)), agora = new Date().toISOString(), novo = {};
+    marc.forEach(id => { novo[id] = antes[id] || { por:S.email, em:agora }; });
+    const n = Object.keys(novo).length, tirou = Object.keys(antes).filter(id => !novo[id]).length;
+    if(!confirm(`${n} cliente(s) autorizado(s): o pedido de assinatura vai para o contato que recebe e-mail/WhatsApp deles, em nome da empresa.${tirou ? ` ${tirou} autorização(ões) retirada(s).` : ''} Confirmar?`)) return;
+    await tenta(async () => { await DB.alterar('lotes', L.id, { parametros:{ ...(L.parametros || {}), autorizados:novo } }); S.LE.aut = null; toast('Autorização registrada.'); desenhaLoteEnvio(); }); },
+  async loteEnviar(){ const L = (S.lotes || []).find(x => x.id===S.loteId), E = S.LE; if(!L || !E || !E.D || E.enviando) return;
+    let { linhas } = loteEnvioDados(L), A = loteAlvos(linhas, E.canal);
+    if(!A.email.length && !A.whats.length){ toast('Nada a enviar por este canal agora.', true); return; }
+    const cfg = whatsCfg(esc_());
+    if(!confirm(`Enviar o pedido de assinatura (${ENVIO_CANAIS[E.canal]})?\n\n${A.email.length ? `• ${A.email.length} e-mail(s) agora, um a cada ${PAUSA_EMAIL_MS/1000} s — mantenha esta tela aberta até terminar.\n` : ''}${A.whats.length ? `• ${A.whats.length} WhatsApp(s) na agenda do robô (${whatsCfgTxt(cfg)}).\n` : ''}\nQuem já recebeu por este canal não recebe de novo.`)) return;
+    E.enviando = true; E.parar = false; E.recusados = []; E.prog = 'Preparando…'; desenhaLoteEnvio(); window.addEventListener('beforeunload', naoSair);
+    const prog = t => { E.prog = t; const p = $('leProg'); if(p) p.textContent = t; };
+    let msg = [], erro = false;
+    try{
+      const criados = await loteCriarSignatarios(linhas);
+      if(criados){ prog(`${criados} signatário(s) cadastrado(s) a partir dos contatos.`); E.D = await DB.loteEnvio(lotePropostas(L.id).map(p => p.id), L.id); ({ linhas } = loteEnvioDados(L)); A = loteAlvos(linhas, E.canal); }
+      if(A.whats.length){ prog(`Agendando ${A.whats.length} WhatsApp(s)…`); const z = await loteZapAgendar(A.whats, 'assinatura'); E.recusados = z.recusados;
+        msg.push(`${z.agendados} WhatsApp(s) agendado(s)` + (z.recusados.length ? `, ${z.recusados.length} não agendado(s)` : '')); if(z.recusados.length) erro = true; }
+      if(A.email.length){ const r = await loteEnviarEmails(A.email, prog); msg.push(`${r.n} e-mail(s) enviado(s)` + (r.falhas.length ? `; falharam: ${r.falhas.slice(0,3).join(' | ')}${r.falhas.length>3 ? '…' : ''}` : '') + (E.parar ? ' (parado por você)' : '')); if(r.falhas.length) erro = true; }
+    }catch(e){ msg.push(e.message); erro = true; }
+    finally{ window.removeEventListener('beforeunload', naoSair); E.enviando = false; E.parar = false; E.prog = ''; }
+    await DB.recarregarVarias(lotePropostas(L.id).map(p => p.id)).catch(() => {});
+    toast(msg.join('. ') + '.', erro);
+    if(S.view==='lote' && S.loteId===L.id){ VIEWS.lote(); } },
+  loteParar(){ if(S.LE && S.LE.enviando){ S.LE.parar = true; const p = $('leProg'); if(p) p.textContent = 'Parando depois do e-mail atual…'; } },
+  async loteAtualizar(){ const L = (S.lotes || []).find(x => x.id===S.loteId); if(!L) return; await tenta(async () => { await DB.recarregarVarias(lotePropostas(L.id).map(p => p.id)); }); VIEWS.lote(); },
+  loteExportar(){ const L = (S.lotes || []).find(x => x.id===S.loteId); if(!L || !S.LE || !S.LE.D) return;
+    baixar(`lote-${semAcento(L.nome).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') || 'propostas'}.csv`, loteCSV(loteEnvioDados(L).linhas), 'text/csv;charset=utf-8'); },
+  loteLembrar(){ const L = (S.lotes || []).find(x => x.id===S.loteId); if(!L || !S.LE || !S.LE.D) return; const lista = loteNaoAbertos(loteEnvioDados(L).linhas); if(!lista.length) return; dlgLoteLembrar(lista, S.LE.D.whatsOk); },
+  async loteLembrarOk(){ const L = (S.lotes || []).find(x => x.id===S.loteId), E = S.LE; if(!L || !E) return; const c = document.querySelector('[name="lb_canal"]:checked'); if(!c){ toast('Escolha o canal.', true); return; }
+    const lista = loteNaoAbertos(loteEnvioDados(L).linhas); $('dlg').close();
+    if(c.value==='whatsapp') await tenta(async () => { const z = await loteZapAgendar(lista.filter(x => x.z && x.x.s.celular), 'lembrete'); E.recusados = z.recusados; toast(`${z.agendados} lembrete(s) por WhatsApp agendado(s)${z.recusados.length ? `; ${z.recusados.length} não agendado(s)` : ''}.`, !!z.recusados.length); });
+    else { E.enviando = true; E.parar = false; window.addEventListener('beforeunload', naoSair); desenhaLoteEnvio();
+      try{ const r = await loteEnviarEmails(lista.filter(x => x.e), t => { E.prog = t; const p = $('leProg'); if(p) p.textContent = t; }); toast(`${r.n} lembrete(s) por e-mail enviado(s)${r.falhas.length ? '; falharam: ' + r.falhas.slice(0,3).join(' | ') : ''}.`, !!r.falhas.length); }
+      finally{ window.removeEventListener('beforeunload', naoSair); E.enviando = false; E.parar = false; E.prog = ''; } }
+    if(S.view==='lote' && S.loteId===L.id) VIEWS.lote(); },
+  async loteZapErros(){ const L = (S.lotes || []).find(x => x.id===S.loteId); if(!L || !S.LE || !S.LE.D) return;
+    const ids = S.LE.D.envios.filter(e => e.status==='erro' && !S.LE.D.envios.some(o => o.signatario_id===e.signatario_id && o.criado_em > e.criado_em)).map(e => e.id); if(!ids.length) return;
+    if(!confirm(`Colocar de novo na agenda do WhatsApp ${ids.length} envio(s) que deram erro? Confira antes se o celular está certo no cadastro do Cobrança Pro.`)) return;
+    await tenta(async () => { const n = await DB.whatsReagendar(ids); toast(`${n} envio(s) reagendado(s).`); }); VIEWS.lote(); },
+  async loteZapCancelar(){ const L = (S.lotes || []).find(x => x.id===S.loteId); if(!L || !S.LE || !S.LE.D) return;
+    const ids = S.LE.D.envios.filter(e => ['agendado','na_fila'].includes(e.status)).map(e => e.id); if(!ids.length) return;
+    if(!confirm(`Cancelar ${ids.length} WhatsApp(s) que ainda não saíram? O que o robô já estiver enviando não dá mais para cancelar.`)) return;
+    await tenta(async () => { const n = await DB.whatsCancelar(ids); toast(`${n} WhatsApp(s) cancelado(s).`); }); VIEWS.lote(); },
+  whatsCfg(){ if(S.perfil!=='diretor'){ toast('Só o diretor altera o ritmo do WhatsApp.', true); return; } dlgWhatsCfg(); },
+  async whatsCfgSalvar(){ const c = whatsCfg({ whats_intervalo_min:$('w_int').value, whats_limite_dia:$('w_lim').value, whats_hora_ini:$('w_ini').value, whats_hora_fim:$('w_fim').value, whats_sabado:$('w_sab').checked });
+    if(c.whats_hora_fim <= c.whats_hora_ini){ toast('O horário final precisa ser depois do inicial.', true); return; }
+    await tenta(async () => { await DB.salvarEscritorio({ ...esc_(), ...c }); $('dlg').close(); toast('Ritmo do WhatsApp salvo: ' + whatsCfgTxt(c) + '.'); desenhaLoteEnvio(); }); }
+});
+document.addEventListener('change', ev => {
+  const el = ev.target, E = S.LE; if(S.view!=='lote' || !E) return;
+  if(el.dataset.lecanal){ E.canal = el.dataset.lecanal; desenhaLoteEnvio(); return; }
+  const L = (S.lotes || []).find(x => x.id===S.loteId); if(!L) return;
+  if(!E.aut) E.aut = new Set(Object.keys((L.parametros || {}).autorizados || {}));
+  if(el.dataset.leaut){ el.checked ? E.aut.add(el.dataset.leaut) : E.aut.delete(el.dataset.leaut); desenhaLoteEnvio(); return; }
+  if(el.dataset.leauttodos){ loteEnvioDados(L).linhas.filter(r => r.aberta && r.plano && ['autorizar','automatico'].includes(r.plano.modo)).forEach(r => el.checked ? E.aut.add(r.c.id) : E.aut.delete(r.c.id)); desenhaLoteEnvio(); }
 });
 
 /* ----- digitação no assistente do lote ----- */
