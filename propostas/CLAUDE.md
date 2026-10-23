@@ -94,6 +94,9 @@ App de propostas de honorários, contratos e confissões de dívida da **Artecon
 - Filial: 50% do Fiscal e do Contábil da faixa dela. Filial com pouco movimento (até 100 fiscais e 100 contábeis, sem empregados):
   25% da tabela, com valor mínimo. Empresa sem movimento: valor fixo (filial: × % de filial).
 - Escala de funcionários aplicada por faixa: 100% até 30, 90% de 31 a 60, 80% de 61 a 100, 70% acima de 100.
+- Primeira versão da tabela gravada em produção em 23/10/2026 (vale a partir dessa data). O **valor por funcionário** dela foi
+  alterado pelo responsável na tela de conferência e difere da planilha inicial de propósito (confirmado em 23/10/2026): não "corrigir".
+  A fonte dos valores é o banco; para ter a planilha atual, use Exportar planilha no app.
 - Avulsos: lista única, corrigida pelo mesmo fator da tabela. Assinatura do escritório: a eletrônica do app (ICP-Brasil só se exigirem).
 - Premissas do cálculo a confirmar com o responsável: sócio com pró-labore além de 2 paga um valor próprio por sócio; o acréscimo de nível
   do Pessoal só entra com funcionários; MEI só tem o Essencial; Societário e Atendimento entram uma vez por empresa (na matriz).
