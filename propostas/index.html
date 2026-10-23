@@ -382,6 +382,14 @@ tr.desab td{opacity:.55}
 .pd-tag{display:inline-block;font-size:11.5px;font-weight:700;padding:1px 7px;margin:0 3px 2px 0;white-space:nowrap;background:#fffbc2;color:#5c5600}
 .acoes-env{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
 @media (max-width:1000px){.canal{flex:1 1 100%}.acoes-env .btn{flex:1 1 100%}}
+/* v2.5.0: tabela de preços */
+input.tp-in{width:96px;padding:4px 6px;text-align:right}
+.tp-niveis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.tp-nivel{border:1px solid var(--linha);background:#fff;padding:16px}.tp-nivel.desab{opacity:.6}
+.tp-nivel h3{margin:0 0 4px;font-size:17px}.tp-nivel .tp-valor{font:600 26px var(--titulo);color:var(--cinza);margin:2px 0 6px}
+.tp-nivel table{width:100%;font-size:13.5px;margin-top:10px;border-collapse:collapse}.tp-nivel td{padding:3px 0;border-top:1px solid var(--linha)}.tp-nivel td.num{text-align:right}
+.tp-regras{margin:4px 0 0;padding-left:18px}.tp-regras li{margin:3px 0}.tp-regras li.al{color:#8e1015}
+@media (max-width:1000px){.tp-niveis{grid-template-columns:1fr}input.tp-in{width:76px}}
 @media (max-width:1000px){.passos{flex-direction:column}.grupo-filtro b{width:100%}.grupo-filtro label{flex-wrap:wrap}input.mini-in{width:80px}}
 @media (max-width:1000px){.grupo-menu{font-size:0;padding:4px 0;border-bottom:2px solid var(--vermelho)}.barra-empresa{grid-template-columns:1fr;margin-top:-6px}.barra-empresa>span{display:none}.barra-empresa>div:last-child{text-align:center!important}}
 @media print{.barra-empresa{display:none!important}.ct-folha{box-shadow:none;margin:0}.doc-area .ct-folha{zoom:1}.ct-pe img{position:fixed;left:0;bottom:1.5mm}.falta{background:none;color:#000}}
@@ -716,10 +724,20 @@ function porSituacao(props){
 const CFG = { SUPABASE_URL:'https://yeujqjtjqtegsnzwwazb.supabase.co', SUPABASE_ANON_KEY:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlldWpxanRqcXRlZ3Nuend3YXpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU1NDE0OTksImV4cCI6MjEwMTExNzQ5OX0.5p1_wJ_aApJpRrN6tFu8qmAytK5FMXWt1soCubpzqao' };
 const SUPABASE_JS = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js';
 
-const APP_VERSION = '2.4.0';
+const APP_VERSION = '2.5.0';
 const LOGO_EMAIL = 'https://arteconartescontabeis-design.github.io/gestao-financeiro/propostas/logo_artecon.png';
 const PORTAL_URL = 'https://arteconartescontabeis-design.github.io/portal/';
 const CHANGELOG = [
+  { v:'2.5.0', data:'23/10/2026', itens:[
+    'Tabela de preços (Configurações › Tabela de preços): valores do Essencial por regime, atividade e faixa de lançamentos, acréscimo de cada nível (Gestão e Estratégico), valores e percentuais, e a lista de serviços avulsos.',
+    'Versões com data de início: vale a versão mais recente até hoje. Versão gravada não muda (para corrigir, grava-se outra) e só é excluída se nenhuma proposta a usou. Só o diretor grava.',
+    'Importar e exportar planilha (.xlsx): os valores entram pela planilha e ficam só no banco. O app mostra tudo para conferir antes de gravar.',
+    'Regras novas no cálculo: degraus acima de 900 lançamentos (+15%, +30%, +45% e +60%), filial com pouco movimento (25% da tabela, com valor mínimo), escala de funcionários por faixa (100%, 90%, 80% e 70%), sócios com pró-labore além de 2 e contas a mais.',
+    'Nunca abaixo de hoje: se a tabela der menos que o honorário atual, o Essencial sugerido fica no valor de hoje e o Gestão e o Estratégico somam o mesmo acréscimo da tabela. Os honorários atuais não mudam: a tabela só projeta.',
+    'Simulador: calcula os três níveis para um cliente do cadastro (com as filiais) ou preenchido à mão, mostrando como cada valor foi calculado.',
+    'Projeção da carteira: hoje × tabela por empresa, com o total e quem sobe ou mantém, e exportação da planilha.',
+    'Banco: rode no SQL Editor a migração 24_migracao_v2_5_0_tabela_precos.sql (reversão: 89_reversao_v2_5_0.sql).'
+  ]},
   { v:'2.4.0', data:'21/10/2026', itens:[
     'Lotes: assinatura e envio em massa, direto na tela do lote, em 4 etapas: quem assina pelo cliente, assinatura do escritório, envio aos clientes e acompanhamento.',
     'Quem assina: os contatos marcados como "Assina" no cadastro do cliente viram os signatários da proposta na hora do envio. Cliente sem contato marcado só recebe se você autorizar, na própria tela (o pedido vai para o contato que recebe e-mail/WhatsApp); a autorização fica registrada com usuário, data e hora.',
@@ -912,7 +930,7 @@ const CHANGELOG = [
 
 const MODO_NUVEM = !!(CFG.SUPABASE_URL && CFG.SUPABASE_ANON_KEY);
 const CFG_INCOMPLETA = !MODO_NUVEM && !!(CFG.SUPABASE_URL || CFG.SUPABASE_ANON_KEY);
-const TAB = { clientes:'prop_clientes', servicos:'prop_servicos', propostas:'prop_propostas', contatos:'prop_clientes_contatos', lotes:'prop_lotes', contratos:'prop_contratos', confissoes:'prop_confissoes' };
+const TAB = { clientes:'prop_clientes', servicos:'prop_servicos', propostas:'prop_propostas', contatos:'prop_clientes_contatos', lotes:'prop_lotes', tabelas:'prop_tabelas_preco', contratos:'prop_contratos', confissoes:'prop_confissoes' };
 const ESCRITORIO_PADRAO = { endereco:'R. Livorno, nº 15 - Sala 101, Pagani, Palhoça/SC.', cidade:'Palhoça/SC', telefone:'(48) 3242-0530', site:'www.artecon.cnt.br', instagram:'@arteconartescontábeis', frase:'O sucesso da sua empresa depende das escolhas que você faz hoje', responsavel:'Cleiver Gonçalves', registro:'CRC/SC 030.315/O-2', dia_vencimento:20, indice:'IGP-M/FGV', valor_funcionario:70.96, validade_dias:10, ct_razao:'ARTECON ARTES CONTÁBEIS SOCIEDADE SIMPLES', ct_cnpj:'79876769000128', ct_endereco:'Rua Livorno, nº 15, Sala 101', ct_cep:'88.132-274', ct_bairro:'Parque Residencial Pagani', ct_cidade:'Palhoça', ct_uf:'SC', ct_foro:'Palhoça, em Santa Catarina', adm_profissao:'contador', valor_inativa:250, retrabalho_pct:50 };
 const ABERTURA = {
   recorrente:'Conforme tratativas prévias, apresentamos nossa proposta de trabalho para a escrituração de uma empresa do tipo jurídico Limitada, com regime de tributação pelo Simples Nacional.',
@@ -959,7 +977,7 @@ const Local = {
     return db;
   },
   async carregar(){ S.email = 'modo local'; S.empresas = [{ ...this.db.tenant, perfil:'diretor' }]; return S.empresas; },
-  async entrarEmpresa(){ const d = this.db; this.migraV220(); S.tenant = { ...d.tenant, escritorio:escritorioCompleto(d.tenant.escritorio) }; S.perfil = 'diretor'; S.clientes = d.clientes; S.contatos = d.contatos; S.cadOk = true; d.lotes = d.lotes || []; S.lotes = d.lotes; S.loteOk = true; S.servicos = d.servicos; S.propostas = d.propostas; await this.ctCarregar(); await this.cdCarregar(); },
+  async entrarEmpresa(){ const d = this.db; this.migraV220(); S.tenant = { ...d.tenant, escritorio:escritorioCompleto(d.tenant.escritorio) }; S.perfil = 'diretor'; S.clientes = d.clientes; S.contatos = d.contatos; S.cadOk = true; d.lotes = d.lotes || []; S.lotes = d.lotes; S.loteOk = true; d.tabelas = d.tabelas || []; S.tabelas = d.tabelas; S.tpOk = true; S.servicos = d.servicos; S.propostas = d.propostas; await this.ctCarregar(); await this.cdCarregar(); },
   async inserir(tab, row){
     const r = { ...row, id:uid(), tenant_id:'local', criado_em:new Date().toISOString(), atualizado_em:new Date().toISOString(), excluido_em:null };
     if(tab==='clientes' && r.documento && this.db.clientes.some(c => !c.excluido_em && c.documento===r.documento)) throw new Error('Já existe cliente ativo com este CNPJ/CPF.');
@@ -976,6 +994,7 @@ const Local = {
     if(tab==='propostas' && r.lote_id && !(this.db.lotes || []).some(l => l.id===r.lote_id && l.status!=='descartado')) throw new Error('O lote não pertence a este escritório ou já foi descartado.');
     if(tab==='propostas'){ r.ano = +r.data_proposta.slice(0,4); this.db.numeradores[r.ano] = (this.db.numeradores[r.ano]||0) + 1; r.numero = this.db.numeradores[r.ano];
       this.db.historico.push({ id:uid(), proposta_id:r.id, de:null, para:r.status, usuario_email:'modo local', criado_em:r.criado_em }); }
+    if(tab==='tabelas'){ this.db.tabelas = this.db.tabelas || []; if(this.db.tabelas.some(t => !t.excluido_em && t.vigencia===r.vigencia)) throw new Error('Já existe uma versão da tabela de preços com esta data de início.'); r.criado_por_email = 'modo local'; }
     this.db[tab].push(r); this.grava(); return r;
   },
   async alterar(tab, id, patch){
@@ -993,6 +1012,8 @@ const Local = {
       if(patch.matriz_id && patch.matriz_id!==r.matriz_id){
         if(!this.db.clientes.some(c => c.id===patch.matriz_id && c.id!==id && !c.excluido_em && !c.matriz_id)) throw new Error('A matriz precisa ser um cliente ativo deste escritório (e não pode ser filial).');
         if(filiais()) throw new Error('Este cliente é matriz de outras empresas e não pode virar filial.'); } }
+    if(tab==='tabelas'){ if(Object.keys(patch).some(k => k!=='excluido_em') || !patch.excluido_em || r.excluido_em) throw new Error('Versão gravada da tabela de preços não muda; grave uma versão nova.');
+      if(this.db.propostas.some(p => (p.condicoes || {}).tabela_preco_id===id)) throw new Error('Esta versão já foi usada em proposta e não pode ser excluída.'); }
     if(tab==='contratos'){ const x = ctRegra(r, patch, S.perfil); if(x.erro) throw new Error(x.erro); patch = x.patch;
       if(patch.status && patch.status!==r.status) this.ctHist(id, 'status', r.status, patch.status, { inicio_vigencia:patch.inicio_vigencia || r.inicio_vigencia, aviso_em:patch.aviso_em, aviso_por:patch.aviso_por, encerrado_em:patch.encerrado_em });
       const campos = ['dados','modelo_texto','contratante_id','data_contrato'].filter(k => k in patch && JSON.stringify(patch[k])!==JSON.stringify(r[k])); if(patch.excluido_em && !r.excluido_em) campos.push('excluido');
@@ -1085,6 +1106,8 @@ const Nuvem = {
     catch(e){ if(!semTabela(e)) throw e; S.contatos = []; S.cadOk = false; }   // banco ainda sem a migração 21
     try{ S.lotes = await this.todos('prop_lotes','criado_em'); S.loteOk = true; }
     catch(e){ if(!semTabela(e)) throw e; S.lotes = []; S.loteOk = false; }     // banco ainda sem a migração 22
+    try{ S.tabelas = await this.todos('prop_tabelas_preco','vigencia'); S.tpOk = true; }
+    catch(e){ if(!semTabela(e)) throw e; S.tabelas = []; S.tpOk = false; }    // banco ainda sem a migração 24
     await this.ctCarregar(); await this.cdCarregar();
   },
   async inserir(tab, row){ const { data, error } = await this.sb.from(TAB[tab]).insert({ ...row, tenant_id:S.tenant.id }).select().single(); if(error) throw this.erro(error); S[tab].push(data); return data; },
@@ -1163,8 +1186,8 @@ const esc_ = () => (S.tenant && S.tenant.escritorio) || ESCRITORIO_PADRAO;
 const MENU = [['g','Propostas'],['painel','▦','Visão geral'],['propostas','▤','Propostas'],['lotes','▥','Lotes'],
   ['g','Clientes'],['clientes','◉','Clientes'],
   ['g','Contratos'],['cpainel','▦','Visão geral'],['contratos','▣','Prestação de serviços'],['confissoes','◆','Confissão de dívida'],['modelo','✎','Modelos dos contratos'],
-  ['g','Configurações'],['servicos','☰','Serviços'],['escritorio','⚙','Escritório'],['versoes','↻','Versões']];
-const MENU_DE = { form:'propostas', documento:'propostas', ctForm:'contratos', contrato:'contratos', clienteForm:'clientes', importar:'clientes', loteNovo:'lotes', lote:'lotes', cdForm:'confissoes', confissao:'confissoes' };
+  ['g','Configurações'],['tabela','$','Tabela de preços'],['servicos','☰','Serviços'],['escritorio','⚙','Escritório'],['versoes','↻','Versões']];
+const MENU_DE = { form:'propostas', documento:'propostas', ctForm:'contratos', contrato:'contratos', clienteForm:'clientes', importar:'clientes', loteNovo:'lotes', lote:'lotes', tabelaEditar:'tabela', cdForm:'confissoes', confissao:'confissoes' };
 function barraEmpresa(){ const e = esc_(), t = S.tenant || {};
   return `<div class="barra-empresa"><span></span><div class="empresa-centro"><b>${esc(t.nome || '')}</b><small>${esc([e.ct_cnpj ? 'CNPJ ' + docFmt(e.ct_cnpj) : '', [e.ct_cidade, e.ct_uf].filter(Boolean).join('/') || e.cidade || ''].filter(Boolean).join(' · '))}</small></div><div style="text-align:right">${(S.empresas || []).length > 1 ? '<button class="btn mini" data-act="trocarEmpresa">⇄ Trocar empresa</button>' : ''}</div></div>`; }
 function moldura(){
@@ -3732,7 +3755,7 @@ Object.assign(VIEWS, {
       <div class="painel"><h2>Como cobra</h2><div class="origens">
         ${org('reajuste','Reajuste anual','Proposta com aceite: honorário atual de cada cliente + o percentual que você informa neste lote.')}
         ${org('avulso','Serviço avulso','Um serviço do catálogo com preço único (ex.: análise tributária, IRPF, certificado digital).')}
-        ${org('mensal','Mensal — 3 níveis','Essencial, Gestão e Estratégico pelo enquadramento. Disponível com a tabela de preços (v2.5/v2.6).', true)}</div>
+        ${org('mensal','Mensal — 3 níveis','Essencial, Gestão e Estratégico pela tabela de preços e o enquadramento. Entra na v2.6, com a proposta por níveis.', true)}</div>
         ${L.tipo==='reajuste' ? `<div class="grade" style="margin-top:12px">
           ${inp('pct','Percentual do reajuste (%) *','c1','text',P.percentual==='' ? '' : pctFmt(P.percentual),'data-ltp="percentual" data-num="1" placeholder="ex.: 4,50"')}
           ${inp('indice','Índice (texto do documento)','','text',P.indice,'data-ltp="indice"')}
@@ -4135,6 +4158,341 @@ document.addEventListener('change', ev => {
   if(el.dataset.ltseltodos){ L.fora = el.checked ? [] : loteCandidatos(S.clientes, S.contatos, S.propostas, L.filtros).map(c => c.id); VIEWS.loteNovo(); return; }
   if(el.dataset.ltsel){ const a = new Set(L.fora); el.checked ? a.delete(el.dataset.ltsel) : a.add(el.dataset.ltsel); L.fora = [...a]; VIEWS.loteNovo(); return; }
   if(el.dataset.lttira){ const a = new Set(L.tirados); el.checked ? a.delete(el.dataset.lttira) : a.add(el.dataset.lttira); L.tirados = [...a]; VIEWS.loteNovo(); }
+});
+
+/* ===================== v2.5.0: TABELA DE PREÇOS ===================== */
+const TP_REG = { simples:'Simples Nacional', presumido:'Lucro Presumido', real:'Lucro Real' };
+const TP_ATV = { servicos:'Serviços', comercio:'Comércio', industria:'Indústria' };
+const TP_DEP = { fiscal:'Fiscal', contabil:'Contábil', pessoal:'Pessoal', societario:'Societário', atendimento:'Atendimento' };
+const TP_LINHAS = { fiscal:'Fiscal', contabil:'Contábil', contas:'Contas e cartões a mais', pessoal:'Pessoal', societario:'Societário', atendimento:'Atendimento' };
+const TP_PARAMS = [
+  ['vinculo','Pessoal: valor por funcionário','R$'], ['socios_sem_custo','Sócios com pró-labore sem custo','qtd'], ['socio_extra','Cada sócio com pró-labore além desses','R$'],
+  ['contas_incluidas','Contas bancárias e cartões incluídos','qtd'], ['conta_extra','Cada conta ou cartão além desses','R$'],
+  ['filial_pct','Filial: % do Fiscal e do Contábil da faixa dela','%'],
+  ['pouco_fiscal','Filial com pouco movimento: até quantos lançamentos fiscais','qtd'], ['pouco_contabil','Filial com pouco movimento: até quantos lançamentos contábeis','qtd'],
+  ['pouco_pct','Filial com pouco movimento: % da tabela','%'], ['pouco_piso','Filial com pouco movimento: valor mínimo','R$'],
+  ['sem_movimento','Empresa sem movimento (filial: aplica o % de filial)','R$'], ['mei','MEI: mensalidade','R$'], ['adicional_novembro','Adicional de novembro: % do honorário','%'] ];
+const TP_ABAS = [['tabela','Tabela'],['regras','Regras e valores'],['avulsos','Avulsos'],['simular','Simulador'],['projecao','Projeção'],['versoes','Versões']];
+
+/* ----- lógica pura (sem DOM) ----- */
+const tpR5 = x => Math.round((+x || 0) / 5) * 5;
+const tpNum = v => (v===null || v===undefined || String(v).trim()==='' || isNaN(+v)) ? null : +v;
+const tpParamNome = k => (TP_PARAMS.find(p => p[0]===k) || [k, k])[1];
+function tpRegimeDe(r){ return { simples:'simples', presumido:'presumido', real:'real', imune:'presumido', mei:'mei' }[r] || null; }
+function tpAtividadeDe(a){ return a==='industria' ? 'industria' : (a==='comercio' || a==='mista') ? 'comercio' : 'servicos'; }
+function tpFaixa(D, n){ const f = D.faixas; for(let i = 0; i < f.length; i++) if((+n || 0) <= f[i]) return i; return f.length - 1; }
+function tpFaixaTxt(D, i){ const f = D.faixas; return i===0 ? `até ${f[0]}` : `${f[i-1] + 1} a ${f[i]}`; }
+// acima da última faixa: degrau sobre o preço da última faixa (o volume de cada departamento decide o seu)
+function tpDegrau(D, n){ const ult = D.faixas[D.faixas.length - 1]; if(!((+n || 0) > ult)) return 0;
+  for(const [ate, p] of D.params.exc || []) if(ate==null || n <= ate) return +p || 0; return 0; }
+// escala de funcionários aplicada por faixa (como o imposto de renda): contratar nunca baixa o valor
+function tpEscala(D, n){ let tot = 0, ant = 0;
+  for(const [ate, p] of D.params.vinc || [[null,100]]){ const lim = ate==null ? Infinity : +ate, q = Math.max(0, Math.min(n, lim) - ant); tot += q * (+D.params.vinculo || 0) * (+p || 0) / 100; ant = lim; if(n <= lim) break; }
+  return r2(tot); }
+function tpVigente(tabelas, hoje){ return ativos(tabelas || []).filter(t => t.vigencia <= hoje).sort((a,b) => a.vigencia < b.vigencia ? 1 : -1)[0] || null; }
+function tpVazia(){ const z = () => [[0,0],[0,0],[0,0],[0,0]], reg = () => ({ servicos:z(), comercio:z(), industria:z() });
+  return { faixas:[100,300,600,900], precos:{ simples:reg(), presumido:reg(), real:reg() }, acrescimos:Object.fromEntries(Object.keys(TP_DEP).map(k => [k, [0,0]])),
+    params:{ vinculo:0, socios_sem_custo:2, socio_extra:0, contas_incluidas:3, conta_extra:0, filial_pct:50, pouco_fiscal:100, pouco_contabil:100, pouco_pct:25, pouco_piso:0, sem_movimento:0, mei:0, adicional_novembro:100,
+      exc:[[2000,15],[5000,30],[10000,45],[null,60]], vinc:[[30,100],[60,90],[100,80],[null,70]] }, avulsos:[] }; }
+function tpValida(D){
+  const er = [], f = (D && D.faixas) || [], P = (D && D.params) || {};
+  if(!f.length || f.some((x, i) => !(+x > 0) || (i && +x <= +f[i-1]))) er.push('As faixas de lançamentos precisam ser números crescentes.');
+  else Object.keys(TP_REG).forEach(r => Object.keys(TP_ATV).forEach(a => f.forEach((_, i) => { const v = ((((D.precos || {})[r] || {})[a]) || [])[i] || [];
+    if(!(+v[0] > 0) || !(+v[1] > 0)) er.push(`Falta o preço de ${TP_REG[r]}, ${TP_ATV[a]}, ${tpFaixaTxt(D, i)} lançamentos (Fiscal e Contábil).`); })));
+  Object.keys(TP_DEP).forEach(k => { const a = (D.acrescimos || {})[k] || []; if(!(+a[0] >= 0) || !(+a[1] >= +a[0])) er.push(`Acréscimo de ${TP_DEP[k]}: informe os valores (o Estratégico não pode ser menor que o Gestão).`); });
+  if(!(+P.vinculo > 0)) er.push('Informe o valor por funcionário.');
+  ['filial_pct','pouco_pct'].forEach(k => { if(!(+P[k] >= 0 && +P[k] <= 100)) er.push(`"${tpParamNome(k)}" deve ficar entre 0 e 100%.`); });
+  const escada = (arr, nome) => { if(!Array.isArray(arr) || !arr.length || arr[arr.length-1][0]!=null || arr.slice(0,-1).some((x, i) => !(+x[0] > 0) || (i && +x[0] <= +arr[i-1][0])) || arr.some(x => !(+x[1] >= 0)))
+    er.push(`${nome}: os limites precisam ser crescentes, com a última linha sem limite.`); };
+  escada(P.exc, 'Degraus acima da última faixa'); escada(P.vinc, 'Escala de funcionários');
+  if(f.length && Array.isArray(P.exc) && P.exc.length > 1 && +P.exc[0][0] <= +f[f.length-1]) er.push('O primeiro degrau precisa ir além da última faixa de lançamentos.');
+  return er;
+}
+// um estabelecimento (matriz ou filial): Fiscal, Contábil e contas a mais, com as regras aplicadas
+function tpEstab(D, c, filial){
+  const P = D.params, E = c.enquadramento || {}, nome = c.nome || '';
+  const out = { fiscal:0, contabil:0, contas:0, regras:[], alertas:[], semDados:null, mei:false, semMov:false, pouco:false, empregados:0, socios:0 };
+  const reg = tpRegimeDe(c.regime), deps = (c.departamentos || []).length ? c.departamentos : ['fiscal','contabil','pessoal'];
+  out.inclui = { fiscal:deps.includes('fiscal'), contabil:deps.includes('contabil'), pessoal:deps.includes('pessoal') };
+  out.empregados = Math.max(0, tpNum(E.empregados) || 0); out.socios = Math.max(0, tpNum(E.socios_prolabore) || 0);
+  const lf = tpNum(E.lanc_fiscal), lc = tpNum(E.lanc_contabil), pre = filial ? `Filial ${nome}: ` : '';
+  if(!reg){ out.semDados = 'sem regime'; return out; }
+  if(reg==='mei'){ out.mei = true; out.contabil = filial ? 0 : +P.mei || 0; out.regras.push(`${pre}MEI: mensalidade única de ${brl(P.mei)}`); return out; }
+  const pctF = filial ? (+P.filial_pct || 0) / 100 : 1;
+  if(['sem_movimento','inativa'].includes(c.situacao) || (lf===0 && lc===0 && !out.empregados)){
+    out.semMov = true; out.contabil = tpR5((+P.sem_movimento || 0) * pctF); out.regras.push(`${pre}sem movimento: ${brl(out.contabil)}`); return out; }
+  const atv = tpAtividadeDe(c.atividade), linhas = ((D.precos[reg] || {})[atv]) || [];
+  const iF = tpFaixa(D, lf || 0), iC = tpFaixa(D, lc || 0), tabF = +((linhas[iF] || [])[0]) || 0, tabC = +((linhas[iC] || [])[1]) || 0, dF = tpDegrau(D, lf || 0), dC = tpDegrau(D, lc || 0);
+  if(lf===null) out.alertas.push(`${pre}sem lançamentos fiscais no enquadramento: usada a faixa ${tpFaixaTxt(D, 0)}`);
+  if(lc===null) out.alertas.push(`${pre}sem lançamentos contábeis no enquadramento: usada a faixa ${tpFaixaTxt(D, 0)}`);
+  if(out.inclui.fiscal) out.regras.push(`${pre}Fiscal: ${lf===null ? '—' : num2(lf).replace(',00','')} lançamentos, faixa ${tpFaixaTxt(D, iF)}${dF ? `, +${dF}% acima de ${D.faixas[D.faixas.length-1]}` : ''}`);
+  if(out.inclui.contabil) out.regras.push(`${pre}Contábil: ${lc===null ? '—' : num2(lc).replace(',00','')} lançamentos, faixa ${tpFaixaTxt(D, iC)}${dC ? `, +${dC}% acima de ${D.faixas[D.faixas.length-1]}` : ''}`);
+  let vF = tabF * (1 + dF / 100), vC = tabC * (1 + dC / 100);
+  if(filial){
+    const pouco = lf!==null && lc!==null && lf <= +P.pouco_fiscal && lc <= +P.pouco_contabil && !out.empregados;
+    if(pouco){ const tot = Math.max(+P.pouco_piso || 0, tpR5((tabF + tabC) * (+P.pouco_pct || 0) / 100)); vF = tpR5(tot * tabF / ((tabF + tabC) || 1)); vC = tot - vF; out.pouco = true;
+      out.regras.push(`${pre}pouco movimento: ${P.pouco_pct}% da tabela, mínimo de ${brl(P.pouco_piso)}`); }
+    else { vF *= pctF; vC *= pctF; out.regras.push(`${pre}${P.filial_pct}% do Fiscal e do Contábil`); }
+  }
+  out.fiscal = out.inclui.fiscal ? tpR5(vF) : 0; out.contabil = out.inclui.contabil ? tpR5(vC) : 0;
+  const contas = tpNum(E.contas); if(!filial && contas!==null && contas > (+P.contas_incluidas || 0)){
+    out.contas = r2((contas - P.contas_incluidas) * (+P.conta_extra || 0)); out.regras.push(`${contas} contas e cartões: ${contas - P.contas_incluidas} além das ${P.contas_incluidas} incluídas`); }
+  return out;
+}
+// a empresa inteira (matriz + filiais): Essencial e, pelos acréscimos, Gestão e Estratégico
+function tpCalcula(D, matriz, filiais){
+  const ests = [{ c:matriz, r:tpEstab(D, matriz, false) }, ...(filiais || []).map(f => ({ c:f, r:tpEstab(D, f, true) }))], m = ests[0].r;
+  const res = { linhas:{ fiscal:0, contabil:0, contas:0, pessoal:0, societario:0, atendimento:0 }, niveis:{ essencial:null, gestao:null, estrategico:null }, regras:[], alertas:[], semDados:m.semDados, mei:m.mei, estabs:ests.length };
+  if(m.semDados) return res;
+  ests.forEach(({ r }) => { res.linhas.fiscal += r.fiscal; res.linhas.contabil += r.contabil; res.linhas.contas += r.contas; res.regras.push(...r.regras); res.alertas.push(...r.alertas); });
+  const P = D.params, emp = ests.reduce((a, e) => a + e.r.empregados, 0), soc = ests.reduce((a, e) => a + e.r.socios, 0);
+  if(m.inclui.pessoal && (emp || soc)){ const extra = Math.max(0, soc - (+P.socios_sem_custo || 0));
+    res.linhas.pessoal = r2(tpEscala(D, emp) + extra * (+P.socio_extra || 0));
+    res.regras.push(`Pessoal: ${emp} funcionário(s)${emp > +((P.vinc || [])[0] || [])[0] ? ' (escala por faixa)' : ''}${soc ? `, ${soc} sócio(s) com pró-labore${extra ? `, ${extra} além dos ${P.socios_sem_custo} sem custo` : ' sem custo'}` : ''}`); }
+  const soma = l => r2(Object.values(l).reduce((a, v) => a + (+v || 0), 0));
+  res.niveis.essencial = { total:soma(res.linhas), linhas:{ ...res.linhas } };
+  if(m.mei){ res.alertas.push('MEI: só o Essencial (sem Gestão e Estratégico)'); return res; }
+  [['gestao',0],['estrategico',1]].forEach(([nv, i]) => { const l = { ...res.linhas }, A = D.acrescimos;
+    if(m.inclui.fiscal) l.fiscal += +A.fiscal[i] || 0; if(m.inclui.contabil) l.contabil += +A.contabil[i] || 0;
+    if(m.inclui.pessoal && emp > 0) l.pessoal = r2(l.pessoal + (+A.pessoal[i] || 0)); l.societario += +A.societario[i] || 0; l.atendimento += +A.atendimento[i] || 0;
+    res.niveis[nv] = { total:soma(l), linhas:l }; });
+  return res;
+}
+// nunca abaixo de hoje: o Essencial fica no valor atual e os outros níveis mantêm o acréscimo da tabela
+function tpSugere(res, atual){
+  const e = res && res.niveis.essencial; if(!e) return null; const a = +atual || 0, d = a > e.total ? r2(a - e.total) : 0;
+  const v = nv => res.niveis[nv] ? r2(res.niveis[nv].total + d) : null;
+  return { atual:a || null, mantem:d > 0, ajuste:d, essencial:r2(e.total + d), gestao:v('gestao'), estrategico:v('estrategico') };
+}
+// projeção da carteira: uma linha por empresa (matriz + filiais do cadastro)
+function tpProjecao(D, clientes){
+  const at = (clientes || []).filter(c => !c.excluido_em), fil = {};
+  at.filter(c => c.matriz_id).forEach(f => { (fil[f.matriz_id] = fil[f.matriz_id] || []).push(f); });
+  return at.filter(c => !c.matriz_id).map(m => {
+    const fs = fil[m.id] || [], res = tpCalcula(D, m, fs), atual = r2([m, ...fs].reduce((a, c) => a + (+c.honorario_atual || 0), 0));
+    const temEnq = ['sem_movimento','inativa'].includes(m.situacao) || tpRegimeDe(m.regime)==='mei' || [m, ...fs].some(c => { const E = c.enquadramento || {}; return tpNum(E.lanc_fiscal)!==null || tpNum(E.lanc_contabil)!==null; });
+    const sit = res.semDados || (!temEnq ? 'sem enquadramento' : !(atual > 0) ? 'sem honorário atual' : null);
+    return { c:m, filiais:fs.length, atual, tabela:res.niveis.essencial ? res.niveis.essencial.total : null, sug:sit ? null : tpSugere(res, atual), sit };
+  });
+}
+function tpProjecaoCSV(linhas){
+  const cab = ['Cliente','CNPJ/CPF','Regime','Filiais','Honorário hoje','Essencial pela tabela','Essencial sugerido','Diferença','Situação'];
+  return '﻿' + [cab, ...linhas.map(x => [x.c.nome, docFmt(x.c.documento || '') || '', REGIMES[x.c.regime] || '', x.filiais, x.atual ? num2(x.atual) : '', x.tabela!=null ? num2(x.tabela) : '',
+    x.sug ? num2(x.sug.essencial) : '', x.sug ? num2(x.sug.essencial - x.atual) : '', x.sit || (x.sug.mantem ? 'mantém o valor de hoje' : 'sobe')])].map(l => l.map(csvCampo).join(';')).join('\r\n');
+}
+// planilha da tabela (importar/exportar), sem nenhum valor no código
+function tpLe(v){ return typeof v==='number' ? v : String(v ?? '').trim()==='' ? null : parseValor(v); }
+function tpChave(mapa, txt){ const t = semAcento(String(txt || '')).trim(); return Object.keys(mapa).find(k => k===t || semAcento(mapa[k])===t) || null; }
+function tpDePlanilha(abas){
+  const D = tpVazia(), achou = {}, tab = (abas.Tabela || []).slice(1).filter(r => r && r[0]);
+  if(!tab.length) throw new Error('A aba "Tabela" está vazia ou não existe.');
+  const faixas = [...new Set(tab.map(r => +tpLe(r[2])).filter(x => x > 0))].sort((a,b) => a - b); D.faixas = faixas;
+  Object.keys(TP_REG).forEach(r => { D.precos[r] = {}; Object.keys(TP_ATV).forEach(a => { D.precos[r][a] = faixas.map(() => [0,0]); }); });
+  tab.forEach((r, i) => { const reg = tpChave(TP_REG, r[0]), atv = tpChave(TP_ATV, r[1]), fx = faixas.indexOf(+tpLe(r[2]));
+    if(!reg || !atv || fx < 0) throw new Error(`Aba "Tabela", linha ${i + 2}: regime, atividade ou faixa não reconhecidos.`);
+    D.precos[reg][atv][fx] = [+tpLe(r[3]) || 0, +tpLe(r[4]) || 0]; achou[reg + atv + fx] = 1; });
+  (abas['Níveis'] || abas.Niveis || []).slice(1).forEach(r => { const k = tpChave(TP_DEP, r && r[0]); if(k) D.acrescimos[k] = [+tpLe(r[1]) || 0, +tpLe(r[2]) || 0]; });
+  const par = {}; (abas['Parâmetros'] || abas.Parametros || []).slice(1).forEach(r => { if(r && r[0]) par[String(r[0]).trim()] = tpLe(r[2]); });
+  TP_PARAMS.forEach(([k]) => { if(par[k]!=null) D.params[k] = par[k]; });
+  const escada = (pre, n) => Array.from({ length:n }, (_, i) => [i < n - 1 ? par[`${pre}${i+1}_ate`] ?? null : null, par[`${pre}${i+1}_pct`] ?? 0]).filter((x, i) => i===n - 1 || x[0]!=null);
+  if(Object.keys(par).some(k => /^exc\d/.test(k))) D.params.exc = escada('exc', Math.max(...Object.keys(par).filter(k => /^exc\d+_/.test(k)).map(k => +k.match(/\d+/)[0])));
+  if(Object.keys(par).some(k => /^vinc\d/.test(k))) D.params.vinc = escada('vinc', Math.max(...Object.keys(par).filter(k => /^vinc\d+_/.test(k)).map(k => +k.match(/\d+/)[0])));
+  D.avulsos = (abas.Avulsos || []).slice(1).filter(r => r && r[2]).map(r => ({ codigo:String(r[0] || '').trim(), depto:String(r[1] || '').trim(), servico:String(r[2]).trim(), preco:+tpLe(r[3]) || 0, unidade:String(r[4] || '').trim(), nivel:String(r[5] || '').trim() }));
+  return D;
+}
+function tpParaPlanilha(t){
+  const D = t.dados, tab = [['Regime','Atividade','Até (lançamentos por mês)','Fiscal (R$)','Contábil (R$)']];
+  Object.keys(TP_REG).forEach(r => Object.keys(TP_ATV).forEach(a => D.faixas.forEach((f, i) => { const v = ((D.precos[r] || {})[a] || [])[i] || [0,0]; tab.push([TP_REG[r], TP_ATV[a], f, +v[0], +v[1]]); })));
+  const niv = [['Departamento','Gestão (R$)','Estratégico (R$)'], ...Object.keys(TP_DEP).map(k => [TP_DEP[k], +(D.acrescimos[k] || [])[0] || 0, +(D.acrescimos[k] || [])[1] || 0])];
+  const par = [['Código','Descrição','Valor'], ...TP_PARAMS.map(([k, n, u]) => [k, `${n} (${u})`, +D.params[k] || 0])];
+  (D.params.exc || []).forEach(([ate, p], i) => { if(ate!=null) par.push([`exc${i+1}_ate`, `Degrau ${i+1}: até quantos lançamentos`, +ate]); par.push([`exc${i+1}_pct`, `Degrau ${i+1}: % sobre a última faixa`, +p]); });
+  (D.params.vinc || []).forEach(([ate, p], i) => { if(ate!=null) par.push([`vinc${i+1}_ate`, `Escala ${i+1}: até quantos funcionários`, +ate]); par.push([`vinc${i+1}_pct`, `Escala ${i+1}: % do valor por funcionário`, +p]); });
+  const av = [['Código','Departamento','Serviço','Preço (R$)','Unidade','Incluído no pacote'], ...(D.avulsos || []).map(x => [x.codigo, x.depto, x.servico, +x.preco, x.unidade, x.nivel])];
+  const leia = [['Tabela de preços — Artecon Propostas'], [`Versão que vale a partir de ${dataBR(t.vigencia)}${t.descricao ? ' — ' + t.descricao : ''}`], [''],
+    ['Para gravar uma versão nova: altere os valores nas abas Tabela, Níveis, Parâmetros e Avulsos (sem mudar os nomes das abas, das colunas e dos códigos)'], ['e use Configurações › Tabela de preços › Importar planilha. O app mostra tudo para conferir antes de gravar.']];
+  return { Tabela:tab, 'Níveis':niv, 'Parâmetros':par, Avulsos:av, 'Leia-me':leia };
+}
+
+/* ----- tela ----- */
+function tpAviso(){ return S.tpOk===false ? '<div class="aviso ambar"><span>A tabela de preços ainda não está no banco. Rode no SQL Editor do projeto <b>cobranca-pro</b> a migração <b>24_migracao_v2_5_0_tabela_precos.sql</b> e recarregue a página.</span></div>' : ''; }
+function tpSituacao(t, vig){ return t.excluido_em ? 'excluída' : vig && t.id===vig.id ? 'vigente' : t.vigencia > hojeISO() ? 'futura' : 'anterior'; }
+const tpVal = (v, u) => u==='%' ? `${num2(v).replace(',00','')}%` : u==='qtd' ? String(+v || 0) : brl(v);
+function tpCartoes(res, sug){
+  const lin = l => Object.keys(TP_LINHAS).filter(k => +l[k]).map(k => `<tr><td>${esc(TP_LINHAS[k])}</td><td class="num">${brl(l[k])}</td></tr>`).join('') || '<tr><td>—</td><td></td></tr>';
+  return `<div class="tp-niveis">${Object.keys(NIVEIS).map(nv => { const n = res.niveis[nv];
+    if(!n) return `<div class="tp-nivel desab"><h3>${esc(NIVEIS[nv])}</h3><p class="dica">Não se aplica.</p></div>`;
+    const s = sug && sug[nv]!=null ? sug[nv] : n.total, dif = sug && sug.atual ? (s / sug.atual - 1) * 100 : null;
+    return `<div class="tp-nivel"><h3>${esc(NIVEIS[nv])}</h3><div class="tp-valor">${brl(s)}</div>
+      ${sug && sug.mantem ? `<small class="dica">pela tabela ${brl(n.total)}; ${nv==='essencial' ? 'mantém o valor de hoje' : 'hoje + acréscimo do nível'}</small>` : ''}
+      ${dif!=null ? `<span class="${dif > 0.005 ? 'pd-tag' : 'ok-tag'}">${dif > 0.005 ? '+' + num2(dif).replace(',00','') + '% sobre hoje' : 'igual a hoje'}</span>` : ''}
+      <table>${lin(n.linhas)}</table></div>`; }).join('')}</div>`;
+}
+function tpSimCliente(id){
+  const c = S.clientes.find(x => x.id===id); if(!c) return null; const E = c.enquadramento || {}, fs = S.clientes.filter(f => !f.excluido_em && f.matriz_id===c.id);
+  return { cliente_id:c.id, regime:c.regime || '', atividade:c.atividade || '', situacao:c.situacao || 'ativa', lanc_fiscal:E.lanc_fiscal ?? '', lanc_contabil:E.lanc_contabil ?? '', empregados:E.empregados ?? '',
+    socios_prolabore:E.socios_prolabore ?? '', contas:E.contas ?? '', departamentos:(c.departamentos || []).length ? c.departamentos.slice() : ['fiscal','contabil','pessoal'],
+    atual:r2([c, ...fs].reduce((a, x) => a + (+x.honorario_atual || 0), 0)) || '' };
+}
+function tpSimResultado(D){
+  const X = S.TP.sim, fs = X.cliente_id ? S.clientes.filter(f => !f.excluido_em && f.matriz_id===X.cliente_id) : [];
+  const m = { nome:'', regime:X.regime, atividade:X.atividade, situacao:X.situacao, departamentos:X.departamentos,
+    enquadramento:{ lanc_fiscal:X.lanc_fiscal, lanc_contabil:X.lanc_contabil, empregados:X.empregados, socios_prolabore:X.socios_prolabore, contas:X.contas } };
+  const res = tpCalcula(D, m, fs); if(res.semDados) return `<div class="aviso"><span>Escolha o regime tributário para calcular.</span></div>`;
+  const sug = tpSugere(res, tpNum(X.atual));
+  return `${fs.length ? `<p class="dica">Inclui ${fs.length} filial(is) do cadastro, cada uma pelo próprio enquadramento.</p>` : ''}${tpCartoes(res, sug)}
+    <div class="grade" style="margin-top:12px"><div class="campo c4"><b>Como foi calculado</b><ul class="tp-regras">${res.regras.map(r => `<li>${esc(r)}</li>`).join('')}${res.alertas.map(r => `<li class="al">${esc(r)}</li>`).join('')}</ul></div></div>`;
+}
+function tpAbaHTML(D, ver, vig){
+  const T = S.TP, P = D.params;
+  if(T.aba==='tabela') return Object.keys(TP_REG).map(r => `<div class="painel"><h2>${esc(TP_REG[r])} <small class="dica">Essencial, R$ por mês</small></h2><div class="rolagem"><table class="lista"><thead><tr><th>Lançamentos por mês</th>
+    ${Object.keys(TP_ATV).map(a => `<th class="num">${esc(TP_ATV[a])}: Fiscal</th><th class="num">Contábil</th><th class="num">Total</th>`).join('')}</tr></thead><tbody>
+    ${D.faixas.map((_, i) => `<tr><td>${esc(tpFaixaTxt(D, i))}</td>${Object.keys(TP_ATV).map(a => { const v = ((D.precos[r] || {})[a] || [])[i] || [0,0]; return `<td class="num">${brl(v[0])}</td><td class="num">${brl(v[1])}</td><td class="num"><b>${brl(+v[0] + +v[1])}</b></td>`; }).join('')}</tr>`).join('')}
+    </tbody></table></div></div>`).join('') + `<p class="dica">Gestão e Estratégico somam o acréscimo de cada nível (aba Regras e valores). Imune/isenta usa o Lucro Presumido; "comércio e serviços" usa Comércio.</p>`;
+  if(T.aba==='regras') return `<div class="painel"><h2>Acréscimo de cada nível (R$ por mês)</h2><div class="rolagem"><table class="lista"><thead><tr><th>Departamento</th><th class="num">Gestão</th><th class="num">Estratégico</th></tr></thead><tbody>
+      ${Object.keys(TP_DEP).map(k => `<tr><td>${esc(TP_DEP[k])}</td><td class="num">${brl((D.acrescimos[k] || [])[0])}</td><td class="num">${brl((D.acrescimos[k] || [])[1])}</td></tr>`).join('')}</tbody></table></div>
+      <p class="dica" style="margin:8px 0 0">Fiscal e Contábil só quando contratados; Pessoal só com funcionários; Societário e Atendimento uma vez por empresa (na matriz).</p></div>
+    <div class="painel"><h2>Valores e percentuais</h2><div class="rolagem"><table class="lista"><tbody>${TP_PARAMS.map(([k, n, u]) => `<tr><td>${esc(n)}</td><td class="num"><b>${esc(tpVal(P[k], u))}</b></td></tr>`).join('')}</tbody></table></div></div>
+    <div class="painel"><h2>Acima de ${D.faixas[D.faixas.length-1]} lançamentos por mês</h2><p style="margin:0 0 6px">Degraus sobre o preço da última faixa, pelo volume de cada departamento:</p>
+      <ul class="tp-regras">${(P.exc || []).map(([ate, p], i, a) => `<li>${ate==null ? `acima de ${num2(a[i-1] ? a[i-1][0] : D.faixas[D.faixas.length-1]).replace(',00','')}` : `até ${num2(ate).replace(',00','')}`}: <b>+${p}%</b></li>`).join('')}</ul></div>
+    <div class="painel"><h2>Escala de funcionários</h2><p style="margin:0 0 6px">Aplicada por faixa: cada faixa paga o seu valor, então contratar nunca baixa o total.</p>
+      <ul class="tp-regras">${(P.vinc || []).map(([ate, p], i, a) => `<li>${ate==null ? `acima de ${a[i-1] ? a[i-1][0] : 0}` : i ? `de ${+a[i-1][0] + 1} a ${ate}` : `até ${ate}`}: <b>${brl(r2(P.vinculo * p / 100))}</b> por funcionário (${p}%)</li>`).join('')}</ul></div>
+    <div class="painel"><h2>Nunca abaixo de hoje</h2><p style="margin:0">Se a tabela der menos que o honorário atual, o Essencial sugerido fica no valor de hoje e o Gestão e o Estratégico somam a ele o mesmo acréscimo da tabela. Os honorários atuais não mudam: a tabela só projeta, e o valor novo vale depois que o cliente assina.</p></div>`;
+  if(T.aba==='avulsos') return `<div class="painel rolagem">${(D.avulsos || []).length ? `<table class="lista"><thead><tr><th>Código</th><th>Departamento</th><th>Serviço</th><th class="num">Preço</th><th>Unidade</th><th>Incluído no pacote</th></tr></thead><tbody>
+    ${D.avulsos.map(x => `<tr><td>${esc(x.codigo)}</td><td>${esc(x.depto)}</td><td>${esc(x.servico)}</td><td class="num">${brl(x.preco)}</td><td>${esc(x.unidade)}</td><td><small>${esc(x.nivel)}</small></td></tr>`).join('')}</tbody></table>`
+    : '<div class="vazio">Esta versão não tem serviços avulsos. Eles entram pela planilha (aba Avulsos).</div>'}</div>`;
+  if(T.aba==='simular'){ const X = S.TP.sim = S.TP.sim || { cliente_id:'', regime:'simples', atividade:'servicos', situacao:'ativa', lanc_fiscal:'', lanc_contabil:'', empregados:'', socios_prolabore:'', contas:'', departamentos:['fiscal','contabil','pessoal'], atual:'' };
+    const cl = ativos(S.clientes).filter(c => !c.matriz_id).slice().sort((a,b) => a.nome.localeCompare(b.nome,'pt-BR'));
+    const sel = (k, mapa, vazio) => `<select id="tps_${k}" data-tps="${k}">${vazio!==undefined ? `<option value="">${esc(vazio)}</option>` : ''}${Object.entries(mapa).map(([v,t]) => `<option value="${v}" ${X[k]===v ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select>`;
+    const num = (k, t) => `<div class="campo c1"><label for="tps_${k}">${esc(t)}</label><input type="number" min="0" step="1" id="tps_${k}" data-tps="${k}" value="${esc(X[k])}"></div>`;
+    return `<div class="painel"><h2>Simular um cliente</h2><div class="grade">
+      <div class="campo"><label for="tps_cliente_id">Cliente do cadastro (opcional)</label><select id="tps_cliente_id" data-tps="cliente_id"><option value="">— preencher à mão —</option>${cl.map(c => `<option value="${c.id}" ${X.cliente_id===c.id ? 'selected' : ''}>${esc(c.nome)}</option>`).join('')}</select></div>
+      <div class="campo c1"><label for="tps_regime">Regime</label>${sel('regime', REGIMES, '—')}</div><div class="campo c1"><label for="tps_atividade">Atividade</label>${sel('atividade', ATIVIDADES, 'Serviços')}</div>
+      <div class="campo c1"><label for="tps_situacao">Situação</label>${sel('situacao', SITUACOES)}</div>
+      ${num('lanc_fiscal','Lançamentos fiscais/mês')}${num('lanc_contabil','Lançamentos contábeis/mês')}${num('empregados','Funcionários')}${num('socios_prolabore','Sócios com pró-labore')}${num('contas','Contas e cartões')}
+      <div class="campo c1"><label for="tps_atual">Honorário de hoje (R$)</label><input type="text" id="tps_atual" data-tps="atual" value="${X.atual==='' ? '' : esc(num2(X.atual))}"></div>
+      <div class="campo c4"><label>Departamentos contratados</label><div class="grupo-filtro" style="border:0;padding:0">${Object.entries(DEPTOS).filter(([k]) => k!=='societario').map(([k,t]) => `<label><input type="checkbox" data-tpsd="${k}" ${X.departamentos.includes(k) ? 'checked' : ''}> ${esc(t)}</label>`).join('')}</div></div>
+    </div></div><div class="painel"><h2>Valores sugeridos</h2><div id="tpSimRes">${tpSimResultado(D)}</div></div>`; }
+  if(T.aba==='projecao'){ const L = tpProjecao(D, S.clientes), ok = L.filter(x => x.sug), hoje = r2(ok.reduce((a, x) => a + x.atual, 0)), proj = r2(ok.reduce((a, x) => a + x.sug.essencial, 0));
+    const cont = s => L.filter(x => x.sit===s).length, sobe = ok.filter(x => x.sug.essencial > x.atual + 0.005).length, ord = L.slice().sort((a, b) => ((b.sug ? b.sug.essencial - b.atual : -1e9) - (a.sug ? a.sug.essencial - a.atual : -1e9)) || a.c.nome.localeCompare(b.c.nome,'pt-BR'));
+    const ind = (rot, v, sub) => `<div class="ind"><div class="rot">${rot}</div><b>${v}</b>${sub ? `<div class="rot">${sub}</div>` : ''}</div>`;
+    return `<div class="resumo-topo">${ind('Hoje', brl(hoje), ok.length + ' empresas comparadas')}${ind('Projeção (Essencial)', brl(proj), hoje ? (proj >= hoje ? '+' : '') + num2((proj / hoje - 1) * 100) + '%' : '')}${ind('Sobem', sobe)}${ind('Mantêm o valor de hoje', ok.length - sobe)}${ind('Sem dados', cont('sem regime') + cont('sem enquadramento') + cont('sem honorário atual'), `${cont('sem enquadramento')} sem enquadramento · ${cont('sem regime')} sem regime · ${cont('sem honorário atual')} sem honorário`)}</div>
+      <div class="painel"><p class="dica" style="margin:0 0 10px">Uma linha por empresa (matriz com as filiais do cadastro). Nada aqui muda o que os clientes pagam: é a projeção pela versão de ${esc(dataBR(ver.vigencia))}, com a regra "nunca abaixo de hoje". O enquadramento (lançamentos e folha) vem da ficha do cliente, aba Enquadramento.</p>
+      <div class="barra-salvar" style="margin:0 0 10px"><button class="btn" data-act="tpProjExportar">Exportar planilha</button></div>
+      <div class="rolagem"><table class="lista"><thead><tr><th>Cliente</th><th>Regime</th><th class="num">Hoje</th><th class="num">Pela tabela</th><th class="num">Sugerido</th><th>Situação</th></tr></thead><tbody>
+      ${ord.map(x => `<tr class="${x.sit ? 'desab' : ''}"><td><button class="elo" data-act="cliente" data-id="${x.c.id}">${esc(x.c.nome)}</button>${x.filiais ? `<br><small class="dica">+ ${x.filiais} filial(is)</small>` : ''}</td><td>${regSelo(x.c.regime)}</td>
+        <td class="num">${x.atual ? brl(x.atual) : '—'}</td><td class="num">${x.tabela!=null && !x.sit ? brl(x.tabela) : '—'}</td><td class="num">${x.sug ? `<b>${brl(x.sug.essencial)}</b>` : '—'}</td>
+        <td>${x.sit ? `<small class="dica">${esc(x.sit)}</small>` : x.sug.mantem || x.sug.essencial <= x.atual + 0.005 ? '<span class="ok-tag">mantém</span>' : `<span class="pd-tag">sobe ${num2((x.sug.essencial / x.atual - 1) * 100).replace(',00','')}%</span>`}</td></tr>`).join('')}
+      </tbody></table></div></div>`; }
+  const L = (S.tabelas || []).slice().sort((a,b) => a.vigencia < b.vigencia ? 1 : -1);
+  return `<div class="painel rolagem"><table class="lista"><thead><tr><th>Vale a partir de</th><th>Descrição</th><th>Gravada por</th><th>Situação</th><th></th></tr></thead><tbody>
+    ${L.map(t => { const s = tpSituacao(t, vig); return `<tr class="${t.excluido_em ? 'desab' : ''}"><td><b>${esc(dataBR(t.vigencia))}</b></td><td>${esc(t.descricao || '—')}</td><td><small>${esc(t.criado_por_email || '')}<br>${esc(dataHora(t.criado_em))}</small></td>
+      <td>${s==='vigente' ? '<span class="ok-tag">vigente</span>' : s==='futura' ? '<span class="pd-tag">futura</span>' : `<small class="dica">${esc(s)}</small>`}</td>
+      <td class="acoes-linha">${t.excluido_em ? '' : `<button class="btn mini" data-act="tpVer" data-id="${t.id}">Ver</button><button class="btn mini" data-act="tpExportar" data-id="${t.id}">Exportar</button>${S.perfil==='diretor' ? `<button class="btn mini" data-act="tpExcluir" data-id="${t.id}">Excluir</button>` : ''}`}</td></tr>`; }).join('')}
+    </tbody></table><p class="dica" style="margin:8px 0 0">Vale a versão com a data de início mais recente até hoje. Versão gravada não muda; para corrigir, grave outra. Só dá para excluir a versão que nenhuma proposta usou.</p></div>`;
+}
+function tpEditorHTML(){
+  const X = S.TP.edit, D = X.dados, P = D.params, n = (attr, v, cls) => `<input type="text" inputmode="decimal" class="tp-in ${cls || ''}" ${attr} value="${v==null || v==='' ? '' : esc(String(v).replace('.', ','))}">`;
+  return `<div class="painel"><h2>Versão</h2><div class="grade">
+      <div class="campo c1"><label for="tpm_vigencia">Vale a partir de *</label><input type="date" id="tpm_vigencia" data-tpm="vigencia" value="${esc(X.vigencia || '')}"></div>
+      <div class="campo"><label for="tpm_descricao">Descrição</label><input type="text" id="tpm_descricao" data-tpm="descricao" maxlength="300" value="${esc(X.descricao || '')}" placeholder="ex.: Tabela 2027"></div></div>
+      ${X.origem ? `<p class="dica" style="margin:8px 0 0">${esc(X.origem)}</p>` : ''}</div>
+    <div class="painel"><h2>Faixas de lançamentos por mês <small class="dica">(limite de cada faixa)</small></h2><div class="grupo-filtro" style="border:0">${D.faixas.map((f, i) => `<label>Faixa ${i + 1}: até ${n(`data-tpf="${i}" aria-label="Limite da faixa ${i + 1}"`, f)}</label>`).join('')}</div></div>
+    ${Object.keys(TP_REG).map(r => `<div class="painel"><h2>${esc(TP_REG[r])} <small class="dica">Essencial, R$ por mês</small></h2><div class="rolagem"><table class="lista"><thead><tr><th>Lançamentos</th>${Object.keys(TP_ATV).map(a => `<th class="num">${esc(TP_ATV[a])}: Fiscal</th><th class="num">Contábil</th>`).join('')}</tr></thead><tbody>
+      ${D.faixas.map((_, i) => `<tr><td>${esc(tpFaixaTxt(D, i))}</td>${Object.keys(TP_ATV).map(a => { const v = ((D.precos[r] || {})[a] || [])[i] || [0,0];
+        return `<td class="num">${n(`data-tpp="${r}|${a}|${i}|0" aria-label="${esc(TP_REG[r] + ' ' + TP_ATV[a] + ' faixa ' + (i + 1) + ' Fiscal')}"`, v[0])}</td><td class="num">${n(`data-tpp="${r}|${a}|${i}|1" aria-label="${esc(TP_REG[r] + ' ' + TP_ATV[a] + ' faixa ' + (i + 1) + ' Contábil')}"`, v[1])}</td>`; }).join('')}</tr>`).join('')}
+      </tbody></table></div></div>`).join('')}
+    <div class="painel"><h2>Acréscimo de cada nível (R$ por mês)</h2><div class="rolagem"><table class="lista"><thead><tr><th>Departamento</th><th class="num">Gestão</th><th class="num">Estratégico</th></tr></thead><tbody>
+      ${Object.keys(TP_DEP).map(k => `<tr><td>${esc(TP_DEP[k])}</td><td class="num">${n(`data-tpa="${k}|0" aria-label="${esc(TP_DEP[k])} Gestão"`, (D.acrescimos[k] || [])[0])}</td><td class="num">${n(`data-tpa="${k}|1" aria-label="${esc(TP_DEP[k])} Estratégico"`, (D.acrescimos[k] || [])[1])}</td></tr>`).join('')}</tbody></table></div></div>
+    <div class="painel"><h2>Valores e percentuais</h2><div class="rolagem"><table class="lista"><tbody>${TP_PARAMS.map(([k, t, u]) => `<tr><td><label for="tpk_${k}">${esc(t)}</label></td><td class="num">${n(`id="tpk_${k}" data-tpk="${k}"`, P[k])} <small class="dica">${u}</small></td></tr>`).join('')}</tbody></table></div></div>
+    <div class="painel"><h2>Degraus acima da última faixa e escala de funcionários</h2><div class="grade">
+      <div class="campo"><b>Degraus (volume de cada departamento)</b>${(P.exc || []).map(([ate, p], i, a) => `<div class="grupo-filtro" style="border:0;padding:4px 0">${i===a.length - 1 ? '<span>acima disso</span>' : `<label>até ${n(`data-tpe="${i}|0" aria-label="Degrau ${i + 1} até"`, ate)}</label>`}<label>+ ${n(`data-tpe="${i}|1" aria-label="Degrau ${i + 1} percentual"`, p)} %</label></div>`).join('')}</div>
+      <div class="campo"><b>Escala (por faixa de funcionários)</b>${(P.vinc || []).map(([ate, p], i, a) => `<div class="grupo-filtro" style="border:0;padding:4px 0">${i===a.length - 1 ? '<span>acima disso</span>' : `<label>até ${n(`data-tpv="${i}|0" aria-label="Escala ${i + 1} até"`, ate)}</label>`}<label>${n(`data-tpv="${i}|1" aria-label="Escala ${i + 1} percentual"`, p)} % do valor</label></div>`).join('')}</div>
+    </div></div>
+    <div class="painel"><h2>Serviços avulsos</h2><p style="margin:0">${(D.avulsos || []).length} serviço(s) nesta versão. ${(D.avulsos || []).length ? 'Eles entram e mudam pela planilha (aba Avulsos).' : 'Para incluir, use a planilha (aba Avulsos) e Importar planilha.'}</p></div>`;
+}
+
+Object.assign(VIEWS, {
+  tabela(){
+    const L = S.tabelas || [], T = S.TP = S.TP || { aba:'tabela', verId:null, sim:null, edit:null }, diretor = S.perfil==='diretor', vig = tpVigente(L, hojeISO());
+    const ver = (T.verId && ativos(L).find(t => t.id===T.verId)) || vig || ativos(L).slice().sort((a,b) => a.vigencia < b.vigencia ? 1 : -1)[0] || null;
+    const botoes = (diretor && S.tpOk!==false ? '<button class="btn" data-act="tpImportar">Importar planilha</button><button class="btn primario" data-act="tpNova">Nova versão</button>' : '') + (ver ? `<button class="btn" data-act="tpExportar" data-id="${ver.id}">Exportar planilha</button>` : '');
+    let corpo = '';
+    if(S.tpOk!==false && !ver) corpo = `<div class="painel"><div class="vazio">Nenhuma tabela de preços gravada. ${diretor ? 'Use <b>Importar planilha</b> com o arquivo da tabela de preços, ou <b>Nova versão</b> para preencher aqui mesmo.' : 'Peça ao diretor para gravar a tabela.'}</div></div>`;
+    if(ver){ const s = tpSituacao(ver, vig);
+      corpo = `<div class="chip-aviso"><span>Mostrando a versão que vale a partir de <b>${esc(dataBR(ver.vigencia))}</b> (${esc(s)})${ver.descricao ? ' — ' + esc(ver.descricao) : ''}.${vig && ver.id!==vig.id ? ` <button class="elo" data-act="tpVer" data-id="${vig.id}">ver a vigente</button>` : ''}${!vig ? ' Nenhuma versão vale ainda hoje.' : ''}</span></div>
+        <div class="abas-tipo">${TP_ABAS.map(([k,t]) => `<button class="${T.aba===k ? 'on' : ''}" data-act="tpAba" data-aba="${k}">${esc(t)}</button>`).join('')}</div>${tpAbaHTML(ver.dados, ver, vig)}`; }
+    $('conteudo').innerHTML = topo('Tabela de preços','Base dos valores sugeridos nas propostas por níveis. Os honorários de hoje não mudam: a tabela só projeta.', botoes) + tpAviso() +
+      '<input type="file" id="tpArquivo" accept=".xlsx,.xls" hidden>' + corpo;
+  },
+  tabelaEditar(){
+    if(!S.TP || !S.TP.edit){ ir('tabela'); return; }
+    $('conteudo').innerHTML = topo('Nova versão da tabela de preços','Confira os valores e a data de início. Depois de gravada a versão não muda: para corrigir, grave outra.','<button class="btn" data-act="tpCancelar">Cancelar</button><button class="btn primario" data-act="tpGravar">Gravar versão</button>') +
+      '<div id="errosTP"></div>' + tpEditorHTML() + '<div class="barra-salvar"><button class="btn" data-act="tpCancelar">Cancelar</button><button class="btn primario" data-act="tpGravar">Gravar versão</button></div>';
+  }
+});
+
+function exigeTP(){ if(S.tpOk===false){ toast('Rode antes no banco a migração 24 (24_migracao_v2_5_0_tabela_precos.sql).', true); return false; } if(S.perfil!=='diretor'){ toast('Só o diretor grava a tabela de preços.', true); return false; } return true; }
+Object.assign(ACOES, {
+  tpAba(el){ S.TP.aba = el.dataset.aba; VIEWS.tabela(); },
+  tpVer(el){ S.TP.verId = el.dataset.id; S.TP.aba = S.TP.aba==='versoes' ? 'tabela' : S.TP.aba; VIEWS.tabela(); window.scrollTo(0,0); },
+  tpNova(){ if(!exigeTP()) return; const vig = tpVigente(S.tabelas, hojeISO()) || ativos(S.tabelas || []).slice().sort((a,b) => a.vigencia < b.vigencia ? 1 : -1)[0];
+    S.TP.edit = { vigencia:hojeISO(), descricao:'', dados:JSON.parse(JSON.stringify(vig ? vig.dados : tpVazia())), origem:vig ? `Cópia da versão de ${dataBR(vig.vigencia)}: altere só o que mudou.` : 'Tabela em branco.' }; ir('tabelaEditar'); },
+  tpImportar(){ if(!exigeTP()) return; const f = $('tpArquivo'); if(f){ f.value = ''; f.click(); } },
+  tpCancelar(){ if(!confirm('Sair sem gravar esta versão?')) return; S.TP.edit = null; ir('tabela'); },
+  async tpGravar(el){ const X = S.TP.edit; if(!X || !exigeTP()) return;
+    const er = tpValida(X.dados); if(!X.vigencia) er.unshift('Informe a data em que a versão passa a valer.');
+    if(X.vigencia && ativos(S.tabelas || []).some(t => t.vigencia===X.vigencia)) er.unshift(`Já existe uma versão que vale a partir de ${dataBR(X.vigencia)}. Escolha outra data (ou exclua a outra versão, se nenhuma proposta a usou).`);
+    if(er.length){ $('errosTP').innerHTML = `<div class="erros" role="alert"><b>Antes de gravar:</b><ul>${er.slice(0,10).map(x => `<li>${esc(x)}</li>`).join('')}${er.length > 10 ? `<li>… e mais ${er.length - 10}.</li>` : ''}</ul></div>`; window.scrollTo(0,0); return; }
+    if(X.vigencia < hojeISO() && !confirm(`A data de início (${dataBR(X.vigencia)}) já passou: a versão passa a valer imediatamente. Continuar?`)) return;
+    el.disabled = true;
+    await tenta(async () => { const t = await DB.inserir('tabelas', { vigencia:X.vigencia, descricao:String(X.descricao || '').trim() || null, dados:X.dados });
+      S.TP.edit = null; S.TP.verId = t.id; S.TP.aba = 'tabela'; toast(`Versão gravada: vale a partir de ${dataBR(t.vigencia)}.`); ir('tabela'); });
+    if(S.TP.edit) el.disabled = false; },
+  async tpExcluir(el){ const t = (S.tabelas || []).find(x => x.id===el.dataset.id); if(!t || !exigeTP()) return;
+    if(!confirm(`Excluir a versão que vale a partir de ${dataBR(t.vigencia)}? Só é possível se nenhuma proposta a usou.`)) return;
+    await tenta(async () => { await DB.alterar('tabelas', t.id, { excluido_em:new Date().toISOString() }); if(S.TP.verId===t.id) S.TP.verId = null; toast('Versão excluída.'); VIEWS.tabela(); }); },
+  async tpExportar(el){ const t = (S.tabelas || []).find(x => x.id===el.dataset.id); if(!t) return;
+    await tenta(async () => { const X = await carregaXlsx(), wb = X.utils.book_new(), abas = tpParaPlanilha(t);
+      Object.entries(abas).forEach(([nome, linhas]) => X.utils.book_append_sheet(wb, X.utils.aoa_to_sheet(linhas), nome));
+      X.writeFile(wb, `tabela-precos-${t.vigencia}.xlsx`); }); },
+  tpProjExportar(){ const vig = (S.TP.verId && ativos(S.tabelas || []).find(t => t.id===S.TP.verId)) || tpVigente(S.tabelas, hojeISO()); if(!vig) return;
+    baixar(`projecao-tabela-${vig.vigencia}.csv`, tpProjecaoCSV(tpProjecao(vig.dados, S.clientes)), 'text/csv;charset=utf-8'); }
+});
+// arquivo da planilha
+document.addEventListener('change', async ev => {
+  const el = ev.target;
+  if(el.id==='tpArquivo' && el.files && el.files[0]){ const f = el.files[0];
+    await tenta(async () => { const X = await carregaXlsx(), wb = X.read(await f.arrayBuffer()), abas = {};
+      wb.SheetNames.forEach(n => { abas[n] = X.utils.sheet_to_json(wb.Sheets[n], { header:1, defval:null }); });
+      const dados = tpDePlanilha(abas);
+      S.TP.edit = { vigencia:hojeISO(), descricao:'', dados, origem:`Importada de ${f.name}. Confira os valores e grave.` }; ir('tabelaEditar');
+      const er = tpValida(dados); if(er.length) toast(`A planilha tem ${er.length} pendência(s); confira antes de gravar.`, true); });
+    return; }
+  if(S.view==='tabela' && S.TP && S.TP.sim){ const X = S.TP.sim;
+    if(el.dataset.tps==='cliente_id'){ const n = el.value ? tpSimCliente(el.value) : null; S.TP.sim = n || { ...X, cliente_id:'' }; VIEWS.tabela(); return; }
+    if(el.dataset.tps==='atual'){ el.value = X.atual==='' ? '' : num2(X.atual); return; }
+    if(el.dataset.tps){ X[el.dataset.tps] = el.value; }
+    if(el.dataset.tpsd){ const s = new Set(X.departamentos); el.checked ? s.add(el.dataset.tpsd) : s.delete(el.dataset.tpsd); X.departamentos = [...s]; }
+    if(el.dataset.tps || el.dataset.tpsd){ const vig = (S.TP.verId && ativos(S.tabelas || []).find(t => t.id===S.TP.verId)) || tpVigente(S.tabelas, hojeISO()) || ativos(S.tabelas || [])[0]; if(vig && $('tpSimRes')) $('tpSimRes').innerHTML = tpSimResultado(vig.dados); } }
+});
+document.addEventListener('input', ev => {
+  const el = ev.target;
+  if(S.view==='tabela' && S.TP && S.TP.sim && el.dataset.tps && el.dataset.tps!=='cliente_id'){ const X = S.TP.sim; X[el.dataset.tps] = el.dataset.tps==='atual' ? (String(el.value).trim()==='' ? '' : parseValor(el.value)) : el.value;
+    const vig = (S.TP.verId && ativos(S.tabelas || []).find(t => t.id===S.TP.verId)) || tpVigente(S.tabelas, hojeISO()) || ativos(S.tabelas || [])[0]; if(vig && $('tpSimRes')) $('tpSimRes').innerHTML = tpSimResultado(vig.dados); return; }
+  if(S.view!=='tabelaEditar' || !S.TP || !S.TP.edit) return;
+  const X = S.TP.edit, D = X.dados, v = String(el.value).trim(), num = v==='' ? 0 : parseValor(v), int = v==='' ? null : parseInt(v.replace(/\D/g,''), 10);
+  if(el.dataset.tpm){ X[el.dataset.tpm] = el.value; return; }
+  if(el.dataset.tpf){ D.faixas[+el.dataset.tpf] = int || 0; return; }
+  if(el.dataset.tpp){ const [r, a, i, k] = el.dataset.tpp.split('|'); D.precos[r][a][+i][+k] = num; return; }
+  if(el.dataset.tpa){ const [d, i] = el.dataset.tpa.split('|'); D.acrescimos[d] = D.acrescimos[d] || [0,0]; D.acrescimos[d][+i] = num; return; }
+  if(el.dataset.tpk){ const u = (TP_PARAMS.find(p => p[0]===el.dataset.tpk) || [])[2]; D.params[el.dataset.tpk] = u==='qtd' ? (int || 0) : num; return; }
+  if(el.dataset.tpe){ const [i, k] = el.dataset.tpe.split('|'); D.params.exc[+i][+k] = +k===0 ? int : num; return; }
+  if(el.dataset.tpv){ const [i, k] = el.dataset.tpv.split('|'); D.params.vinc[+i][+k] = +k===0 ? int : num; }
+});
+document.addEventListener('change', ev => { const el = ev.target;
+  if(S.view==='tabelaEditar' && el.classList.contains('tp-in') && !el.dataset.tpf && !el.dataset.tpk?.match(/^(socios_sem_custo|contas_incluidas|pouco_fiscal|pouco_contabil)$/) && !(el.dataset.tpe || '').endsWith('|0') && !(el.dataset.tpv || '').endsWith('|0')){
+    const v = String(el.value).trim(); if(v!=='') el.value = String(parseValor(v)).replace('.', ','); }
+  if(S.view==='tabelaEditar' && el.dataset.tpf){ VIEWS.tabelaEditar(); }
 });
 
 /* ===================== PÁGINA DO CLIENTE (só a proposta, sem login) ===================== */

@@ -10,8 +10,8 @@ App de propostas de honorários, contratos e confissões de dívida da **Artecon
   Modo nuvem (Supabase, quando o `CFG` está preenchido) ou modo local (localStorage, para teste).
   Camada de dados em `Local`/`Nuvem` (`DB.inserir`, `DB.alterar`, `DB.inserirVarios`), estado global em `S`, telas em `VIEWS`, botões em `ACOES` (`data-act`), navegação por `data-ir`/`ir()`.
 - `sql/` — migrações e reversões, **rodadas pelo usuário** no SQL Editor do projeto `cobranca-pro`
-  (numeração continua a dos arquivos antigos: 17 = contratos, 19 = confissões, 21 = cadastro único, 22 = lotes, 23 = envio em massa;
-  reversões 96, 93, 92, 91, 90 — a próxima migração é a 24 e a próxima reversão a 89).
+  (numeração continua a dos arquivos antigos: 17 = contratos, 19 = confissões, 21 = cadastro único, 22 = lotes, 23 = envio em massa,
+  24 = tabela de preços; reversões 96, 93, 92, 91, 90, 89 — a próxima migração é a 25 e a próxima reversão a 88).
 - `supabase/functions/prop-email` — Edge Function dos e-mails automáticos (fila `prop_fila_email`).
 - Publicado em `https://arteconartescontabeis-design.github.io/gestao-financeiro/propostas/` (o repositório antigo `propostas` só redireciona).
 - Banco: projeto Supabase `yeujqjtjqtegsnzwwazb` (o mesmo do Cobrança Pro), tabelas `prop_*` com RLS; login compartilhado com o Cobrança Pro.
@@ -31,7 +31,7 @@ App de propostas de honorários, contratos e confissões de dívida da **Artecon
    (limite de 1 MB e o arquivo precisaria ir inteiro dentro da chamada; o app tem ~1,1 MB, o .zip ~560 KB por causa das imagens
    embutidas): o usuário salva e depois a pasta é conferida pela listagem do conector.
 
-## Estado (21/10/2026)
+## Estado (23/10/2026)
 - **v2.2.0 — cadastro único de clientes** (migração `sql/21_migracao_v2_2_0_cadastro_unico.sql`, reversão `sql/92_reversao_v2_2_0.sql`):
   - "Clientes da proposta" e "Contratantes" viraram um só cadastro (`prop_clientes`), no grupo Clientes do menu.
     Contratos e confissões continuam com a coluna `contratante_id`, que agora aponta para `prop_clientes`.
@@ -74,7 +74,29 @@ App de propostas de honorários, contratos e confissões de dívida da **Artecon
     e cancela o WhatsApp pendente quando a pessoa assina.
   - Acompanhamento: lembrar quem não abriu (> 2 dias), reenviar/cancelar WhatsApp (`prop_whats_reagendar`/`prop_whats_cancelar`),
     planilha CSV sem links.
+- **v2.5.0 — tabela de preços** (migração `sql/24_migracao_v2_5_0_tabela_precos.sql`, reversão `sql/89_reversao_v2_5_0.sql`):
+  - `prop_tabelas_preco`: uma linha por versão (`vigencia` = data de início; vale a de maior vigência <= hoje), valores em `dados` jsonb:
+    `faixas`, `precos[regime][atividade][faixa] = [fiscal, contabil]` (Essencial), `acrescimos[depto] = [gestao, estrategico]`,
+    `params` (vínculo, sócios, contas, filial, pouco movimento, sem movimento, MEI, adicional de novembro, `exc` = degraus acima da última
+    faixa, `vinc` = escala de funcionários) e `avulsos`. Guarda `prop_tabelas_preco_guarda`: só diretor grava (PROP120), versão não muda
+    (PROP122), não apaga (PROP121), exclui só a que nenhuma proposta usou (`condicoes.tabela_preco_id`, PROP123).
+  - **Os valores (R$) não ficam no repositório**: entram pelo app (Configurações › Tabela de preços › Importar planilha .xlsx, abas
+    Tabela, Níveis, Parâmetros, Avulsos) e ficam só no banco. Exportar gera a mesma planilha.
+  - Cálculo puro: `tpEstab` (um estabelecimento) e `tpCalcula` (matriz + filiais) → Essencial/Gestão/Estratégico com linhas por
+    departamento e as regras aplicadas; `tpSugere` aplica "nunca abaixo de hoje"; `tpProjecao` faz a carteira por empresa.
+  - Tela `VIEWS.tabela` (abas Tabela, Regras e valores, Avulsos, Simulador, Projeção, Versões, estado em `S.TP`) e `VIEWS.tabelaEditar`.
 - v2.1.x (contratos e confissões) e anteriores: ver aba Versões do app.
+
+## Regras de preço aprovadas (23/10/2026, apresentação "Proposta por níveis")
+- **Nunca abaixo de hoje:** os honorários atuais não mudam; a tabela só projeta. Se a tabela der menos que o atual, o Essencial
+  sugerido fica no valor de hoje e Gestão/Estratégico somam o mesmo acréscimo da tabela. O valor novo vale depois da assinatura.
+- Acima da última faixa (900 lançamentos): degraus de +15%, +30%, +45% e +60% (até 2.000, 5.000, 10.000 e acima), por departamento.
+- Filial: 50% do Fiscal e do Contábil da faixa dela. Filial com pouco movimento (até 100 fiscais e 100 contábeis, sem empregados):
+  25% da tabela, com valor mínimo. Empresa sem movimento: valor fixo (filial: × % de filial).
+- Escala de funcionários aplicada por faixa: 100% até 30, 90% de 31 a 60, 80% de 61 a 100, 70% acima de 100.
+- Avulsos: lista única, corrigida pelo mesmo fator da tabela. Assinatura do escritório: a eletrônica do app (ICP-Brasil só se exigirem).
+- Premissas do cálculo a confirmar com o responsável: sócio com pró-labore além de 2 paga um valor próprio por sócio; o acréscimo de nível
+  do Pessoal só entra com funcionários; MEI só tem o Essencial; Societário e Atendimento entram uma vez por empresa (na matriz).
 
 ## Decisões do responsável sobre assinatura (21/10/2026)
 - **Proposta:** pode ser assinada só com CPF (nome, CPF, e-mail, cargo e declaração de poderes). A foto com documento é
@@ -85,11 +107,8 @@ App de propostas de honorários, contratos e confissões de dívida da **Artecon
   clientes e o envio para eles exige uma autorização explícita (v2.4.0). Sem autorização, ficam como pendência.
 
 ## Próximas entregas (decididas em 20/10/2026)
-- v2.5.0 tabela de preços e catálogo (o app e os documentos mostram só os valores finais).
 - v2.6.0 proposta por níveis (Essencial, Gestão, Estratégico) e importação dos relatórios do Questor para o enquadramento.
 - v2.7.0 contrato herdando a proposta.
-- Pendentes de decisão do responsável: excedente acima da última faixa de lançamentos, preços avulsos, definição de
-  "pouco movimento", escala intermediária do preço por vínculo, tipo de assinatura digital do escritório.
 
 ## Testes
 - Roteiro Playwright (fora do repositório) com Supabase falso em memória para o modo nuvem e dados da v2.1 para o modo local.
