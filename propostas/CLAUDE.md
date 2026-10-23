@@ -98,8 +98,13 @@ App de propostas de honorários, contratos e confissões de dívida da **Artecon
   alterado pelo responsável na tela de conferência e difere da planilha inicial de propósito (confirmado em 23/10/2026): não "corrigir".
   A fonte dos valores é o banco; para ter a planilha atual, use Exportar planilha no app.
 - Avulsos: lista única, corrigida pelo mesmo fator da tabela. Assinatura do escritório: a eletrônica do app (ICP-Brasil só se exigirem).
-- Premissas do cálculo a confirmar com o responsável: sócio com pró-labore além de 2 paga um valor próprio por sócio; o acréscimo de nível
-  do Pessoal só entra com funcionários; MEI só tem o Essencial; Societário e Atendimento entram uma vez por empresa (na matriz).
+- Premissas do cálculo confirmadas pelo responsável (23/10/2026): sócio com pró-labore além de 2 paga um valor próprio por sócio;
+  o acréscimo de nível do Pessoal só entra com funcionários; MEI só tem o Essencial; Atendimento entra uma vez por empresa (na matriz).
+- **Societário fora do honorário** (decidido em 23/10/2026: "não entrará nas cobranças da Artecon"): acréscimo de nível zero
+  (Gestão e Estratégico) e nenhum serviço societário incluído nos níveis. Dos avulsos do Societário ficam só **SA4** (alvará ou
+  licença nova) e **SA5** (inscrição interestadual); saem S01 a S09 e SA1 a SA3. Não é mudança de código: é uma versão nova da tabela
+  (o cálculo e o simulador já escondem linha zerada). Na v2.6.0, tirar o Societário dos textos da tela (`VIEWS.tabela`, aba Regras:
+  "Societário e Atendimento uma vez por empresa") e não listar Societário nos serviços dos níveis da proposta.
 
 ## Decisões do responsável sobre assinatura (21/10/2026)
 - **Proposta:** pode ser assinada só com CPF (nome, CPF, e-mail, cargo e declaração de poderes). A foto com documento é
