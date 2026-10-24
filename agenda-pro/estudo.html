@@ -182,6 +182,59 @@ details.opc summary{cursor:pointer;font-weight:600;color:var(--accent);padding:8
 body.com-player .toasts{bottom:calc(190px + env(safe-area-inset-bottom))}
 .toast{background:var(--text);color:#fff;padding:10px 16px;border-radius:12px;font-size:13px;font-weight:500;box-shadow:var(--shadow);max-width:420px}
 .toast.ok{background:var(--green)}.toast.err{background:var(--red)}
+/* módulos (v1.5.0): conteúdo completo, exemplos, exercícios e avaliação */
+.mod-lista{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.mod-l{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:1px solid var(--border);border-radius:12px;padding:12px;background:var(--bg);color:var(--text)}
+.mod-l:disabled{opacity:.55;cursor:default}
+.mod-l .num{width:38px;height:38px;border-radius:10px;background:var(--accent-lt);color:var(--accent);font:700 14px var(--mono);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mod-l .info{flex:1;min-width:0}.mod-l .info b{display:block;font-size:14px;line-height:1.3}.mod-l .info span{display:block;font-size:12px;color:var(--text-3);margin-top:2px}
+.selo-nota{font:600 12px var(--mono);padding:3px 8px;border-radius:20px;background:var(--amber-lt);color:#7a4f00;flex-shrink:0}
+.selo-nota.ok{background:var(--green-lt);color:var(--green)}
+.voltar-mod{border:none;background:none;color:var(--accent);font:600 13.5px var(--font);padding:2px 0 10px}
+.sub-abas{margin:12px 0 0}
+.legenda{font-size:12px;color:var(--text-3);margin-top:8px}
+.texto-mod{font-size:14.5px;line-height:1.6;margin-top:8px}
+.texto-mod h4{font-size:14.5px;margin:14px 0 6px}
+.texto-mod p{margin:0 0 10px}
+.texto-mod ul,.texto-mod ol{margin:0 0 10px 20px}
+.texto-mod li{margin-bottom:4px}
+.texto-mod table{border-collapse:collapse;font-size:13px;margin:6px 0 12px;min-width:100%}
+.texto-mod th,.texto-mod td{border:1px solid var(--border);padding:6px 8px;text-align:left;vertical-align:top}
+.texto-mod th{background:var(--bg)}
+.texto-mod .fonte{font-size:11.5px;color:var(--text-3)}
+.texto-mod .ia{background:var(--purple-lt);border-left:3px solid var(--purple);padding:8px 10px;border-radius:6px}
+.texto-mod .desat{background:var(--amber-lt);border-left:3px solid var(--amber);padding:8px 10px;border-radius:6px;color:#5c3b00}
+details.exemplo{border:1px solid var(--border);border-radius:12px;margin-top:10px;background:var(--surface)}
+details.exemplo summary{cursor:pointer;padding:12px 14px;font-weight:600;font-size:14px}
+details.exemplo[open] summary{border-bottom:1px solid var(--border)}
+details.exemplo .texto-mod{padding:4px 14px 10px}
+.questao{border-top:1px solid var(--border);padding:14px 0}
+.questao:first-of-type{border-top:none}
+.questao .enun{font-weight:600;font-size:14.5px;line-height:1.45;white-space:pre-wrap}
+.questao .enun small{display:block;font-weight:600;font-size:11.5px;color:var(--text-3);margin-bottom:2px;text-transform:uppercase;letter-spacing:.04em}
+.alt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;border:1px solid var(--border);background:var(--surface);border-radius:10px;padding:10px 12px;margin-top:7px;font:500 14px/1.45 var(--font);color:var(--text)}
+.alt .letra{width:24px;height:24px;border-radius:50%;border:2px solid var(--border-strong);display:flex;align-items:center;justify-content:center;font:700 11px var(--font);flex-shrink:0;color:var(--text-2);margin-top:-1px}
+.alt.marcada{border-color:var(--accent);background:var(--accent-lt)}
+.alt.marcada .letra{border-color:var(--accent);background:var(--accent);color:#fff}
+.alt.certa{border-color:var(--green);background:var(--green-lt)}
+.alt.certa .letra{border-color:var(--green);background:var(--green);color:#fff}
+.alt.errada{border-color:var(--red);background:var(--red-lt)}
+.alt.errada .letra{border-color:var(--red);background:var(--red);color:#fff}
+.alt:disabled{cursor:default}
+.explica{margin-top:8px;font-size:13.5px;line-height:1.5;padding:10px 12px;border-radius:10px;background:var(--bg)}
+.explica .fonte{display:block;font-size:11.5px;color:var(--text-3);margin-top:4px}
+.res-ok{color:var(--green);font-weight:700}.res-erro{color:var(--red);font-weight:700}
+.placar{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.placar .nota-grande{font:700 40px/1 var(--font);letter-spacing:-1px}
+.tent{display:flex;justify-content:space-between;gap:10px;font-size:13px;border-top:1px solid var(--border);padding:8px 0}
+.tent:first-child{border-top:none}
+.barra-aval{position:sticky;bottom:calc(8px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.96);border:1px solid var(--border);border-radius:14px;padding:10px 12px;box-shadow:var(--shadow);margin-top:10px}
+.barra-aval span{flex:1;font-size:13px;color:var(--text-2)}
+body.com-player .barra-aval{bottom:calc(186px + env(safe-area-inset-bottom))}
+.ir-mod{display:inline-block;border:none;background:none;color:var(--accent);font:600 12px var(--font);padding:2px 0 0}
+.eq-av{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:10px 0;border-top:1px solid var(--border);font-size:13px}
+.eq-av:first-child{border-top:none}
+.eq-av .nome{flex:1 1 160px;font-weight:600;min-width:0}
 @media (max-width:560px){
   .resumo{grid-template-columns:1fr;justify-items:center}
   .barras{width:100%}
@@ -215,12 +268,14 @@ body.com-player .toasts{bottom:calc(190px + env(safe-area-inset-bottom))}
     </div>
     <nav class="abas" aria-label="Seções do estudo">
       <button class="aba ativa" data-pg="trilha">Minha trilha</button>
+      <button class="aba" data-pg="modulos">Módulos</button>
       <button class="aba" data-pg="notas">Anotações</button>
       <button class="aba" data-pg="equipe" id="aba-equipe" hidden>Equipe</button>
     </nav>
   </header>
   <main>
     <section id="pg-trilha"></section>
+    <section id="pg-modulos" hidden></section>
     <section id="pg-notas" hidden></section>
     <section id="pg-equipe" hidden></section>
   </main>
@@ -267,7 +322,7 @@ body.com-player .toasts{bottom:calc(190px + env(safe-area-inset-bottom))}
 <div class="toasts" id="toasts"></div>
 
 <script>
-const ESTUDO_VERSAO = '1.4.0';
+const ESTUDO_VERSAO = '1.5.0';
 const SUPA_URL = 'https://vuwgxndahrzinfdlapxz.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1d2d4bmRhaHJ6aW5mZGxhcHh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3NTA0ODgsImV4cCI6MjA5MDMyNjQ4OH0.9DaPGHIxt0CO-pjYPBwsHaoSqDN35CwVU0lJUyTXQIQ';
 const $ = id => document.getElementById(id);
@@ -288,6 +343,7 @@ const E = {
   trilha: null, prog: {}, notas: [], perfil: null,
   atual: null, pagina: 'trilha', fila: new Map(), timerFila: null, ultimoSalvo: 0,
   soEstudo: [], acessoTexto: '', urls: {}, urlsEm: 0,
+  modulo: null, secaoMod: 'conteudo', aval: [], tentativa: null,
 };
 let D = null; // atalho para E.dados
 
@@ -426,11 +482,14 @@ async function abrirApp(user) {
     if (!us || !us.length) throw new Error('Seu acesso ao Estudo não está ativo. Fale com o administrador do escritório.');
     E.usuario = us[0];
     await carregarConteudo();
-    const [perfis, progresso, notas] = await Promise.all([
+    const [perfis, progresso, notas, aval] = await Promise.all([
       api('GET', `/rest/v1/agenda_estudo_perfil?auth_id=eq.${authId}&select=*`),
       api('GET', `/rest/v1/agenda_estudo_progresso?auth_id=eq.${authId}&select=item,concluido,posicao_seg,atualizado_em`),
       api('GET', `/rest/v1/agenda_estudo_notas?auth_id=eq.${authId}&select=*&order=criado_em.desc&limit=200`),
+      api('GET', `/rest/v1/agenda_estudo_avaliacoes?auth_id=eq.${authId}&select=id,modulo,acertos,total,nota,criado_em&order=criado_em.desc&limit=500`).catch(() => []),
     ]);
+    E.aval = aval || [];
+    setTimeout(enviarAvalPendentes, 2000);
     E.perfil = perfis && perfis[0] || null;
     E.prog = {};
     (progresso || []).forEach(p => { E.prog[p.item] = { concluido: p.concluido, pos: Number(p.posicao_seg) || 0, em: p.atualizado_em } });
@@ -618,7 +677,7 @@ document.querySelectorAll('.aba').forEach(b => b.addEventListener('click', () =>
 function irPara(pg) {
   E.pagina = pg;
   document.querySelectorAll('.aba').forEach(b => b.classList.toggle('ativa', b.dataset.pg === pg));
-  ['trilha', 'notas', 'equipe'].forEach(p => { $('pg-' + p).hidden = p !== pg });
+  ['trilha', 'modulos', 'notas', 'equipe'].forEach(p => { $('pg-' + p).hidden = p !== pg });
   render();
   window.scrollTo(0, 0)
 }
@@ -627,6 +686,7 @@ function render() {
   $('sub-trilha').textContent = t ? t.nome : 'Escolha a sua trilha';
   if (E.pagina === 'trilha') renderTrilha();
   else if (E.pagina === 'notas') renderNotas();
+  else if (E.pagina === 'modulos') renderModulos()
   else if (E.pagina === 'equipe') renderEquipe()
 }
 
@@ -679,6 +739,7 @@ function renderTrilha() {
     ${barra('Áudios', n.fa, t.faixas.length, 'var(--accent)')}
     ${t.videos.length ? barra('Vídeos', n.vi, t.videos.length, 'var(--purple)') : ''}
     ${barra('Tarefas', n.ta, t.tarefas.length, 'var(--amber)')}
+    ${htmlBarraAval(t, barra)}
     <div class="muted">${n.resto > 0 ? `Faltam cerca de ${horas(n.resto)} de áudio${t.videos.length ? ' e vídeo' : ''}.` : 'Nada de áudio ou vídeo pendente.'}${t.opcionais.length ? ` Opcionais: ${n.opc} de ${t.opcionais.length}.` : ''}</div>
   </div>
 </div>
@@ -692,7 +753,8 @@ ${mods ? `<div class="mods">${mods}</div>` : ''}
     const f = D.faixas[i];
     if (f.grupo !== grupo) {
       grupo = f.grupo;
-      html += `<div class="grupo">${whatsEsc(grupo)}${f.tema ? `<small>${whatsEsc(f.tema)}</small>` : ''}</div>`;
+      const mg = /^Módulo (\d+)/.exec(grupo), md = mg && modDados('m' + mg[1]);
+      html += `<div class="grupo">${whatsEsc(grupo)}${f.tema ? `<small>${whatsEsc(f.tema)}</small>` : ''}${md ? `<button class="ir-mod" onclick="abrirModulo('m${mg[1]}')">📘 Estudar o módulo: texto completo, exemplos, exercícios e avaliação →</button>` : ''}</div>`;
     }
     html += htmlFaixa(i)
   });
@@ -970,11 +1032,12 @@ async function renderEquipe() {
   el.innerHTML = '<div class="card"><div class="gira" style="margin:20px auto"></div></div>';
   try {
     const tid = Number(E.usuario.tenant_id);
-    const [us, so, perfis, prog] = await Promise.all([
+    const [us, so, perfis, prog, avs] = await Promise.all([
       api('GET', `/rest/v1/agenda_usuarios?tenant_id=eq.${tid}&ativo=eq.true&select=nome,auth_id,perfil&order=nome`),
       api('GET', `/rest/v1/agenda_estudo_usuarios?tenant_id=eq.${tid}&select=id,auth_id,nome,email,whatsapp,ativo&order=nome`),
       api('GET', '/rest/v1/agenda_estudo_perfil?select=auth_id,trilha,atualizado_em'),
       api('GET', '/rest/v1/agenda_estudo_progresso?select=auth_id,item,concluido,posicao_seg,atualizado_em&limit=10000'),
+      api('GET', `/rest/v1/agenda_estudo_avaliacoes?tenant_id=eq.${tid}&select=auth_id,modulo,nota,criado_em&limit=10000`).catch(() => []),
     ]);
     E.soEstudo = so || [];
     const naEquipe = new Set((us || []).map(u => u.auth_id));
@@ -998,6 +1061,7 @@ async function renderEquipe() {
 <p class="muted" style="margin-top:4px">Conclusão média de quem já escolheu a trilha: <b>${media}%</b>. As anotações de cada pessoa são particulares e não aparecem aqui.</p>
 <div style="margin-top:10px">${linhas.map(l => `<div class="eq-l"><div class="nome">${whatsEsc(l.nome)}${l.so ? '<span class="tag-so">só Estudo</span>' : ''}</div><div class="tr">${l.t ? whatsEsc(l.t.curto) : 'Sem trilha'}${l.ult ? `<br><span class="muted">${dataHora(l.ult)}</span>` : ''}</div>
 <div class="eq-barra"><div class="trilho"><div class="enche" style="width:${l.n ? l.n.pct : 0}%;background:${l.n && l.n.pct >= 100 ? 'var(--green)' : 'var(--accent)'}"></div></div><span>${l.n ? l.n.pct + '%' : '—'}</span></div></div>`).join('')}</div></div>
+${htmlEquipeAval(pessoas, avs || [])}
 
 <div class="card"><h2>Pessoas só do Estudo <span class="cont">${ativos} ativa${ativos === 1 ? '' : 's'}</span></h2>
 <p class="muted" style="margin-top:4px">Para quem não usa o Agenda: a pessoa entra só no Estudo, com login próprio, e não vê nada da agenda. O cadastro fica só aqui (não vai para o Portal Artecon). Quem já é da equipe do Agenda não precisa de cadastro.</p>
@@ -1103,6 +1167,232 @@ ${senha ? `<div><span class="muted">Senha provisória</span><b class="senha">${w
 function copiarAcesso() {
   const ok = () => toast('Copiado ✓', 'ok'), falhou = () => toast('Não foi possível copiar. Selecione o texto e copie.', 'err');
   if (navigator.clipboard) navigator.clipboard.writeText(E.acessoTexto).then(ok, falhou); else falhou()
+}
+
+// ── módulos (v1.5.0): texto completo, exemplos resolvidos, exercícios de assinalar e avaliação ──
+// Conteúdo em D.modulos (dados.json do armazenamento protegido). Notas em agenda_estudo_avaliacoes (sql/agenda_estudo_avaliacoes.sql).
+const NOTA_REF = 70;        // referência de aprovação: só informa, não bloqueia o treinamento
+const QUESTOES_PROVA = 10;  // sorteadas do banco do módulo a cada tentativa
+const LETRAS = 'ABCDEF';
+function modDados(id) { const m = D && D.modulos && D.modulos[id]; return m && m.conteudo ? m : null }
+function listaModulos() {
+  const mods = {};
+  Object.values(D.faixas).forEach(f => {
+    const m = /^Módulo (\d+)/.exec(f.grupo || '');
+    if (m && !mods['m' + m[1]]) mods['m' + m[1]] = { id: 'm' + m[1], n: Number(m[1]), titulo: f.tema || f.grupo };
+  });
+  return Object.values(mods).sort((a, b) => a.n - b.n)
+}
+function fmtNota(n) { return (Math.round(Number(n) * 10) / 10).toString().replace('.', ',') + '%' }
+function melhorNota(mod) {
+  const ns = E.aval.filter(a => a.modulo === mod).map(a => Number(a.nota));
+  return ns.length ? Math.max(...ns) : null
+}
+function embaralhar(lista) {
+  const a = [...lista];
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]] }
+  return a
+}
+function abrirModulo(id, secao) {
+  if (!modDados(id)) return;
+  E.modulo = id; E.secaoMod = secao || 'conteudo';
+  if (E.pagina !== 'modulos') irPara('modulos'); else { render(); window.scrollTo(0, 0) }
+}
+function secaoModulo(s) { E.secaoMod = s; render(); window.scrollTo(0, 0) }
+function voltarModulos() { E.modulo = null; render(); window.scrollTo(0, 0) }
+function arrumarTabelas(el) {
+  el.querySelectorAll('.texto-mod table').forEach(tb => { if (tb.parentNode.classList.contains('tab-rola')) return; const w = document.createElement('div'); w.className = 'tab-rola'; tb.parentNode.insertBefore(w, tb); w.appendChild(tb) })
+}
+function modulosDaTrilha(t) {
+  const ids = new Set();
+  t.faixas.forEach(i => { const m = /^Módulo (\d+)/.exec((D.faixas[i] || {}).grupo || ''); if (m) ids.add('m' + m[1]) });
+  return [...ids].filter(modDados)
+}
+function htmlBarraAval(t, barra) {
+  const mods = modulosDaTrilha(t);
+  if (!mods.length) return '';
+  const ok = mods.filter(m => (melhorNota(m) || 0) >= NOTA_REF).length;
+  return barra('Avaliações', ok, mods.length, 'var(--green)') + `<div class="muted" style="margin-top:-4px">Avaliações com ${NOTA_REF}% ou mais (opcional, fora da conclusão). Faça na aba Módulos.</div>`
+}
+
+function renderModulos() {
+  const el = $('pg-modulos');
+  if (E.modulo && modDados(E.modulo)) { renderModulo(el); return }
+  E.modulo = null;
+  const mods = listaModulos();
+  el.innerHTML = `<div class="card"><h2>Módulos</h2>
+<p class="muted" style="margin-top:4px">Cada módulo tem o texto completo, exemplos resolvidos passo a passo, exercícios de assinalar com correção na hora e uma avaliação com nota, que você pode refazer quando quiser. Os módulos chegam em etapas.</p>
+<div class="mod-lista">${mods.map(m => {
+    const md = modDados(m.id), nota = melhorNota(m.id);
+    return `<button class="mod-l" ${md ? `onclick="abrirModulo('${m.id}')"` : 'disabled'}><span class="num">${m.n}</span>
+<span class="info"><b>${whatsEsc(md ? md.titulo : m.titulo)}</b><span>${md ? `${md.exemplos.length} exemplos · ${md.exercicios.length} exercícios · avaliação de ${Math.min(QUESTOES_PROVA, md.avaliacao.length)} questões` : 'Em preparação'}</span></span>
+${nota != null ? `<span class="selo-nota${nota >= NOTA_REF ? ' ok' : ''}">${fmtNota(nota)}</span>` : ''}</button>`
+  }).join('')}</div></div>`
+}
+
+function renderModulo(el) {
+  const md = modDados(E.modulo), n = Number(E.modulo.slice(1)), s = E.secaoMod || 'conteudo';
+  const abas = [['conteudo', 'Conteúdo'], ['exemplos', `Exemplos (${md.exemplos.length})`], ['exercicios', `Exercícios (${md.exercicios.length})`], ['avaliacao', 'Avaliação']];
+  let html = `<button class="voltar-mod" onclick="voltarModulos()">← Todos os módulos</button>
+<div class="card"><h2>Módulo ${n} · ${whatsEsc(md.titulo)}</h2>${md.objetivo ? `<p class="muted" style="margin-top:4px">${whatsEsc(md.objetivo)}</p>` : ''}
+<div class="chips sub-abas">${abas.map(([k, r]) => `<button class="chip${k === s ? ' ativo' : ''}" onclick="secaoModulo('${k}')">${r}</button>`).join('')}</div></div>`;
+  // textos fixos do programa (dados.json do armazenamento protegido), não vêm do banco
+  if (s === 'conteudo') {
+    html += `<div class="card"><div class="legenda">Origem de cada informação: <b>[FG]</b> Fellipe Guerra · <b>[CM]</b> Caio Melo · <b>[N]</b> notícia ou órgão oficial · <b>[IA]</b> complemento do estudo (explicação ou conta refeita), em destaque roxo. Em amarelo, o que já está desatualizado.</div></div>`
+      + md.conteudo.map(sec => `<div class="card"><h2>${whatsEsc(sec.titulo)}</h2><div class="texto-mod">${sec.html}</div></div>`).join('')
+      + `<div class="continuar"><button class="btn prim" onclick="secaoModulo('exemplos')">Ver os exemplos resolvidos →</button></div>`;
+  } else if (s === 'exemplos') {
+    html += `<div class="card"><h2>Exemplos resolvidos</h2><p class="muted" style="margin-top:4px">Toque no título para abrir o passo a passo. As contas foram refeitas e conferidas.</p>
+${md.exemplos.map((ex, i) => `<details class="exemplo"${i === 0 ? ' open' : ''}><summary>${i + 1}. ${whatsEsc(ex.titulo)}</summary><div class="texto-mod">${ex.html}</div></details>`).join('')}</div>
+<div class="continuar"><button class="btn prim" onclick="secaoModulo('exercicios')">Fazer os exercícios →</button></div>`;
+  } else if (s === 'exercicios') {
+    html += htmlExercicios(md);
+  } else {
+    html += htmlAvaliacao(md);
+  }
+  el.innerHTML = html;
+  arrumarTabelas(el)
+}
+
+// exercícios de fixação: correção na hora, sem nota (respostas guardadas só neste aparelho)
+function chaveExerc(mod) { return `estudo_exerc_${E.authId}_${mod}` }
+function respostasExerc(mod) { try { return JSON.parse(ler(chaveExerc(mod)) || '{}') } catch (e) { return {} } }
+function responderExerc(mod, qid, k) {
+  const r = respostasExerc(mod);
+  if (r[qid] != null) return;
+  r[qid] = k; guardar(chaveExerc(mod), JSON.stringify(r));
+  const y = window.scrollY; render(); window.scrollTo(0, y)
+}
+function refazerExercicios(mod) { apagar(chaveExerc(mod)); render(); window.scrollTo(0, 0) }
+function htmlAlternativas(q, ordem, escolhida, mostrar, onclick) {
+  // ordem: posição exibida → índice original; escolhida: índice original marcado
+  return ordem.map((orig, pos) => {
+    let cls = '';
+    if (mostrar) cls = orig === q.correta ? ' certa' : (orig === escolhida ? ' errada' : '');
+    else if (orig === escolhida) cls = ' marcada';
+    return `<button class="alt${cls}" ${mostrar ? 'disabled' : `onclick="${onclick(pos)}"`}><span class="letra">${LETRAS[pos]}</span><span>${whatsEsc(q.alternativas[orig])}</span></button>`
+  }).join('')
+}
+function htmlExplica(q, escolhida) {
+  const ok = escolhida === q.correta;
+  return `<div class="explica"><span class="${ok ? 'res-ok' : 'res-erro'}">${ok ? '✓ Certo.' : (escolhida == null ? 'Sem resposta.' : '✗ Não é essa.')}</span> ${whatsEsc(q.explicacao)}${q.fonte ? `<span class="fonte">${whatsEsc(q.fonte)}</span>` : ''}</div>`
+}
+function htmlExercicios(md) {
+  const r = respostasExerc(md.id);
+  const feitas = md.exercicios.filter(q => r[q.id] != null), certas = feitas.filter(q => r[q.id] === q.correta).length;
+  return `<div class="card"><h2>Exercícios de fixação <span class="cont">${feitas.length ? `${certas} de ${feitas.length} certas` : `${md.exercicios.length} questões`}</span></h2>
+<p class="muted" style="margin-top:4px">Marque a alternativa: a correção e a explicação aparecem na hora. Não vale nota.</p>
+${md.exercicios.map((q, i) => {
+    const esc = r[q.id] != null ? Number(r[q.id]) : null, ordem = q.alternativas.map((_, k) => k);
+    return `<div class="questao"><div class="enun"><small>Exercício ${i + 1}</small>${whatsEsc(q.pergunta)}</div>
+${htmlAlternativas(q, ordem, esc, esc != null, pos => `responderExerc('${md.id}','${q.id}',${pos})`)}${esc != null ? htmlExplica(q, esc) : ''}</div>`
+  }).join('')}
+<div class="continuar">${feitas.length ? `<button class="btn" onclick="refazerExercicios('${md.id}')">Refazer os exercícios</button>` : ''}
+<button class="btn prim" onclick="secaoModulo('avaliacao')">Ir para a avaliação →</button></div></div>`
+}
+
+// avaliação: 10 questões sorteadas, alternativas embaralhadas, nota, gabarito comentado; pode refazer (vale a melhor nota)
+function iniciarAvaliacao(mod) {
+  const md = modDados(mod);
+  const qs = embaralhar(md.avaliacao).slice(0, Math.min(QUESTOES_PROVA, md.avaliacao.length));
+  E.tentativa = { mod, questoes: qs.map(q => ({ id: q.id, ordem: embaralhar(q.alternativas.map((_, k) => k)) })), respostas: {}, fim: null };
+  render(); window.scrollTo(0, 0)
+}
+function marcarAval(qid, pos) {
+  const t = E.tentativa;
+  if (!t || t.fim) return;
+  t.respostas[qid] = pos;
+  const y = window.scrollY; render(); window.scrollTo(0, y)
+}
+function cancelarAvaliacao() { if (!confirm('Sair da avaliação? As respostas desta tentativa serão perdidas.')) return; E.tentativa = null; render(); window.scrollTo(0, 0) }
+async function entregarAvaliacao() {
+  const t = E.tentativa, md = modDados(t.mod);
+  const faltam = t.questoes.filter(x => t.respostas[x.id] == null).length;
+  if (faltam && !confirm(`Faltam ${faltam} questão(ões) sem resposta. Entregar assim mesmo?`)) return;
+  const det = t.questoes.map(x => {
+    const q = md.avaliacao.find(y => y.id === x.id), pos = t.respostas[x.id], escolhida = pos != null ? x.ordem[pos] : null;
+    return { q: x.id, escolhida, correta: q.correta, ok: escolhida === q.correta }
+  });
+  const acertos = det.filter(d => d.ok).length, total = det.length, nota = Math.round(10000 * acertos / total) / 100;
+  t.fim = { acertos, total, nota, det };
+  const reg = { modulo: t.mod, acertos, total, nota, respostas: det, tenant_id: E.usuario.tenant_id };
+  try {
+    const r = await api('POST', '/rest/v1/agenda_estudo_avaliacoes', { body: reg, prefer: 'return=representation' });
+    E.aval.unshift((r && r[0]) || { ...reg, criado_em: new Date().toISOString() });
+    toast('Nota salva ✓', 'ok')
+  } catch (e) {
+    guardarAvalPendente(reg);
+    E.aval.unshift({ ...reg, criado_em: new Date().toISOString(), pendente: true });
+    toast('Sem conexão: a nota ficou guardada no aparelho e será enviada depois.', 'err')
+  }
+  render(); window.scrollTo(0, 0)
+}
+function guardarAvalPendente(reg) {
+  try { const k = 'estudo_aval_pend_' + E.authId; const l = JSON.parse(ler(k) || '[]'); l.push(reg); guardar(k, JSON.stringify(l)) } catch (e) {}
+}
+async function enviarAvalPendentes() {
+  const k = 'estudo_aval_pend_' + E.authId;
+  let l = []; try { l = JSON.parse(ler(k) || '[]') } catch (e) {}
+  if (!l.length || !E.token) return;
+  try {
+    await api('POST', '/rest/v1/agenda_estudo_avaliacoes', { body: l.map(r => ({ ...r, tenant_id: E.usuario.tenant_id })) });
+    apagar(k);
+    E.aval.forEach(a => { delete a.pendente })
+  } catch (e) {}
+}
+window.addEventListener('online', () => enviarAvalPendentes());
+function htmlAvaliacao(md) {
+  const t = E.tentativa && E.tentativa.mod === md.id ? E.tentativa : null;
+  const nq = Math.min(QUESTOES_PROVA, md.avaliacao.length);
+  if (t && !t.fim) {
+    const resp = Object.keys(t.respostas).length;
+    return `<div class="card"><h2>Avaliação <span class="cont">${resp} de ${t.questoes.length} respondidas</span></h2>
+${t.questoes.map((x, i) => {
+      const q = md.avaliacao.find(y => y.id === x.id), pos = t.respostas[x.id];
+      return `<div class="questao"><div class="enun"><small>Questão ${i + 1} de ${t.questoes.length}</small>${whatsEsc(q.pergunta)}</div>
+${htmlAlternativas(q, x.ordem, pos != null ? x.ordem[pos] : null, false, p => `marcarAval('${x.id}',${p})`)}</div>`
+    }).join('')}
+<div class="barra-aval"><span>${resp} de ${t.questoes.length} respondidas</span><button class="btn" onclick="cancelarAvaliacao()">Sair</button><button class="btn prim" onclick="entregarAvaliacao()">Entregar</button></div></div>`
+  }
+  const tentativas = E.aval.filter(a => a.modulo === md.id), melhor = melhorNota(md.id);
+  let html = '';
+  if (t && t.fim) {
+    const f = t.fim, passou = f.nota >= NOTA_REF;
+    html += `<div class="card"><div class="placar"><div class="nota-grande" style="color:${passou ? 'var(--green)' : 'var(--amber)'}">${fmtNota(f.nota)}</div>
+<div><b>${f.acertos} de ${f.total} certas</b><div class="muted">${passou ? `Acima da referência de ${NOTA_REF}%. Bom trabalho!` : `Abaixo da referência de ${NOTA_REF}%. Isso não bloqueia o treinamento: revise o conteúdo e refaça quando quiser.`}</div></div></div>
+<div class="continuar"><button class="btn prim" onclick="iniciarAvaliacao('${md.id}')">Refazer a avaliação (novo sorteio)</button><button class="btn" onclick="secaoModulo('conteudo')">Revisar o conteúdo</button></div></div>
+<div class="card"><h2>Gabarito comentado</h2>${t.questoes.map((x, i) => {
+      const q = md.avaliacao.find(y => y.id === x.id), d = f.det[i];
+      return `<div class="questao"><div class="enun"><small>Questão ${i + 1}</small>${whatsEsc(q.pergunta)}</div>${htmlAlternativas(q, x.ordem, d.escolhida, true)}${htmlExplica(q, d.escolhida)}</div>`
+    }).join('')}</div>`;
+  } else {
+    html += `<div class="card"><h2>Avaliação do módulo</h2>
+<ul class="texto-mod" style="margin-left:20px"><li>${nq} questões sorteadas de um banco de ${md.avaliacao.length}, com as alternativas embaralhadas.</li>
+<li>No fim aparecem a nota e o gabarito comentado.</li><li>Referência de aprovação: ${NOTA_REF}%. Não bloqueia o treinamento.</li>
+<li>Pode refazer quantas vezes quiser; vale a melhor nota.</li></ul>
+<div class="continuar"><button class="btn prim" onclick="iniciarAvaliacao('${md.id}')">${tentativas.length ? 'Fazer de novo' : 'Começar a avaliação'}</button></div></div>`;
+  }
+  html += `<div class="card"><h2>Minhas tentativas <span class="cont">${tentativas.length ? `melhor nota ${fmtNota(melhor)}` : ''}</span></h2>
+${tentativas.length ? tentativas.map(a => `<div class="tent"><span>${dataHora(a.criado_em)}${a.pendente ? ' · <i>a enviar</i>' : ''}</span><span>${a.acertos} de ${a.total} · <b>${fmtNota(a.nota)}</b></span></div>`).join('')
+      : '<p class="muted" style="margin-top:6px">Nenhuma tentativa ainda.</p>'}</div>`;
+  return html
+}
+
+// equipe: melhor nota e tentativas por módulo (admin e gerente)
+function htmlEquipeAval(pessoas, avs) {
+  const mods = listaModulos().filter(m => modDados(m.id));
+  if (!mods.length) return '';
+  const porPessoa = {};
+  avs.forEach(a => { const p = (porPessoa[a.auth_id] = porPessoa[a.auth_id] || {}); const m = (p[a.modulo] = p[a.modulo] || { melhor: 0, n: 0 }); m.n++; m.melhor = Math.max(m.melhor, Number(a.nota)) });
+  const com = pessoas.filter(p => porPessoa[p.auth_id]);
+  return `<div class="card"><h2>Avaliações dos módulos <span class="cont">${com.length} de ${pessoas.length} já fizeram</span></h2>
+<p class="muted" style="margin-top:4px">Melhor nota e número de tentativas. Referência: ${NOTA_REF}% (não bloqueia o treinamento).</p>
+<div style="margin-top:8px">${pessoas.map(p => {
+    const r = porPessoa[p.auth_id] || {};
+    return `<div class="eq-av"><span class="nome">${whatsEsc(p.nome)}</span>${mods.map(m => r[m.id]
+      ? `<span class="selo-nota${r[m.id].melhor >= NOTA_REF ? ' ok' : ''}" title="${r[m.id].n} tentativa(s)">M${m.n} ${fmtNota(r[m.id].melhor)} · ${r[m.id].n}×</span>`
+      : `<span class="selo-nota" style="background:var(--bg);color:var(--text-3)">M${m.n} —</span>`).join('')}</div>`
+  }).join('')}</div></div>`
 }
 
 iniciar();

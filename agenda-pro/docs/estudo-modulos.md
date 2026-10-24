@@ -1,0 +1,38 @@
+# Estudo da Reforma — módulos completos (aba Módulos, Estudo 1.5.0 / Agenda 2.9.0)
+
+Pedido do usuário (24/10/2026): estudo mais completo, exemplos por inteiro, exercícios de assinalar e avaliação
+que pode ser refeita. Combinado:
+
+- Nota de referência **70%**, que **não bloqueia** o treinamento. A avaliação é **opcional**: aparece na trilha numa barra
+  separada ("Avaliações"), fora do % de conclusão.
+- Entregas em etapas: **Etapa 1** Módulos 3, 6 e 7 · **Etapa 2** Módulos 1, 2, 4 e 5 · **Etapa 3** Módulos 8 e 9 e revisão.
+- **Áudio dos exemplos novos: só depois que o usuário aprovar o texto de cada etapa** (cota da Azure; lançar o uso no portal).
+
+## Onde fica
+- O conteúdo vai no `dados.json` do armazenamento privado `estudo` (nunca no GitHub: o repositório é público), na chave
+  `modulos` → `{ "m3": {...}, "m6": {...} }`. Para trocar: baixar o `dados.json` pela função `estudo-carga`, mexer só em
+  `modulos` e subir de volta (ver CLAUDE.md).
+- Notas: tabela `agenda_estudo_avaliacoes` (`sql/agenda_estudo_avaliacoes.sql`). Cada entrega é uma linha; o app mostra a
+  melhor nota e o histórico. Respostas dos exercícios de fixação ficam só no aparelho (`localStorage`).
+
+## Formato de um módulo
+```json
+{
+  "id": "m3", "titulo": "...", "objetivo": "1–2 frases",
+  "conteudo":   [ { "titulo": "Seção", "html": "<p>...</p>" } ],
+  "exemplos":   [ { "id": "m3-e1", "titulo": "...", "html": "enunciado, passo a passo em tabela, resultado, regra" } ],
+  "exercicios": [ { "id": "m3-x01", "pergunta": "...", "alternativas": ["", "", "", ""], "correta": 0,
+                    "explicacao": "...", "fonte": "LC 214/2025, art. 27 · [FG aula 2]" } ],
+  "avaliacao":  [ mesmo formato, ids "m3-a01"... ]
+}
+```
+Quantidades: 6–12 seções, 4–6 exemplos, 8–10 exercícios, 20–25 questões no banco da avaliação (o app sorteia 10 e
+embaralha as alternativas). HTML permitido: `p ul ol li table thead tbody tr th td b strong i em h4 br span`, com `class`
+só em `p`/`span`: `fonte` (origem), `ia` (complemento do estudo, destaque roxo) e `desat` (desatualizado, destaque amarelo).
+Perguntas e alternativas são texto puro (o app escapa).
+
+## Regras do conteúdo (Prompt Mestre do usuário)
+Não inventar; toda afirmação vem das fontes (programa no OneDrive "Reforma Tributária - Programa de Estudo", apostilas e
+exercícios dos cursos, análises das aulas). Marcar a origem com [FG], [CM], [N] e [IA] (complemento). Sinalizar o que está
+desatualizado na data. Preservar exceções. Refazer toda conta (Python) e registrar quando a conta da fonte não fecha.
+Escrever com as próprias palavras.
