@@ -36,3 +36,17 @@ Não inventar; toda afirmação vem das fontes (programa no OneDrive "Reforma Tr
 exercícios dos cursos, análises das aulas). Marcar a origem com [FG], [CM], [N] e [IA] (complemento). Sinalizar o que está
 desatualizado na data. Preservar exceções. Refazer toda conta (Python) e registrar quando a conta da fonte não fecha.
 Escrever com as próprias palavras.
+
+## Regra das fontes (usuário, 24/10/2026)
+- O que está nos portais dos cursos (Nutror e Hotmart: aulas, apostilas, exercícios) vale como **verdadeiro**. Quando a lei
+  consultada disser outra coisa, o texto segue o curso e registra a diferença numa nota (ex.: redução do art. 38-B — curso 60%,
+  LC 123 consultada 50%).
+- Exceção: ato oficial **publicado depois** do material do curso (resolução, manual, notícia da Receita) prevalece e o texto avisa
+  que mudou. Foi o caso do calendário do Simples para 2027 (Res. CGSN 194/2026 e manual do regime regular de 07/10/2026).
+
+## Revisão técnica (Etapa 1)
+- 24/10/2026: revisão documental do relatório da Etapa 1 (calendário, multas, premissas, cenários). Os módulos foram para a
+  **versão 1.2**: calendário oficial de 2027, base legal da multa "reduzida a 75%", premissas antes dos resultados, farmácia com e
+  sem crédito de estoque (veredito condicional), linha do tempo cartão × crediário e a seção "Situação desta versão" com o que
+  ainda falta confirmar. Memória de cálculo em planilha à parte (fora do GitHub).
+- Cada módulo leva `versao`; ao mexer no texto, subir a versão e anotar na seção "Situação desta versão".
