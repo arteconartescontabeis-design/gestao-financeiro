@@ -217,6 +217,8 @@ details.exemplo{border:1px solid var(--border);border-radius:12px;margin-top:10p
 details.exemplo summary{cursor:pointer;padding:12px 14px;font-weight:600;font-size:14px}
 details.exemplo[open] summary{border-bottom:1px solid var(--border)}
 details.exemplo .texto-mod{padding:4px 14px 10px}
+/* áudio do exemplo (v1.7.0) */
+details.exemplo .ex-audio{padding:10px 14px;border-bottom:1px solid var(--border)}
 .questao{border-top:1px solid var(--border);padding:14px 0}
 .questao:first-of-type{border-top:none}
 .questao .enun{font-weight:600;font-size:14.5px;line-height:1.45;white-space:pre-wrap}
@@ -331,7 +333,7 @@ body.com-player .barra-aval{bottom:calc(186px + env(safe-area-inset-bottom))}
 <div class="toasts" id="toasts"></div>
 
 <script>
-const ESTUDO_VERSAO = '1.6.0';
+const ESTUDO_VERSAO = '1.7.0';
 const SUPA_URL = 'https://vuwgxndahrzinfdlapxz.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1d2d4bmRhaHJ6aW5mZGxhcHh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3NTA0ODgsImV4cCI6MjA5MDMyNjQ4OH0.9DaPGHIxt0CO-pjYPBwsHaoSqDN35CwVU0lJUyTXQIQ';
 const $ = id => document.getElementById(id);
@@ -1300,8 +1302,9 @@ function renderModulo(el) {
       + md.conteudo.map(sec => `<div class="card"><h2>${whatsEsc(sec.titulo)}</h2><div class="texto-mod">${sec.html}</div></div>`).join('')
       + `<div class="continuar"><button class="btn prim" onclick="secaoModulo('exemplos')">Ver os exemplos resolvidos →</button></div>`;
   } else if (s === 'exemplos') {
-    html += `<div class="card"><h2>Exemplos resolvidos</h2><p class="muted" style="margin-top:4px">Toque no título para abrir o passo a passo. As contas foram refeitas e conferidas.</p>
-${md.exemplos.map((ex, i) => `<details class="exemplo"${i === 0 ? ' open' : ''}><summary>${i + 1}. ${whatsEsc(ex.titulo)}</summary><div class="texto-mod">${ex.html}</div></details>`).join('')}</div>
+    const comAudio = md.exemplos.some(ex => faixaExemplo(ex));
+    html += `<div class="card"><h2>Exemplos resolvidos</h2><p class="muted" style="margin-top:4px">Toque no título para abrir o passo a passo. As contas foram refeitas e conferidas.${comAudio ? ' Toque no ▶ para ouvir a explicação de cada exemplo.' : ''}</p>
+${md.exemplos.map((ex, i) => `<details class="exemplo"${exAberto(md, ex, i) ? ' open' : ''}${idSeguro(ex.id) ? ` ontoggle="exToggle(this,'${md.id}','${ex.id}')"` : ''}><summary>${i + 1}. ${whatsEsc(ex.titulo)}</summary>${htmlAudioExemplo(ex)}<div class="texto-mod">${ex.html}</div></details>`).join('')}</div>
 <div class="continuar"><button class="btn prim" onclick="secaoModulo('exercicios')">Fazer os exercícios →</button></div>`;
   } else if (s === 'exercicios') {
     html += htmlExercicios(md);
@@ -1309,7 +1312,28 @@ ${md.exemplos.map((ex, i) => `<details class="exemplo"${i === 0 ? ' open' : ''}>
     html += htmlAvaliacao(md);
   }
   el.innerHTML = html;
-  arrumarTabelas(el)
+  arrumarTabelas(el);
+  marcarTocando()
+}
+// áudio do exemplo (v1.7.0): faixa "faixa:ex-<id do exemplo>" em D.faixas, fora das trilhas e da conclusão
+const idSeguro = id => /^[a-z0-9-]+$/.test(id || '');
+// guarda quais exemplos estão abertos: o render() ao fim do áudio não fecha o que a pessoa abriu
+function exAberto(md, ex, i) { const a = E.exAbertos && E.exAbertos[md.id]; return a ? !!a[ex.id] : i === 0 }
+function exToggle(el, mod, id) {
+  E.exAbertos = E.exAbertos || {};
+  if (!E.exAbertos[mod]) { const md = modDados(mod); E.exAbertos[mod] = md && md.exemplos.length ? { [md.exemplos[0].id]: true } : {} }
+  E.exAbertos[mod][id] = el.open
+}
+function faixaExemplo(ex) {
+  const id = idSeguro(ex.id) ? 'faixa:ex-' + ex.id : '';
+  return id && D.faixas[id] ? id : ''
+}
+function htmlAudioExemplo(ex) {
+  const id = faixaExemplo(ex);
+  if (!id) return '';
+  const f = D.faixas[id], ok = feito(id);
+  return `<div class="item ex-audio${ok ? ' feito' : ''}" data-faixa="${id}"><button class="play" onclick="tocar('${id}')" aria-label="Ouvir este exemplo">${ICO.play}</button>
+<div class="item-info"><b>Ouvir este exemplo</b><div class="meta">${mmss(f.seg)}${ok ? ' · ouvido' : ''}</div></div></div>`
 }
 
 // exercícios de fixação: correção na hora, sem nota (respostas guardadas só neste aparelho)
