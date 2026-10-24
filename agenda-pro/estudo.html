@@ -171,6 +171,15 @@ details.opc summary{cursor:pointer;font-weight:600;color:var(--accent);padding:8
 .analise{font-size:12.5px;color:var(--text-2);margin-top:5px}
 .item-info .analise b{display:inline;font-size:12.5px;font-weight:600;color:var(--text);white-space:nowrap;line-height:1.5}
 .selo{display:inline-block;font:600 11px var(--font);color:var(--green);background:var(--green-lt);padding:1px 7px;border-radius:20px;margin-right:4px}
+.selo.novo{color:var(--accent);background:var(--accent-lt);vertical-align:2px}
+/* atualizações semanais (v1.6.0) */
+.card-atual{border-color:var(--accent);background:linear-gradient(180deg,var(--accent-lt),var(--surface) 90px)}
+.atual-item{border-top:1px solid var(--border);padding:12px 0}
+.atual-item:first-of-type{border-top:none}
+.atual-item>b{display:block;font-size:14.5px;line-height:1.35}
+.atual-data{font:600 11.5px var(--font);color:var(--accent);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
+.atual-lista{display:flex;justify-content:space-between;gap:10px;font-size:13px;border-top:1px solid var(--border);padding:8px 0}
+.atual-lista:first-child{border-top:none}
 .leitor-corpo p{margin:0 0 10px}
 .leitor-corpo ul,.leitor-corpo ol{margin:0 0 10px 22px}
 .leitor-corpo li{margin-bottom:4px}
@@ -322,7 +331,7 @@ body.com-player .barra-aval{bottom:calc(186px + env(safe-area-inset-bottom))}
 <div class="toasts" id="toasts"></div>
 
 <script>
-const ESTUDO_VERSAO = '1.5.0';
+const ESTUDO_VERSAO = '1.6.0';
 const SUPA_URL = 'https://vuwgxndahrzinfdlapxz.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1d2d4bmRhaHJ6aW5mZGxhcHh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3NTA0ODgsImV4cCI6MjA5MDMyNjQ4OH0.9DaPGHIxt0CO-pjYPBwsHaoSqDN35CwVU0lJUyTXQIQ';
 const $ = id => document.getElementById(id);
@@ -703,7 +712,7 @@ function escolherTrilha(id) {
 
 function renderTrilha() {
   const el = $('pg-trilha');
-  const t = trilhaAtual();
+  const t = trilhaVisivel(trilhaAtual(), E.prog);
   if (!t) {
     el.innerHTML = `<div class="card"><h2>Escolha a sua trilha</h2>
 <p class="muted" style="margin-top:4px">Cada trilha tem áudios, vídeos dos cursos e tarefas práticas. Você pode trocar quando quiser; o que já concluiu continua valendo nas outras trilhas.</p>
@@ -730,7 +739,7 @@ function renderTrilha() {
   let html = `<div class="card">${htmlSeletor()}
 <p style="font-size:13.5px;margin-top:2px"><b>${whatsEsc(t.nome)}</b> · ${whatsEsc(t.para)} · ${whatsEsc(t.tempo)}</p>
 <p class="muted" style="margin-top:2px">${whatsEsc(t.objetivo)}</p></div>
-
+${htmlAtualizacoes(t)}
 <div class="card"><h2>Conclusão <span class="cont">${n.feitos} de ${n.total} itens</span></h2>
 <div class="resumo" style="margin-top:12px">
   <div class="anel" role="img" aria-label="${n.pct}% concluído"><svg viewBox="0 0 132 132"><circle cx="66" cy="66" r="${r}" fill="none" stroke="var(--bg)" stroke-width="14"/><circle cx="66" cy="66" r="${r}" fill="none" stroke="${cor}" stroke-width="14" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${circ * (1 - n.pct / 100)}"/></svg>
@@ -769,6 +778,8 @@ ${mods ? `<div class="mods">${mods}</div>` : ''}
     : `<div class="sec-tit" style="margin-top:6px">Opcionais</div>` + t.opcionais.map(htmlVideo).join('');
   html += `</div>`;
 
+  html += htmlHistoricoAtualizacoes(t);
+
   // tarefas
   html += `<div class="card"><h2>✍️ Tarefas práticas <span class="cont">${n.ta}/${t.tarefas.length}</span></h2>${t.tarefas.map(k => `<div class="item${feito(k.id) ? ' feito' : ''}">
 <button class="marca${feito(k.id) ? ' sim' : ''}" onclick="alternar('${k.id}')" aria-label="Marcar tarefa como feita">${ICO.ok}</button>
@@ -793,7 +804,7 @@ function htmlVideo(id) {
   const ok = feito(id);
   return `<div class="item${ok ? ' feito' : ''}">
 <button class="marca${ok ? ' sim' : ''}" onclick="alternar('${id}')" aria-label="Marcar vídeo como assistido">${ICO.ok}</button>
-<div class="item-info"><b><a href="${whatsEsc(v.link)}" target="_blank" rel="noopener">${whatsEsc(v.titulo)} ↗</a></b>
+<div class="item-info"><b>${ehNovo(v) ? '<span class="selo novo">novo</span>' : ''}<a href="${whatsEsc(v.link)}" target="_blank" rel="noopener">${whatsEsc(v.titulo)} ↗</a></b>
 <div class="meta">${whatsEsc(v.curso)} · ${whatsEsc(v.bloco)} · ${whatsEsc(duracaoVideo(v))}</div>${v.analise ? `
 <div class="analise"><span class="selo">✓ analisado</span> ${v.analise.assistir.length
   ? 'assistir ' + v.analise.assistir.map(t => `<b>${whatsEsc(t[0])}–${whatsEsc(t[1])}</b>`).join(', ')
@@ -973,7 +984,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') $('leitor').
 // ── anotações ────────────────────────────────────────────
 function renderNotas() {
   const el = $('pg-notas');
-  const t = trilhaAtual();
+  const t = trilhaVisivel(trilhaAtual(), E.prog);
   let onde = '<div class="onde">Escolha uma trilha na aba "Minha trilha" para ver o que falta.</div>';
   let pend = '';
   if (t) {
@@ -1050,7 +1061,7 @@ async function renderEquipe() {
       const pf = (perfis || []).find(x => x.auth_id === u.auth_id);
       const t = pf && D.trilhas.find(x => x.id === pf.trilha);
       const pr = porPessoa[u.auth_id] || {};
-      const n = t ? numeros(t, pr) : null;
+      const n = t ? numeros(trilhaVisivel(t, pr), pr) : null;
       const datas = Object.values(pr).map(x => x.em).filter(Boolean).sort();
       return { nome: u.nome, so: u.so, t, n, ult: datas[datas.length - 1] };
     }).sort((a, b) => ((b.n ? b.n.pct : -1) - (a.n ? a.n.pct : -1)) || String(a.nome).localeCompare(b.nome));
@@ -1167,6 +1178,53 @@ ${senha ? `<div><span class="muted">Senha provisória</span><b class="senha">${w
 function copiarAcesso() {
   const ok = () => toast('Copiado ✓', 'ok'), falhou = () => toast('Não foi possível copiar. Selecione o texto e copie.', 'err');
   if (navigator.clipboard) navigator.clipboard.writeText(E.acessoTexto).then(ok, falhou); else falhou()
+}
+
+// ── atualizações semanais (v1.6.0): aulas novas dos cursos ──
+// A rotina semanal acrescenta em dados.json: videos[id].novo = 'AAAA-MM-DD' e atualizacoes[] = {id, iso, data, titulo, html, video, trilhas}.
+// Quem já tinha começado a trilha antes da publicação vê a aula como "Atualização para revisar" (fora da lista e do %);
+// quem não começou recebe a aula direto na trilha.
+function inicioTrilha(t, prog) {
+  if (!t) return null;
+  const itens = [...t.faixas, ...t.videos, ...t.opcionais, ...t.tarefas.map(x => x.id)];
+  const datas = itens.map(i => prog[i] && prog[i].em).filter(Boolean).map(d => String(d).slice(0, 10)).sort();
+  return datas[0] || null
+}
+function trilhaVisivel(t, prog) {
+  const ini = inicioTrilha(t, prog || {});
+  if (!t || !ini) return t;
+  const depois = id => D.videos[id] && D.videos[id].novo && D.videos[id].novo > ini;
+  return { ...t, videos: t.videos.filter(i => !depois(i)), opcionais: t.opcionais.filter(i => !depois(i)) }
+}
+function ehNovo(v) { return !!(v && v.novo && (Date.now() - Date.parse(v.novo + 'T12:00:00')) < 30 * 86400000) }
+function atualizacoesDaTrilha(t) { return (D.atualizacoes || []).filter(a => !a.trilhas || a.trilhas.includes(t.id)) }
+function atualizacoesPendentes(t) {
+  const ini = inicioTrilha(t, E.prog);
+  if (!ini) return [];
+  return atualizacoesDaTrilha(t).filter(a => a.iso > ini && !feito('atualizacao:' + a.id))
+}
+function htmlAtualizacoes(t) {
+  const pend = atualizacoesPendentes(t);
+  if (!pend.length) return '';
+  // texto fixo do programa (dados.json do armazenamento protegido), não vem do banco
+  return `<div class="card card-atual"><h2>📢 Atualizações para revisar <span class="cont">${pend.length}</span></h2>
+<p class="muted" style="margin-top:4px">Publicadas depois que você começou esta trilha. Não contam na conclusão.</p>
+${pend.map(a => {
+    const v = a.video && D.videos[a.video];
+    return `<div class="atual-item"><div class="atual-data">${whatsEsc(a.data)}</div><b>${whatsEsc(a.titulo)}</b><div class="texto-mod">${a.html || ''}</div>
+<div class="continuar">${v ? `<a class="btn" href="${whatsEsc(v.link)}" target="_blank" rel="noopener">Abrir a aula ↗</a>` : ''}${v && v.analise ? `<button class="btn" onclick="abrirAnalise('${a.video}')">Análise</button>` : ''}<button class="btn prim" onclick="verAtualizacao('${a.id}')">Marcar como vista</button></div></div>`
+  }).join('')}</div>`
+}
+function verAtualizacao(id) {
+  marcar('atualizacao:' + id, { concluido: true }, true);
+  toast('Atualização marcada como vista ✓', 'ok');
+  render()
+}
+function htmlHistoricoAtualizacoes(t) {
+  const todas = atualizacoesDaTrilha(t).slice().sort((a, b) => b.iso.localeCompare(a.iso));
+  if (!todas.length) return '';
+  return `<div class="card"><details class="opc" style="margin-top:0"><summary>📢 Todas as atualizações desta trilha (${todas.length})</summary>
+${todas.map(a => `<div class="atual-lista"><span>${whatsEsc(a.data)} · ${whatsEsc(a.titulo)}</span><span class="muted">${feito('atualizacao:' + a.id) ? 'vista' : ''}</span></div>`).join('')}</details></div>`
 }
 
 // ── módulos (v1.5.0): texto completo, exemplos resolvidos, exercícios de assinalar e avaliação ──

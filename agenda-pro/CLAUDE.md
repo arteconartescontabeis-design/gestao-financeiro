@@ -28,6 +28,9 @@ Publicado pelo GitHub Pages: https://arteconartescontabeis-design.github.io/gest
   avaliação (10 questões sorteadas, refazer à vontade, vale a melhor nota; referência 70% que não bloqueia; fora do % da trilha).
   Conteúdo em `dados.json` → `modulos`; notas em `agenda_estudo_avaliacoes` (`sql/agenda_estudo_avaliacoes.sql`). Formato, regras e
   etapas em `docs/estudo-modulos.md` (Etapa 1: Módulos 3, 6 e 7; áudio dos exemplos só depois da aprovação do texto pelo usuário).
+  **Atualização semanal (v2.10.0, Estudo 1.6.0):** toda segunda ~7h a rotina desta frente verifica aulas novas dos cursos e
+  publica no `dados.json` (`videos[].novo`, `atualizacoes[]`): quem já começou a trilha vê "Atualizações para revisar"; quem não
+  começou recebe a aula na trilha. Detalhes em `docs/estudo-atualizacoes.md`.
   **Pessoas só do Estudo (v2.5.0, Estudo 1.2.0):** admin/gerente cadastram na aba Equipe do Estudo quem não usa o Agenda.
   Ficam em `agenda_estudo_usuarios` (não em `agenda_usuarios`: não veem nada da agenda), com login próprio e senha provisória
   criados pela função `estudo-usuario`; o Estudo pede a senha nova no 1º acesso. **Só local: não vai para o Portal** (pedido do
