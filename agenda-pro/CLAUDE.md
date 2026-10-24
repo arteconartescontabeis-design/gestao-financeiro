@@ -28,6 +28,9 @@ Publicado pelo GitHub Pages: https://arteconartescontabeis-design.github.io/gest
   avaliação (10 questões sorteadas, refazer à vontade, vale a melhor nota; referência 70% que não bloqueia; fora do % da trilha).
   Conteúdo em `dados.json` → `modulos`; notas em `agenda_estudo_avaliacoes` (`sql/agenda_estudo_avaliacoes.sql`). Formato, regras e
   etapas em `docs/estudo-modulos.md` (Etapa 1: Módulos 3, 6 e 7; áudio dos exemplos só depois da aprovação do texto pelo usuário).
+  **Áudio dos exemplos (v2.11.0, Estudo 1.7.0):** cada exemplo resolvido pode ter a faixa `faixa:ex-<id do exemplo>` em
+  `D.faixas` (`audio/ex-<id>.mp3`, grupo "Módulo N", tema "Exemplos resolvidos"); o botão "Ouvir este exemplo" aparece só se a
+  faixa existir. Fica fora das trilhas e do % de conclusão. Roteiros e geração em `docs/estudo-modulos.md`.
   **Atualização semanal (v2.10.0, Estudo 1.6.0):** toda segunda ~7h a rotina desta frente verifica aulas novas dos cursos e
   publica no `dados.json` (`videos[].novo`, `atualizacoes[]`): quem já começou a trilha vê "Atualizações para revisar"; quem não
   começou recebe a aula na trilha. Detalhes em `docs/estudo-atualizacoes.md`.

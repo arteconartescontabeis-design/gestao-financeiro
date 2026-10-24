@@ -37,6 +37,20 @@ exercícios dos cursos, análises das aulas). Marcar a origem com [FG], [CM], [N
 desatualizado na data. Preservar exceções. Refazer toda conta (Python) e registrar quando a conta da fonte não fecha.
 Escrever com as próprias palavras.
 
+## Áudio dos exemplos (Estudo 1.7.0 / Agenda 2.11.0)
+- Aprovado pelo usuário em 24/10/2026 para a Etapa 1: 18 exemplos (Módulos 3, 6 e 7), cerca de 90 min, ~60 mil caracteres
+  falados (lançar no portal: Consumo de IA → app `estudo`, voz).
+- Roteiro: um texto por exemplo, escrito para ouvir (sem siglas de fonte, sem "P1", todo número igual ao do exemplo; um
+  conferidor checa os números). Fala: as mesmas regras do roteiro dos 40 áudios (voz Azure pt-BR-FranciscaNeural).
+- No `dados.json`: `faixas["faixa:ex-m6-e1"] = { arq: "audio/ex-m6-e1.mp3", titulo: "Exemplo 1: ...", grupo: "Módulo 6",
+  tema: "Exemplos resolvidos", seg, html }`. O app mostra o botão no exemplo quando a faixa existe; não entra nas trilhas.
+- Mudou o texto de um exemplo depois do áudio: refazer o roteiro e o áudio daquele exemplo (ou avisar que o áudio é da versão
+  anterior).
+
+## Etapa 2 (Módulos 1, 2, 4 e 5)
+- Começou em 24/10/2026, com as lições da revisão da Etapa 1 na especificação (seção "Situação desta versão", premissas antes
+  das contas, vereditos condicionais, regra das fontes, contas em Python para a memória de cálculo).
+
 ## Regra das fontes (usuário, 24/10/2026)
 - O que está nos portais dos cursos (Nutror e Hotmart: aulas, apostilas, exercícios) vale como **verdadeiro**. Quando a lei
   consultada disser outra coisa, o texto segue o curso e registra a diferença numa nota (ex.: redução do art. 38-B — curso 60%,
