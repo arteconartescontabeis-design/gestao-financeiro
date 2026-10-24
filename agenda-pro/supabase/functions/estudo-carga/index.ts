@@ -33,7 +33,7 @@ Deno.serve(async (req) => {
 
     if (req.method === "GET" && !caminho) {
       const arquivos: unknown[] = [];
-      for (const pasta of ["", "audio", "analises"]) {
+      for (const pasta of ["", "audio", "analises", "modulos"]) {
         const { data, error } = await db.storage.from(BALDE).list(pasta, { limit: 1000 });
         if (error) return resp({ ok: false, erro: error.message }, 500);
         (data || []).filter((a) => a.id).forEach((a) =>
