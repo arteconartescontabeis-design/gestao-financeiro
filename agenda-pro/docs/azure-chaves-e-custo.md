@@ -29,10 +29,15 @@ Regras: a chave nunca vai para arquivo, GitHub, e-mail ou WhatsApp. No servidor,
    (claude.ai → Claude Code → ambiente Default → segredos de rede).
 3. Para trocar sem parar nada: passe tudo para a CHAVE 2 primeiro, regenere a CHAVE 1 e depois volte.
 
-## Custo: antes de 08/11/2026 (fim da avaliação grátis)
+## Custo (feito em 25/10/2026: pagamento conforme o uso + orçamento `alerta-artecon` de R$ 5/mês)
 1. Portal da Azure → **Assinaturas** → "Azure subscription 1" → **Atualizar** para "Pagamento conforme
    o uso". O plano F0 do `artecon-voz` continua grátis; sem isso, o recurso para.
 2. **Gerenciamento de Custos → Orçamentos → Adicionar**: escopo "Azure subscription 1", mensal,
    valor R$ 10 (ou US$ 2, conforme a moeda da conta), alertas em 50%, 80% e 100% do valor **real** para `cleiver@artecon.cnt.br`.
    Com tudo no F0 o gasto fica em R$ 0; qualquer valor no alerta quer dizer que algo pago foi criado.
+   Feito assim: `alerta-artecon`, R$ 5/mês, 50% e 100% real + 100% previsto, e-mails cleiver@ e artecon@artecon.cnt.br. Criar pela
+   própria assinatura (Assinaturas → Azure subscription 1 → Gerenciamento de custos → Orçamentos): no escopo da conta de cobrança o
+   valor do `MonthlyBudget` automático não muda. O campo de % aceita decimal só com ponto (ex.: 0.5).
 3. Não mudar o `artecon-voz` para o plano Standard (S0): ele cobra por uso e não recusa ao passar da cota.
+4. Consumo real: `artecon-voz` → Monitoramento → Métricas, agregação **Sum** (não Max): *Synthesized Characters* (voz; cobra o SSML
+   inteiro) e *Audio Seconds Transcribed* (transcrição; não a "Batch"). Outubro/2026: 479.290 caracteres e 315 s.

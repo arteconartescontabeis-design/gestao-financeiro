@@ -1,6 +1,6 @@
 -- Núcleo do portal (projeto fbxelwhdiisfmnwrerbl) · aplicado em 25/10/2026
 -- App "outros" no Consumo de IA: guarda a diferença entre as Métricas da Azure (recurso artecon-voz) e o que os apps lançam
--- (ex.: Corretor de Vídeos do Radar, que usa a CHAVE 2 do mesmo recurso; testes). Só acrescenta.
+-- (testes e usos não lançados; o Corretor de Vídeos do Radar, CHAVE 2, só transcreve e não entra na voz). Só acrescenta.
 insert into core.ia_fala_apps (app, nome, tipo, descricao)
 values ('outros', 'Outros usos do recurso artecon-voz', 'voz',
         'Diferença entre as Métricas da Azure e os lançamentos dos apps (ex.: Corretor de Vídeos do Radar, CHAVE 2; testes)')
