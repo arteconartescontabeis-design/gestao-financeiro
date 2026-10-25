@@ -107,8 +107,9 @@ O número aparece no topo de todas as telas e no login; tocar nele abre o histó
 1. ~~**Instalar o serviço WhatsApp v1.5.1 no ARTEDB01**~~ **Feito em 11/10/2026** (áudio "agenda de hoje" de 1 s transcrito,
    respondido em ~12 s e contado no portal). Usa a **Azure do Projeto Criança**: recurso `artecon-voz` (grupo `artecon-voz`, Brazil South,
    plano Gratuito F0, assinatura "Azure subscription 1"), CHAVE 1 (a CHAVE 2 é do Corretor de Vídeos do Radar). As 5 h/mês grátis são do
-   recurso inteiro. **Pendente:** a avaliação grátis da Azure vence por volta de **08/11/2026** — antes disso, passar a assinatura para
-   pagamento conforme o uso (o F0 continua grátis), senão o recurso para (também no Projeto Criança).
+   recurso inteiro. ~~Avaliação grátis vencendo em ~08/11/2026~~ **Feito (informado pelo usuário em 25/10/2026):** assinatura em
+   pagamento conforme o uso (o F0 continua grátis) e orçamento `alerta-artecon` criado (ver Segurança). O Corretor de Vídeos do Radar
+   (CHAVE 2, repositório `radar-video`) só **transcreve** (divide as 5 h/mês e a vaga única do F0 com a Agenda); não gera voz.
 2. ~~**Agenda Pro no Portal Artecon, com o controle de acesso**~~ **Feito em 10/10/2026** (portal v1.5.0 + Agenda v2.2.0 +
    função `portal-provisionar`). Ficou como o Cobrança: login próprio com senha provisória. Em aberto, se o usuário quiser:
    entrar no Agenda direto pelo portal (sem digitar a senha de novo) e cadastrar o WhatsApp da pessoa pelo portal. Anotações originais:
@@ -132,7 +133,9 @@ O número aparece no topo de todas as telas e no login; tocar nele abre o histó
 - Núcleo do portal: `enviar_email`/`cct_email_db` só para a chave de serviço; funções do robô do CCT fechadas sem login.
 - Azure: chaves, troca e orçamento em `docs/azure-chaves-e-custo.md`; avisos de 80%/100% das cotas em `sql/nucleo_ia_fala_avisos.sql`.
 - Feito pelo usuário (12/10/2026): a chave da Anthropic do histórico (final `6QAA`) já não existe no console; "Prevent use of
-  leaked passwords" ligado nos três projetos (agenda-pro, Departamento Pessoal e Cobrança; conferido nos alertas do Supabase). Pendente: orçamento na Azure antes de 08/11/2026.
+  leaked passwords" ligado nos três projetos (agenda-pro, Departamento Pessoal e Cobrança; conferido nos alertas do Supabase). Orçamento na Azure **feito em 25/10/2026**: `alerta-artecon` na assinatura "Azure subscription 1", R$ 5/mês, alertas em 50% e 100%
+  do custo real e 100% do previsto, para cleiver@ e artecon@artecon.cnt.br (o `MonthlyBudget` de US$ 1.043,88 da conta de cobrança
+  veio pronto e ficou como está).
 - Fora do Agenda (avisar, não mexer sem pedido): no mesmo projeto, as funções `fin_*` do Financeiro aceitam chamada sem login
   (conferir dentro de cada uma); `validar-anexos` lê documento sem login (limitado pela IA Central a US$ 1/dia).
   **18/10/2026:** o Financeiro saiu deste projeto (foi para o `cobranca-pro`); as tabelas `fin_*` e o `fin-documentos` que ficaram
