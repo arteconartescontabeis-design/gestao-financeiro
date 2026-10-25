@@ -64,7 +64,8 @@ Escrever com as próprias palavras.
   gabarito; questões parecidas entre bancos de módulos diferentes ficaram (não se contradizem). Relatórios em
   `revisao/achados_coerencia_*.md` no armazenamento.
 - Memórias de cálculo (planilhas) e relatórios de cada etapa: pasta `revisao/` do armazenamento.
-- Áudio dos exemplos: Etapa 1 pronta; Etapas 2 e 3 só depois da aprovação do texto.
+- Áudio dos exemplos: os 52 exemplos dos 9 módulos têm áudio (cerca de 4 h 30; Etapas 2 e 3 aprovadas pelo usuário em 25/10/2026).
+  Ferramentas em `ferramentas/audio_exemplos/` no armazenamento (roteiros, conversor de fala e registro das faixas).
 
 ## Regra das fontes (usuário, 24/10/2026)
 - O que está nos portais dos cursos (Nutror e Hotmart: aulas, apostilas, exercícios) vale como **verdadeiro**. Quando a lei
