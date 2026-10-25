@@ -94,7 +94,10 @@ O número aparece no topo de todas as telas e no login; tocar nele abre o histó
   duas cotas grátis do recurso `artecon-voz` (transcrição 5 h/mês; voz 500 mil caracteres/mês) (`core.ia_fala_painel`, tabelas
   `core.ia_fala_apps`/`ia_fala_uso`; `sql/nucleo_ia_fala.sql` e `sql/nucleo_ia_fala_v2.sql`). Apps: `agenda` (transcrição, automático),
   `estudo` e `crianca` (voz, lançados à mão). **Ao gerar voz com a Azure** (falas do Projeto Criança, faixas do Estudo etc.), lançar os
-  caracteres em Portal → Consumo de IA → Lançar uso (ou `core.ia_fala_lancar`). Já lançado em 11/10/2026: Projeto Criança ~7 mil e
+  caracteres em Portal → Consumo de IA → Lançar uso (ou `core.ia_fala_lancar`). **A Azure cobra o SSML inteiro** (menos `<speak>` e
+  `<voice>`): pausas e siglas soletradas contam, cerca de 1,4× o texto falado; lançar pelo tamanho do SSML enviado. O número oficial
+  está no portal da Azure: `artecon-voz` → Monitoramento → Métricas → *Synthesized Characters*, agregação **Sum** (outubro/2026:
+  479.290 de 500 mil). Diferenças de usos que não passam pelos apps vão no app `outros` (`sql/nucleo_ia_fala_outros.sql`). Já lançado em 11/10/2026: Projeto Criança ~7 mil e
   Estudo ~112 mil caracteres (estimado pelo texto das 40 faixas). A IA Central (Claude/OpenAI, `ia-gateway`) não foi mexida: o Agenda não usa IA paga — a voz no app é
   o reconhecimento do navegador e os comandos são interpretados pelo `AGCMD`/`comandos.ts`.
 - Resposta rápida: o gatilho `trg_recebida_avisar_agenda` (em `cob_whatsapp_recebidas`, no Cobrança) chama a função `agenda-whats` assim que uma mensagem chega (`sql/cobranca_recebidas_aviso_agenda.sql`); o pg_cron de 30 s fica de reserva. O resto da espera é do serviço: ele olha a fila a cada `consulta_fila_seg` (config.json, padrão 20 s) e espera 20–45 s entre um envio e outro.
