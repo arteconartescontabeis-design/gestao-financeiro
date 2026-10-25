@@ -47,9 +47,24 @@ Escrever com as próprias palavras.
 - Mudou o texto de um exemplo depois do áudio: refazer o roteiro e o áudio daquele exemplo (ou avisar que o áudio é da versão
   anterior).
 
-## Etapa 2 (Módulos 1, 2, 4 e 5)
-- Começou em 24/10/2026, com as lições da revisão da Etapa 1 na especificação (seção "Situação desta versão", premissas antes
-  das contas, vereditos condicionais, regra das fontes, contas em Python para a memória de cálculo).
+## Situação dos 9 módulos (25/10/2026)
+| Módulo | Versão | Etapa |
+|---|---|---|
+| 3 | 1.3 | Etapa 1 (duas revisões técnicas) + revisão geral |
+| 6, 7 | 1.4 | Etapa 1 (duas revisões técnicas) + revisão geral |
+| 1 | 1.2 | Etapa 2 + revisão geral (duas passadas) |
+| 2, 4, 5 | 1.1 | Etapa 2 + revisão geral |
+| 8, 9 | 1.0 | Etapa 3 (aguardando revisão técnica) |
+
+- Etapas 2 e 3 foram escritas com as lições da revisão da Etapa 1 na especificação: seção "Situação desta versão",
+  premissas antes das contas, vereditos condicionais, regra das fontes e um script de contas por módulo (`<id>_contas.py`,
+  guardado no armazenamento em `ferramentas/etapa2/` e `ferramentas/etapa3/`).
+- **Revisão geral de coerência** (25/10/2026): leitura cruzada dos 9 módulos (mesmo fato com números diferentes, mesmo
+  exemplo do curso com resultados diferentes, remissões, questões contraditórias). 31 achados, 29 aplicados, sem mudar
+  gabarito; questões parecidas entre bancos de módulos diferentes ficaram (não se contradizem). Relatórios em
+  `revisao/achados_coerencia_*.md` no armazenamento.
+- Memórias de cálculo (planilhas) e relatórios de cada etapa: pasta `revisao/` do armazenamento.
+- Áudio dos exemplos: Etapa 1 pronta; Etapas 2 e 3 só depois da aprovação do texto.
 
 ## Regra das fontes (usuário, 24/10/2026)
 - O que está nos portais dos cursos (Nutror e Hotmart: aulas, apostilas, exercícios) vale como **verdadeiro**. Quando a lei

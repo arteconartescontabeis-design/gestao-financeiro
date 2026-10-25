@@ -24,7 +24,7 @@ Publicado pelo GitHub Pages: https://arteconartescontabeis-design.github.io/gest
   `dados.json`, basta subir o arquivo (não precisa trocar `ESTUDO_VERSAO`; o app sempre confere). As versões antigas desses arquivos
   ainda estão no histórico do GitHub (limpar o histórico só com confirmação do usuário).
   Tabelas `agenda_estudo_*` (`sql/agenda_estudo.sql`, com o comando de remoção comentado no fim).
-  **Módulos completos (v2.9.0, Estudo 1.5.0):** aba Módulos com texto completo, exemplos resolvidos, exercícios de assinalar e
+  **Módulos completos (v2.9.0, Estudo 1.5.0; os 9 módulos desde 25/10/2026):** aba Módulos com texto completo, exemplos resolvidos, exercícios de assinalar e
   avaliação (10 questões sorteadas, refazer à vontade, vale a melhor nota; referência 70% que não bloqueia; fora do % da trilha).
   Conteúdo em `dados.json` → `modulos`; notas em `agenda_estudo_avaliacoes` (`sql/agenda_estudo_avaliacoes.sql`). Formato, regras e
   etapas em `docs/estudo-modulos.md` (Etapa 1: Módulos 3, 6 e 7; áudio dos exemplos só depois da aprovação do texto pelo usuário).
