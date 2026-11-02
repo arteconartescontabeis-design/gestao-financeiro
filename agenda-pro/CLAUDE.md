@@ -93,7 +93,8 @@ O número aparece no topo de todas as telas e no login; tocar nele abre o histó
   Portal (v1.7.0) → Consumo de IA: um cartão por uso da Azure em "Por aplicativo" e o quadro "Azure — voz e transcrição" com as
   duas cotas grátis do recurso `artecon-voz` (transcrição 5 h/mês; voz 500 mil caracteres/mês) (`core.ia_fala_painel`, tabelas
   `core.ia_fala_apps`/`ia_fala_uso`; `sql/nucleo_ia_fala.sql` e `sql/nucleo_ia_fala_v2.sql`). Apps: `agenda` (transcrição, automático),
-  `estudo` e `crianca` (voz, lançados à mão). **Ao gerar voz com a Azure** (falas do Projeto Criança, faixas do Estudo etc.), lançar os
+  `estudo` e `crianca` (voz, lançados à mão; **desde novembro/2026 o Projeto Criança usa uma conta Azure pessoal**, fora do
+  `artecon-voz`: não lançar aqui). **Ao gerar voz com a Azure** (falas do Projeto Criança, faixas do Estudo etc.), lançar os
   caracteres em Portal → Consumo de IA → Lançar uso (ou `core.ia_fala_lancar`). **A Azure cobra o SSML inteiro** (menos `<speak>` e
   `<voice>`): pausas e siglas soletradas contam, cerca de 1,4× o texto falado; lançar pelo tamanho do SSML enviado. O número oficial
   está no portal da Azure: `artecon-voz` → Monitoramento → Métricas → *Synthesized Characters*, agregação **Sum** (outubro/2026:

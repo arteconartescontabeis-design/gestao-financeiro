@@ -47,14 +47,21 @@ Escrever com as próprias palavras.
 - Mudou o texto de um exemplo depois do áudio: refazer o roteiro e o áudio daquele exemplo (ou avisar que o áudio é da versão
   anterior).
 
-## Situação dos 9 módulos (25/10/2026)
+## Situação dos 9 módulos (02/11/2026)
 | Módulo | Versão | Etapa |
 |---|---|---|
-| 3 | 1.3 | Etapa 1 (duas revisões técnicas) + revisão geral |
-| 6, 7 | 1.4 | Etapa 1 (duas revisões técnicas) + revisão geral |
-| 1 | 1.2 | Etapa 2 + revisão geral (duas passadas) |
-| 2, 4, 5 | 1.1 | Etapa 2 + revisão geral |
-| 8, 9 | 1.0 | Etapa 3 (aguardando revisão técnica) |
+| 3 | 1.4 | Etapa 1 (duas revisões técnicas) + revisão geral + cenário TCU |
+| 6, 7 | 1.5 | Etapa 1 (duas revisões técnicas) + revisão geral + cenário TCU / datas |
+| 1 | 1.3 | Etapa 2 + revisão geral (duas passadas) + cenário TCU |
+| 2, 4, 5 | 1.2 | Etapa 2 + revisão geral + cenário TCU |
+| 8 | 1.1 | Etapa 3 + cenário TCU (aguardando revisão técnica) |
+| 9 | 1.0 | Etapa 3 (aguardando revisão técnica) |
+
+- **CBS de 2027 (02/11/2026):** o TCU calculou a referência em **11,3%** em 28/10/2026 (CBS 11,2% + IBS 0,1% em 2027); o
+  Senado fixa até 15/12/2026 (sem fixação, vale 11,3%). Os 16 exemplos que usam 2027 seguem a hipótese do curso (9,30%) como
+  gabarito e trazem o quadro "Atualização oficial" com o cenário do TCU; nenhum veredito muda (o mais apertado: farmácia com
+  crédito de estoque, folga de R$ 4.142,16 → R$ 540,24). As memórias têm a aba "Cenário TCU 11,3%". **Depois de 15/12:** refazer
+  os 16 exemplos com o número final do Senado (texto, memórias e áudio, ~85 mil caracteres de voz).
 
 - Etapas 2 e 3 foram escritas com as lições da revisão da Etapa 1 na especificação: seção "Situação desta versão",
   premissas antes das contas, vereditos condicionais, regra das fontes e um script de contas por módulo (`<id>_contas.py`,
