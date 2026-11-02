@@ -33,7 +33,9 @@ Publicado pelo GitHub Pages: https://arteconartescontabeis-design.github.io/gest
   faixa existir. Fica fora das trilhas e do % de conclusão. Roteiros e geração em `docs/estudo-modulos.md`.
   **Atualização semanal (v2.10.0, Estudo 1.6.0):** toda segunda ~7h a rotina desta frente verifica aulas novas dos cursos e
   publica no `dados.json` (`videos[].novo`, `atualizacoes[]`): quem já começou a trilha vê "Atualizações para revisar"; quem não
-  começou recebe a aula na trilha. Detalhes em `docs/estudo-atualizacoes.md`.
+  começou recebe a aula na trilha. **Desde 02/11/2026 a leitura dos cursos roda no ARTEAPP01** (`C:\Artecon\EstudoCursos`, Chrome
+  dos cursos aberto e logado, ligado por Remote Control): a nuvem tinha captcha na Eduzz e perdia o login da Hotmart.
+  Detalhes em `docs/estudo-atualizacoes.md`.
   **Pessoas só do Estudo (v2.5.0, Estudo 1.2.0):** admin/gerente cadastram na aba Equipe do Estudo quem não usa o Agenda.
   Ficam em `agenda_estudo_usuarios` (não em `agenda_usuarios`: não veem nada da agenda), com login próprio e senha provisória
   criados pela função `estudo-usuario`; o Estudo pede a senha nova no 1º acesso. **Só local: não vai para o Portal** (pedido do
