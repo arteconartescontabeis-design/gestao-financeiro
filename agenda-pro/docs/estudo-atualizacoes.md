@@ -34,12 +34,15 @@ usa o Chrome que ficou logado.
   (a sessão do servidor não consegue responder de volta).
 - **`entrar_cursos.js`** abre um **Chrome comum** (sem "controlado por software de teste") com o perfil `perfil`,
   as abas da Nutror e da Hotmart e a porta de controle `9334`, que só atende o próprio servidor (127.0.0.1).
-  A pessoa entra nas duas plataformas, **minimiza e deixa o Chrome aberto**. A cada 5 s o login é guardado em `sessao.json`.
+  - O Chrome é independente do programa. Se ele já estiver aberto, o programa só guarda o login.
+  - Ao abrir, repõe os cookies de `sessao.json`. Assim, depois de reiniciar o servidor, o login costuma voltar sozinho.
+  - A pessoa entra nas duas plataformas, se pedirem, e deixa o Chrome aberto.
+  - Durante 20 min o programa guarda **só os cookies** em `sessao.json`, a cada 30 s. Depois minimiza o Chrome e termina.
   - Nutror: `cleiver@artecon.cnt.br`, código "sem senha" da Eduzz.
   - Hotmart: `artecon@artecon.cnt.br`, e-mail + código. Pedir o código **uma vez** e usar o mais recente.
     Não usar "Entrar com Google".
 - **`verificar_semana.js [--salvar]`** usa primeiro o Chrome aberto (porta 9334) numa aba nova, que fecha no fim, e
-  mantém o Chrome aberto. Sem esse Chrome, abre o perfil escondido e repõe os cookies de `sessao.json`. A saída começa
+  mantém o Chrome aberto e minimizado. Sem esse Chrome, abre o perfil escondido e repõe os cookies de `sessao.json`. A saída começa
   com `via: chrome aberto (porta 9334)` ou `via: perfil escondido`, e grava `semana_<data>.json`.
   `--salvar` troca a base pela lista lida: rodar **só depois** de publicar o `dados.json`, conferido o md5.
 - **Servidor reiniciado ou Chrome fechado:** status `login`. Alguém roda `node entrar_cursos.js` na pasta e faz os
@@ -48,6 +51,14 @@ usa o Chrome que ficou logado.
   `claude remote-control`.
 - **Segurança:** `sessao.json` (cookies em texto) e a porta 9334 dão acesso às duas contas a quem usa o servidor.
   A pasta fica restrita aos administradores do ARTEAPP01.
+- **Consumo do servidor (corrigido em 02/11/2026):**
+  - **Abas piscando.** A 1ª versão guardava o login com `storageState()` a cada 5 s. Cada chamada abria e fechava uma
+    aba escondida para ler o armazenamento local dos sites (10 abas diferentes em 10 s). Agora só `cookies()`, que não
+    abre aba. **Não usar `storageState()` com o Chrome aberto.**
+  - **Janela visível.** Visível, o Chrome redesenha as páginas sem placa de vídeo e gasta ~9% de CPU (4 núcleos).
+    Minimizado, 0%. Os dois roteiros minimizam no fim.
+  - **`aliviar.js estado | minimizar | pausar | branco`** mostra as abas, a janela e as mídias tocando; minimiza;
+    pausa vídeos; ou deixa uma aba em branco. Nada disso fecha o Chrome nem tira o login.
 - **Primeira verificação pelo servidor (02/11/2026):** Hotmart ok (401 aulas, nenhuma nova). Nutror ok (98 aulas,
   2 novas): "Exercício Prático - Formação de Preço" (opcionais: Contábil, Intensivo, Avançado) e "Exercício Prático -
   O Simples Nacional na NF-e de 2027" (opcionais: Fiscal, Intensivo, Avançado), no bloco "Simuladores da Reforma
