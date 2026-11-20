@@ -12,6 +12,7 @@ App de cobrança da **Artecon** (escritório contábil). Tudo em português.
 - `docs/sicredi/` — material da Sicredi (cartilha, coleção Postman sem credenciais, resumo da API).
 - `docs/auditoria-2026-10-06.md` — varredura de erros/segurança e pendências.
 - **`docs/situacao-e-pendencias-2026-10-06.md` — onde paramos e lista do que falta (comece por aqui ao retomar).**
+- **Multiempresa (v2.19.0→v2.23.0, em andamento):** 4+ empresas do grupo com clientes e envio compartilhados; plano, decisões e resumo da API do Questor Negócio em `docs/multiempresa-2026-11-20.md`. `migration_v2_19_0_multiempresa.sql` pronta (cria `cob_empresas` e `empresa_id`; **não** mexe no índice único do nosso número — o app faz upsert com `onConflict 'tenant_id,nosso_numero'`, a troca sai só na v2.21.0 junto com o app).
 
 ## Robô (fora deste repositório)
 - Servidor **ARTEAPP01** (antes ARTEDB01; conferido em 21/10/2026 pelo sinal do robô, `cob_automacao_config.robo_sinal.maquina`, robô v2.6.0), tarefa agendada "Artecon Robo Cobranca", Python 3.10, log em `C:\Artecon\Robo\logs`, pastas `C:\Artecon\Cobranca\{entrada,processados,relatorios}`.
