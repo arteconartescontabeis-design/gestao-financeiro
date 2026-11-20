@@ -1,11 +1,12 @@
 # Multiempresa + integração Questor Negócio — plano aprovado (20/11/2026)
 
-**Status (20/11/2026, noite):** plano aprovado e em execução autorizada. **v2.20.0 publicada** (PR #17,
-GitHub Pages conferido servindo v2.20.0). Migrations v2.19.0, v2.20.0 e **v2.21.0 parte A** (índice novo do
-nosso número, convivendo com o antigo) **aplicadas no banco**. **App v2.21.0 pronto na branch** — sequência de
-publicação: fazer o merge do v2.21.0 e, DEPOIS de publicado e recarregado, rodar a
-`migration_v2_21_1_solta_indice_antigo.sql` (parte B). Nunca rodar a parte B antes do merge: o app v2.20
-publicado depende do índice antigo para o upsert das importações.
+**Status (20/11/2026, madrugada): v2.19.0 → v2.21.0 CONCLUÍDAS E PUBLICADAS.** v2.20.0 (PR #17) e
+v2.21.0 (PR #18) mescladas na main; GitHub Pages conferido servindo a v2.21.0. Todas as migrations aplicadas
+no banco na ordem segura: v2.19.0, v2.20.0 (view), v2.21.0 parte A (antes do merge) e parte B
+(`migration_v2_21_1`, depois do Pages servir a v2.21.0) — a unicidade do nosso número agora é por empresa.
+Se alguém estava com o app aberto na v2.20 durante a troca, basta recarregar a página (F5).
+**Próximos passos:** cadastrar as demais empresas em Sistema → Empresas e, com a chave x-api-key no Vault,
+começar a v2.22.0 (integração Questor Negócio em modo paralelo).
 Apresentação visual (mockups e tabelas): artefato no Claude — https://claude.ai/artifact/2sgN2wEk2EYyH2HzMgKnQU
 
 ## Decisões do usuário
@@ -40,8 +41,8 @@ O app faz `upsert` com `onConflict: 'tenant_id,nosso_numero'` em `cob_parcelas`
 |---|---|---|
 | v2.19.0 | Banco: `cob_empresas` (com `padrao`, `questor_cnpj`), `empresa_id` + backfill para a Artecon, gatilho da empresa padrão no insert, trava de troca de empresa (diretor/robô), índices, `cob_parcelas.questor_id` | **concluída — aplicada no banco em 20/11** |
 | v2.20.0 | App: tela Sistema → Empresas do grupo (só diretor), seletor "Todas as empresas" no topo (lembrado por usuário), filtro por empresa no Painel e em Conferir → Parcelas (com etiqueta), variáveis `{{empresa_cobradora}}`/`{{empresa_cnpj}}` nos modelos; migration `v2_20_0_view_empresa.sql` (view do Painel com `empresa_id`, security_invoker preservado) | **banco aplicado; app pronto — publicar `index.html`** |
-| v2.21.0 | Importações lançam na empresa do seletor (senão a padrão); boleto manual com empresa na confirmação e checagem de duplicidade por empresa; Relatórios (4 abas) seguem o seletor; Painel em "Todas" com quebra por empresa; mensagens (e-mail, WhatsApp, cartão) assinadas pela empresa dona dos boletos (`v2210Emissora`; mista = padrão; Pix e logotipo só da padrão); índice do nosso número por empresa em 2 partes (A antes do merge — aplicada; B depois — `migration_v2_21_1`) | **app pronto na branch — publicar e rodar a parte B** |
-| v2.22.0 | Integração Questor Negócio em **modo paralelo** (mesmo padrão do `sicredi_modo`): sincronização agendada por empresa (títulos, baixas, vencidos), comparação na aba Erros, nenhum envio depende dela | a fazer |
+| v2.21.0 | Importações lançam na empresa do seletor (senão a padrão); boleto manual com empresa na confirmação e checagem de duplicidade por empresa; Relatórios (4 abas) seguem o seletor; Painel em "Todas" com quebra por empresa; mensagens (e-mail, WhatsApp, cartão) assinadas pela empresa dona dos boletos (`v2210Emissora`; mista = padrão; Pix e logotipo só da padrão); índice do nosso número por empresa em 2 partes (A antes do merge — aplicada; B depois — `migration_v2_21_1`) | **concluída — publicada em 20/11 (PR #18), partes A e B aplicadas** |
+| v2.22.0 | Integração Questor Negócio em **modo paralelo**: Edge Function `questor-sync` (publicada no Supabase) autentica com a chave do cofre (`segredo_servico('questor_api_key')`), lê títulos (janela −400d/+60d) e baixas (7d) por empresa (`questor_cnpj`) e compara com o app **sem gravar nada** — resumo por empresa (só na API, API liquidada × app aberta, divergência de valor, baixas) na tela Empresas e nas execuções (etapa/origem `questor_api`). Botões (só diretor): Testar conexão, Importar estabelecimentos (vincula CNPJs), Capturar agora. Migration `v2_22_0_questor_api.sql` aplicada (origem nova + chaves `questor_api_key`/`questor_api_url` na lista do cofre — registrar no artecon-supabase/docs/DECISOES.md). **Falta: o usuário cadastrar o segredo `questor_api_key` no Vault** (Dashboard → Integrations → Vault) | **publicar app; aguardando a chave no Vault** |
 | v2.23.0 | Corte: API vira a fonte (captura, baixas automáticas, 2ª via em PDF nos envios); relatório do Questor instalado e .CRT viram contingência; robô aposentado aos poucos | a fazer |
 
 ## API Questor Negócio — resumo do que importa
