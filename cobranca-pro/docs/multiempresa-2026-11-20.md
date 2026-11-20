@@ -1,7 +1,9 @@
 # Multiempresa + integração Questor Negócio — plano aprovado (20/11/2026)
 
-**Status:** aprovado pelo usuário em 20/11/2026 ("seguir"). Etapa 1 entregue:
-`migration_v2_19_0_multiempresa.sql` pronta para rodar no SQL Editor. Nada foi aplicado no banco ainda.
+**Status (20/11/2026, noite):** plano aprovado ("seguir"/"pode seguir"). **Migrations v2.19.0 e v2.20.0
+aplicadas no banco** pela sessão do Claude (autorizado pelo usuário) — empresa padrão criada e 100% do
+histórico vinculado (0 registros sem empresa). **App v2.20.0 pronto no repositório** (tela Empresas, seletor,
+filtros do Painel e Parcelas, variáveis de assinatura) — falta publicar o `index.html`.
 Apresentação visual (mockups e tabelas): artefato no Claude — https://claude.ai/artifact/2sgN2wEk2EYyH2HzMgKnQU
 
 ## Decisões do usuário
@@ -34,8 +36,8 @@ O app faz `upsert` com `onConflict: 'tenant_id,nosso_numero'` em `cob_parcelas`
 ## Etapas
 | Versão | Entrega | Situação |
 |---|---|---|
-| v2.19.0 | Banco: `cob_empresas` (com `padrao`, `questor_cnpj`), `empresa_id` + backfill para a Artecon, gatilho da empresa padrão no insert, trava de troca de empresa (diretor/robô), índices, `cob_parcelas.questor_id` | **migration pronta — rodar** |
-| v2.20.0 | App: cadastro de empresas (Sistema, só diretor), seletor no topo, filtros nas telas, assinatura `{{empresa}}`/`{{empresa_cnpj}}` nas mensagens | a fazer |
+| v2.19.0 | Banco: `cob_empresas` (com `padrao`, `questor_cnpj`), `empresa_id` + backfill para a Artecon, gatilho da empresa padrão no insert, trava de troca de empresa (diretor/robô), índices, `cob_parcelas.questor_id` | **concluída — aplicada no banco em 20/11** |
+| v2.20.0 | App: tela Sistema → Empresas do grupo (só diretor), seletor "Todas as empresas" no topo (lembrado por usuário), filtro por empresa no Painel e em Conferir → Parcelas (com etiqueta), variáveis `{{empresa_cobradora}}`/`{{empresa_cnpj}}` nos modelos; migration `v2_20_0_view_empresa.sql` (view do Painel com `empresa_id`, security_invoker preservado) | **banco aplicado; app pronto — publicar `index.html`** |
 | v2.21.0 | Importações/relatórios por empresa (detecção por conta/convênio), troca do índice único do nosso número, Painel consolidado com quebra | a fazer |
 | v2.22.0 | Integração Questor Negócio em **modo paralelo** (mesmo padrão do `sicredi_modo`): sincronização agendada por empresa (títulos, baixas, vencidos), comparação na aba Erros, nenhum envio depende dela | a fazer |
 | v2.23.0 | Corte: API vira a fonte (captura, baixas automáticas, 2ª via em PDF nos envios); relatório do Questor instalado e .CRT viram contingência; robô aposentado aos poucos | a fazer |
@@ -65,6 +67,15 @@ O app faz `upsert` com `onConflict: 'tenant_id,nosso_numero'` em `cob_parcelas`
   aba Erros; baixas → `cob_pagamentos` respeitando o estorno da v2.18 (item `ignorada` não baixa de novo).
 - Captura pode rodar em **Edge Function agendada do Supabase** (sem depender do ARTEAPP01), registrando em
   `cob_automacao_execucoes` para o painel.
+
+## v2.20.0 — limites de propósito (para a v2.21.0)
+- O seletor filtra **Painel** (títulos, recebimentos, envios do dia) e **Conferir → Parcelas**. Rotina (passos 1–5),
+  filas de envio/ligação (RPCs `cob_fila_disparos_email` etc.), relatórios, confronto e robô continuam "todas" —
+  o Painel avisa ao lado do carimbo de atualização.
+- `{{empresa_cobradora}}`/`{{empresa_cnpj}}` valem nos **modelos personalizados** (`aplicarVariaveis`); os layouts
+  fixos de e-mail/WhatsApp (v2.9.7/v2.10.0) seguem assinando "Artecon Artes Contábeis" — hoje todos os boletos
+  são da Artecon; a troca entra na v2.21.0, quando os disparos saem separados por empresa.
+- Empresa do disparo: resolvida em `v297Titulos` (parcelas do cliente); carteira mista = assinatura da padrão.
 
 ## Pendências (do usuário)
 - Nome, CNPJ e apelido das outras 3+ empresas (cadastro será feito na tela da v2.20.0).
