@@ -1,9 +1,11 @@
 # Multiempresa + integração Questor Negócio — plano aprovado (20/11/2026)
 
-**Status (20/11/2026, noite):** plano aprovado ("seguir"/"pode seguir"). **Migrations v2.19.0 e v2.20.0
-aplicadas no banco** pela sessão do Claude (autorizado pelo usuário) — empresa padrão criada e 100% do
-histórico vinculado (0 registros sem empresa). **App v2.20.0 pronto no repositório** (tela Empresas, seletor,
-filtros do Painel e Parcelas, variáveis de assinatura) — falta publicar o `index.html`.
+**Status (20/11/2026, noite):** plano aprovado e em execução autorizada. **v2.20.0 publicada** (PR #17,
+GitHub Pages conferido servindo v2.20.0). Migrations v2.19.0, v2.20.0 e **v2.21.0 parte A** (índice novo do
+nosso número, convivendo com o antigo) **aplicadas no banco**. **App v2.21.0 pronto na branch** — sequência de
+publicação: fazer o merge do v2.21.0 e, DEPOIS de publicado e recarregado, rodar a
+`migration_v2_21_1_solta_indice_antigo.sql` (parte B). Nunca rodar a parte B antes do merge: o app v2.20
+publicado depende do índice antigo para o upsert das importações.
 Apresentação visual (mockups e tabelas): artefato no Claude — https://claude.ai/artifact/2sgN2wEk2EYyH2HzMgKnQU
 
 ## Decisões do usuário
@@ -38,7 +40,7 @@ O app faz `upsert` com `onConflict: 'tenant_id,nosso_numero'` em `cob_parcelas`
 |---|---|---|
 | v2.19.0 | Banco: `cob_empresas` (com `padrao`, `questor_cnpj`), `empresa_id` + backfill para a Artecon, gatilho da empresa padrão no insert, trava de troca de empresa (diretor/robô), índices, `cob_parcelas.questor_id` | **concluída — aplicada no banco em 20/11** |
 | v2.20.0 | App: tela Sistema → Empresas do grupo (só diretor), seletor "Todas as empresas" no topo (lembrado por usuário), filtro por empresa no Painel e em Conferir → Parcelas (com etiqueta), variáveis `{{empresa_cobradora}}`/`{{empresa_cnpj}}` nos modelos; migration `v2_20_0_view_empresa.sql` (view do Painel com `empresa_id`, security_invoker preservado) | **banco aplicado; app pronto — publicar `index.html`** |
-| v2.21.0 | Importações/relatórios por empresa (detecção por conta/convênio), troca do índice único do nosso número, Painel consolidado com quebra | a fazer |
+| v2.21.0 | Importações lançam na empresa do seletor (senão a padrão); boleto manual com empresa na confirmação e checagem de duplicidade por empresa; Relatórios (4 abas) seguem o seletor; Painel em "Todas" com quebra por empresa; mensagens (e-mail, WhatsApp, cartão) assinadas pela empresa dona dos boletos (`v2210Emissora`; mista = padrão; Pix e logotipo só da padrão); índice do nosso número por empresa em 2 partes (A antes do merge — aplicada; B depois — `migration_v2_21_1`) | **app pronto na branch — publicar e rodar a parte B** |
 | v2.22.0 | Integração Questor Negócio em **modo paralelo** (mesmo padrão do `sicredi_modo`): sincronização agendada por empresa (títulos, baixas, vencidos), comparação na aba Erros, nenhum envio depende dela | a fazer |
 | v2.23.0 | Corte: API vira a fonte (captura, baixas automáticas, 2ª via em PDF nos envios); relatório do Questor instalado e .CRT viram contingência; robô aposentado aos poucos | a fazer |
 
