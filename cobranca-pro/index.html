@@ -457,6 +457,7 @@ tr:hover td{background:rgba(255,255,255,.025)}
 .v2130-per select,.v2130-per input{width:auto;padding:7px 10px}
 .v2130-per .rot{font-size:12.5px;color:var(--muted)}
 .v2140-ver{margin-left:auto;font-size:12px;font-weight:700;color:var(--muted);border:1px solid var(--border2);border-radius:20px;padding:5px 12px;white-space:nowrap}
+.v22-emp{width:auto;max-width:220px;font-size:12.5px;font-weight:600;border:1.5px solid var(--primary-light);border-radius:10px;padding:7px 10px;background:#fff;color:var(--text)}   /* v2.20.0: seletor de empresa */
 .v2130-graf{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:0 0 16px}
 @media(max-width:900px){.v2130-graf{grid-template-columns:1fr}}
 .v2130-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 16px;border-bottom:1px solid var(--border);padding-bottom:0}
@@ -609,7 +610,7 @@ tr:hover td{background:rgba(255,255,255,.025)}
     <div class="logo">
       <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAADZCAMAAAA5QZbuAAAA/1BMVEViXFjk3+GwaGnw5CerPELcmp2YMDMMlNFweoGjmpvEWVzIfILkvcGIcTszeJfjw729wMG9vsAuhKt3ho54NziVjzmhm1zLgX5+fDy4e4Tr4UgAAAA6X2nDOUTEvz/7/v5gYGJYWVteXmCyKi3t5+jU1dfGyMmzMzSTlJaIiYthXmJ2dnhdYGO0tbfBLTGmp6ixR0rBMTPtycry1te0VVfIdXfNh4rSlZe5Zmjnt7jYpqjbtLXEZ2qSRkmWKCvlqqwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADADA5KAAAAQHRSTlP/////////////////////////////////////////////////////////////////////////////////////73leyQAAIslJREFUeNrtnYl6o7iygG2f2DdbT3dPz1nvEiTEZowhxnu8vP9bXW2AVowdk63RN2fOJI5Bql8qVZVKUu+pKx+q9DoRfBYgyFNK+5VBHY8aIL96QC5+2zjS2OuA2IHcAkcqLQPphw5w+h0QKxAUq0CSFqvhhRDASQekBkjfgc4YF44DOiBtrRJ+BAB9RzeJ2IF4FIg4QsKWpo4kBoBD74DYgfiSxoIYSNTSTM5wQNgBqQXyU5lCHBC3MXU45ejoRkg9kIQKajLh4sJziHP9uWNCcOCJCr9l3AGpB3KnjZDri+sHZLjHdIB0QGqBhCoQ6FzdbfOh8oYOiB1IpAJxHL8D8o5AYg0I7IC8IxCkjY8WXPUOyBlAdI11fVe9A9IciAcKc7dFV70D0hwIdtQlGh2QdwaC/UIIFSBRB+T9gKSgcNZajJ10QJoDwX4h+OUAGQjqgLwbEOwXgjAGUJJXvwPybkCwXwhSxVsHXgfkfYEo8ayrr6p3QBoDQXj6AEnaAfkoQMgCLvAT0G7spAPSGIg/HuMpwwftxk46II2B/CAo+h5o11XvgDQGgpUVcFAftOuqd0AaA8HTOXbMlZDv1V31DkhjIMRRv8W2FpRX1Tsg7wWEOOqRmk56dYF1QBoDuaVAnn4pQPqtAJng0uv1nHEHxAaEDA1iU6mZDt61gYzHmATngYF0ydY2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" alt="Artecon">
     </div>
-    <div class="sub">Mesa de Trabalho · Cobrança Pro <span style="font-size:11px;opacity:.7;">v2.18.1</span></div>
+    <div class="sub">Mesa de Trabalho · Cobrança Pro <span style="font-size:11px;opacity:.7;">v2.20.0</span></div>
     <div class="field">
       <label>E-mail</label>
       <input type="email" id="emailInput" placeholder="seu@email.com" autocomplete="email">
@@ -732,6 +733,9 @@ tr:hover td{background:rgba(255,255,255,.025)}
       <button class="nav-item" id="navConfig" onclick="abrirConfig()">
         <span class="icon">⚙️</span><span>Configurações</span>
       </button>
+      <button class="nav-item" id="navEmpresas" onclick="abrirEmpresas()">
+        <span class="icon">🏢</span><span>Empresas</span>
+      </button>
       <button class="nav-item" id="navVersoes" onclick="abrirVersoes()">
         <span class="icon">🗒️</span><span>Versões</span>
       </button>
@@ -744,7 +748,7 @@ tr:hover td{background:rgba(255,255,255,.025)}
       <div style="margin-top:6px;">
         <button class="sair" onclick="fazerLogout()"><span class="sair-label">Sair</span> ↩</button>
       </div>
-      <div style="margin-top:8px;font-size:10px;opacity:.5;letter-spacing:.04em;">v2.18.1 · 19/10/2026</div>
+      <div style="margin-top:8px;font-size:10px;opacity:.5;letter-spacing:.04em;">v2.20.0 · 20/11/2026</div>
     </div>
   </aside>
 
@@ -756,6 +760,9 @@ tr:hover td{background:rgba(255,255,255,.025)}
       <div class="v22-tt"><small id="v22Data"></small><h1 id="v22Titulo">Cobrança Pro</h1></div>
       <button class="v22-cmd" type="button" onclick="v22AbrirPaleta()"><svg class="v22i" viewBox="0 0 24 24"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14M20 20l-4-4"/></svg>Buscar tela, cliente, CNPJ ou boleto<kbd>Ctrl K</kbd></button>
       <div class="v22-sp"></div>
+      <!-- v2.20.0: seletor de empresa (aparece com 2 ou mais empresas ativas) -->
+      <select class="v22-emp" id="v2200Sel" style="display:none;" onchange="v2200Trocar(this.value)"
+        title="Painel e Conferir → Parcelas seguem a empresa escolhida; Rotina, filas, relatórios e robô mostram todas (filtros completos na v2.21)"></select>
       <button class="v22-pill" id="v22Robo" type="button" onclick="v22Ir('navAutomacao')" title="Situação do robô"><span class="dot"></span><span class="v22-lbl" id="v22RoboTxt">Robô</span></button>
       <button class="v22-btn" type="button" onclick="v22Ir('nav1')"><svg class="v22i" viewBox="0 0 24 24"><path d="M12 19V7M7 12l5-5 5 5M5 3h14"/></svg><span class="v22-lbl">Importar remessa</span></button>
       <button class="v22-btn pri" type="button" onclick="v22Ir('nav3')"><svg class="v22i" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg><span class="v22-lbl">Enviar cobranças</span><em id="v22QtdEnvio" style="display:none"></em></button>
@@ -950,6 +957,49 @@ tr:hover td{background:rgba(255,255,255,.025)}
 
         <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px;">
           <button class="btn solid" onclick="salvarConfig()">💾 Salvar configurações</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── v2.20.0: EMPRESAS DO GRUPO (multiempresa) ─── -->
+    <div id="cardEmpresas" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2>🏢 Empresas do grupo</h2>
+            <div class="card-sub">Multiempresa: clientes, modelos e envio são compartilhados; cada boleto pertence a uma empresa. Alterações só pelo diretor.</div>
+          </div>
+          <button class="btn sm fechar-pagina" onclick="fecharEmpresas()">✕ Fechar</button>
+        </div>
+        <div class="alert" style="font-size:12.5px;">ℹ️ <div>Com <b>2 ou mais empresas ativas</b> aparece o seletor <b>"Todas as empresas"</b> na barra de cima — o Painel e Conferir → Parcelas seguem a escolha. Tudo que o app grava sem indicar empresa cai na <b>empresa padrão</b>. O <b>CNPJ no Questor</b> é a inscrição do estabelecimento no Questor Negócio (usado pela integração, a partir da v2.22).</div></div>
+        <div style="display:flex;justify-content:flex-end;margin:10px 0;">
+          <button class="btn sm solid" onclick="v2200NovaEmpresa()">➕ Nova empresa</button>
+        </div>
+        <div style="overflow:auto;">
+          <table id="tabEmpresas">
+            <thead><tr><th>Empresa</th><th>CNPJ</th><th>Apelido</th><th>Assinatura nas mensagens</th><th>CNPJ no Questor</th><th>Situação</th><th></th></tr></thead>
+            <tbody><tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px;">Carregando…</td></tr></tbody>
+          </table>
+        </div>
+        <div id="v2200Form" style="display:none;margin-top:16px;border-top:1px solid var(--border);padding-top:14px;">
+          <div class="section-title"><span class="dot"></span><span id="v2200FormTitulo">Nova empresa</span></div>
+          <div class="grid c3">
+            <div><label>Nome (razão social)</label><input type="text" id="v2200Nome" placeholder="ex.: Artecon Artes Contábeis"></div>
+            <div><label>CNPJ</label><input type="text" id="v2200Cnpj" placeholder="00.000.000/0001-00"></div>
+            <div><label>Apelido (seletor e etiquetas)</label><input type="text" id="v2200Apelido" placeholder="ex.: Artecon"></div>
+          </div>
+          <div class="grid c3" style="margin-top:10px;">
+            <div><label>Assinatura nas mensagens</label><input type="text" id="v2200Ass" placeholder="como assina o e-mail/WhatsApp ({{empresa_cobradora}})"></div>
+            <div><label>Cor da etiqueta</label><input type="color" id="v2200Cor" value="#2e86ab" style="height:38px;padding:4px;"></div>
+            <div><label>CNPJ no Questor Negócio (estabelecimento)</label><input type="text" id="v2200QuestorCnpj" placeholder="inscrição federal do estabelecimento"></div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;margin-top:12px;">
+            <label class="v25-chk" style="margin:0;"><input type="checkbox" id="v2200Ativo" checked> Ativa</label>
+            <div style="flex:1;"></div>
+            <button class="btn" onclick="v2200FecharForm()">Cancelar</button>
+            <button class="btn solid" id="v2200BtnSalvar" onclick="v2200SalvarEmpresa()">💾 Salvar empresa</button>
+          </div>
+          <div id="v2200Erro" class="alert warn" style="display:none;margin-top:10px;"></div>
         </div>
       </div>
     </div>
@@ -1214,7 +1264,7 @@ tr:hover td{background:rgba(255,255,255,.025)}
         <div class="alert info">
           💡 <div><strong>Variáveis disponíveis</strong> (são substituídas na hora do envio):
           <code>{{razao_social}}</code> · <code>{{total}}</code> · <code>{{qtd_parcelas}}</code> ·
-          <code>{{dias_atraso}}</code> · <code>{{tabela_parcelas}}</code> (tabela HTML com os títulos) · <code>{{total_atualizado}}</code> (com multa e juros) · <code>{{lista_parcelas}}</code> (lista em texto, para WhatsApp)</div>
+          <code>{{dias_atraso}}</code> · <code>{{tabela_parcelas}}</code> (tabela HTML com os títulos) · <code>{{total_atualizado}}</code> (com multa e juros) · <code>{{lista_parcelas}}</code> (lista em texto, para WhatsApp) · <code>{{empresa_cobradora}}</code> e <code>{{empresa_cnpj}}</code> (empresa dona dos boletos do aviso — v2.20.0)</div>
         </div>
 
         <div class="section-title"><span class="dot warn"></span>Cliente com 1 boleto em atraso</div>
@@ -1537,6 +1587,7 @@ tr:hover td{background:rgba(255,255,255,.025)}
         <table>
           <thead><tr><th style="white-space:nowrap;">Versão</th><th style="white-space:nowrap;">Data</th><th>O que mudou</th></tr></thead>
           <tbody>
+            <tr><td><b>v2.20.0</b></td><td>20/11/2026</td><td><b>Multiempresa — cadastro de empresas e seletor no topo.</b> Nova tela <b>Sistema → Empresas do grupo</b> (só diretor altera): nome, CNPJ, apelido, cor da etiqueta, assinatura das mensagens e o CNPJ do estabelecimento no Questor Negócio. Com 2 ou mais empresas ativas aparece o seletor <b>"Todas as empresas"</b> na barra de cima: o <b>Painel</b> e <b>Conferir → Parcelas</b> seguem a empresa escolhida (a lista de parcelas ganha a etiqueta da empresa); Rotina, filas, relatórios e robô continuam mostrando todas — os filtros completos chegam na v2.21.0. Os modelos de mensagem ganham as variáveis <code>{{empresa_cobradora}}</code> e <code>{{empresa_cnpj}}</code> (empresa dona dos boletos do aviso; os layouts fixos seguem assinando Artecon até a v2.21.0). Tudo que o app grava sem indicar empresa cai na <b>empresa padrão</b> (gatilho do banco, v2.19.0). <b>Rodar antes: <code>migration_v2_19_0_multiempresa.sql</code> e <code>migration_v2_20_0_view_empresa.sql</code></b> (a view do Painel passa a informar a empresa).</td></tr>
             <tr><td><b>v2.18.1</b></td><td>19/10/2026</td><td><b>Estorno acha o pagamento no boleto certo.</b> Baixa parcial cria um boleto de saldo com o mesmo documento (ex.: U15953 e U15953-S1) e a janela de estorno, aberta no boleto de saldo, dizia "não tem pagamento". Agora, quando o boleto selecionado não tem pagamento, a janela procura nos boletos de mesmo documento e mostra o pagamento de lá, dizendo de qual boleto ele é; o título da janela passou a mostrar valor e situação do boleto selecionado. Sem migration; robô sem mudança.</td></tr>
             <tr><td><b>v2.18.0</b></td><td>19/10/2026</td><td><b>Estornar pagamento (Conferir → Parcelas).</b> Para baixa errada ou pagamento devolvido: selecione o boleto e clique em <b>↩️ Estornar pagamento</b>. O pagamento <b>não é apagado</b> — fica marcado como estornado, com motivo, usuário e data; a parcela volta para <b>Aberta</b> e o item do retorno (ou do recebimento) vira <b>Ignorado</b>, para o Reprocessar pendentes e o robô não baixarem de novo. O estorno pode ser <b>desfeito</b> na mesma janela (volta tudo como estava). Só diretor, com motivo obrigatório; tudo registrado no histórico do cliente e na auditoria. Banco: rodar <code>migration_v2_18_0_estorno_pagamento.sql</code>; robô sem mudança.</td></tr>
             <tr><td><b>v2.17.1</b></td><td>18/10/2026</td><td><b>Endereço novo.</b> O Cobrança Pro passou para o repositório do departamento <b>Gestão Empresarial e Financeiro</b> (<code>gestao-financeiro/cobranca-pro/</code>). O logo dos e-mails aponta para o endereço novo; o endereço antigo leva ao novo. Dados, login e robô não mudaram.</td></tr>
@@ -1612,7 +1663,7 @@ tr:hover td{background:rgba(255,255,255,.025)}
           <input type="date" id="v2130DashDe" onchange="carregarDashboard()" aria-label="De"><span class="sub">a</span>
           <input type="date" id="v2130DashAte" onchange="carregarDashboard()" aria-label="Até"></span>
         <span class="rot" id="v2130DashRot"></span>
-        <span class="v2140-ver" title="Versão do Cobrança Pro em uso">Cobrança Pro v2.18.1 · 19/10/2026</span>
+        <span class="v2140-ver" title="Versão do Cobrança Pro em uso">Cobrança Pro v2.20.0 · 20/11/2026</span>
       </div>
       <div class="v23-hero">
         <div class="card v23-cart">
@@ -4505,11 +4556,14 @@ async function v297Titulos(disparo) {
   let parcelas = [];
   if (!MODO_TESTE) {
     const { data, error } = await supabaseClient.from('cob_parcelas')
-      .select('id, nosso_numero, documento, valor_original, data_vencimento')
+      .select('id, nosso_numero, documento, valor_original, data_vencimento, empresa_id')
       .eq('tenant_id', tenantIdAtual).eq('cliente_id', disparo.clienteId).eq('status', 'aberta')
       .lt('data_vencimento', hojeLocal()).order('data_vencimento');
     if (error) throw new Error('não foi possível ler os títulos do cliente: ' + error.message);   // v2.11.1: sem a tabela de títulos a cobrança não sai
     parcelas = data || [];
+    // v2.20.0: empresa dona dos boletos do aviso ({{empresa_cobradora}}); misto ou vazio = assinatura padrão
+    const v2200Ids = [...new Set(parcelas.map(p => p.empresa_id).filter(Boolean))];
+    disparo.v2200EmpresaId = v2200Ids.length === 1 ? v2200Ids[0] : null;
     const enc = await v254Seguro(async () => { const r = await supabaseClient.from('cob_parcelas_abertas_com_encargos')
       .select('id, valor_atualizado').eq('tenant_id', tenantIdAtual).eq('cliente_id', disparo.clienteId); if (r.error) throw r.error; return r.data; });
     if (enc) { const m = new Map(enc.map(x => [x.id, Number(x.valor_atualizado)])); parcelas.forEach(p => { if (m.has(p.id)) p.valor_atualizado = m.get(p.id); }); }
@@ -6052,14 +6106,15 @@ async function carregarParcelas() {
   } else {
     let data;   // v2.5.4: busca em páginas (antes parava em 1.000 linhas)
     try {
-      data = await buscarTodasPaginas(() => supabaseClient.from('cob_parcelas')
-        .select('id, cliente_id, nosso_numero, documento, valor_original, data_vencimento, status, origem, cob_clientes(razao_social, cnpj)')
-        .eq('tenant_id', tenantIdAtual).order('data_vencimento').order('id'));
+      data = await buscarTodasPaginas(() => v2200F(supabaseClient.from('cob_parcelas')
+        .select('id, cliente_id, nosso_numero, documento, valor_original, data_vencimento, status, origem, empresa_id, cob_clientes(razao_social, cnpj)')
+        .eq('tenant_id', tenantIdAtual)).order('data_vencimento').order('id'));   // v2.20.0: filtro e etiqueta por empresa
     } catch (error) { mostrarToast('Erro ao carregar parcelas: ' + error.message); return; }
     parcelasLista = (data || []).map(p => ({
       id: p.id, clienteId: p.cliente_id, razaoSocial: p.cob_clientes?.razao_social || '—', cnpj: p.cob_clientes?.cnpj || '',
       documento: p.documento || p.nosso_numero, nossoNumero: p.nosso_numero, origem: p.origem || '', documentoBd: p.documento || '',   // v2.15.0: documento como está no banco (pode ser vazio)
       valor: Number(p.valor_original) || 0, vencimento: p.data_vencimento, status: p.status,
+      empresaId: p.empresa_id || null,   // v2.20.0
     }));
   }
   filtrarParcelas();
@@ -6118,7 +6173,7 @@ function filtrarParcelas() {
     return `
     <tr class="${v2150Sel === p.id ? 'v2150-sel' : ''}">
       <td><input type="radio" name="v2150Sel" aria-label="Selecionar ${autoEsc(p.documento)}" ${v2150Sel === p.id ? 'checked' : ''} onchange="v2150Selecionar(${idx})" style="width:auto;"></td>
-      <td style="font-weight:600;">${autoEsc(p.razaoSocial)}</td>
+      <td style="font-weight:600;">${autoEsc(p.razaoSocial)}${v2200Tag(p.empresaId)}</td>
       <td style="font-size:12px;">${autoEsc(p.documento)}${p.origem === 'manual' ? ' <span class="badge grey" title="Lançado manualmente">manual</span>' : ''}</td>
       <td style="font-size:12px;color:var(--muted);">${p.nossoNumero && p.nossoNumero !== p.documento ? autoEsc(p.nossoNumero) : '—'}</td>
       <td style="white-space:nowrap;">${venc.toLocaleDateString('pt-BR')}</td>
@@ -6894,7 +6949,11 @@ async function salvarModelos() {
 
 function aplicarVariaveis(texto, disparo, tabelaHtml) {
   const fmt = v => 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+  // v2.20.0: empresa dona dos boletos do disparo (resolvida em v297Titulos); sem ela, a padrão
+  const emp = (disparo && disparo.v2200EmpresaId && v2200PorId(disparo.v2200EmpresaId)) || v2200Padrao();
   return texto
+    .replace(/{{empresa_cobradora}}/g, (emp && (emp.assinatura || emp.nome)) || 'Artecon Artes Contábeis')
+    .replace(/{{empresa_cnpj}}/g, (emp && emp.cnpj) || '')
     .replace(/{{razao_social}}/g, disparo.razaoSocial)
     .replace(/{{total_atualizado}}/g, fmt(disparo.totalAtualizado != null ? disparo.totalAtualizado : disparo.totalEmAberto))
     .replace(/{{total}}/g, fmt(disparo.totalEmAberto))
@@ -6905,6 +6964,147 @@ function aplicarVariaveis(texto, disparo, tabelaHtml) {
 }
 
 /* ============================================================
+   v2.20.0 — MULTIEMPRESA: empresas do grupo, seletor e filtros
+   Clientes, modelos e envio continuam compartilhados (tenant);
+   parcelas, pagamentos e conciliações pertencem a uma empresa.
+   ============================================================ */
+let v2200Empresas = [];        // empresas ativas (cache do seletor e das etiquetas)
+let v2200Cadastro = [];        // todas, inclusive inativas (tela Sistema → Empresas)
+let v2200EmpresaId = null;     // empresa escolhida no seletor (null = todas)
+let v2200EditId = null;
+const v2200LS = () => 'cobEmpresa_' + (tenantIdAtual || '');
+function v2200PorId(id) { return v2200Empresas.find(e => e.id === id) || v2200Cadastro.find(e => e.id === id) || null; }
+function v2200Padrao() { return v2200Empresas.find(e => e.padrao) || v2200Empresas[0] || null; }
+function v2200F(q) { return v2200EmpresaId ? q.eq('empresa_id', v2200EmpresaId) : q; }   // filtro das consultas por empresa
+function v2200Tag(empresaId) {   // etiqueta pequena nas listas (só aparece com 2+ empresas)
+  if (v2200Empresas.length < 2 || !empresaId) return '';
+  const e = v2200PorId(empresaId); if (!e) return '';
+  const cor = /^#[0-9a-fA-F]{3,8}$/.test(e.cor || '') ? e.cor : '#6b7a8d';
+  return ` <span class="badge grey" title="${autoEsc(e.nome)}" style="white-space:nowrap;"><i style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${cor};margin-right:4px;"></i>${autoEsc(e.apelido || e.nome)}</span>`;
+}
+async function v2200Iniciar() {   // chamada no login; sem a migration v2.19.0 o app segue como antes
+  v2200Empresas = []; v2200EmpresaId = null;
+  const sel = document.getElementById('v2200Sel');
+  if (MODO_TESTE) { if (sel) sel.style.display = 'none'; return; }
+  try {
+    const { data, error } = await supabaseClient.from('cob_empresas')
+      .select('id, nome, cnpj, apelido, assinatura, cor, questor_cnpj, padrao, ativo')
+      .eq('tenant_id', tenantIdAtual).eq('ativo', true)
+      .order('padrao', { ascending: false }).order('nome');
+    if (error) throw error;
+    v2200Empresas = data || [];
+  } catch (e) { console.warn('[empresas]', e); }
+  let salvo = null;
+  try { salvo = localStorage.getItem(v2200LS()); } catch (e) {}
+  v2200EmpresaId = salvo && v2200PorId(salvo) ? salvo : null;
+  if (!sel) return;
+  if (v2200Empresas.length < 2) { sel.style.display = 'none'; v2200EmpresaId = null; return; }
+  sel.innerHTML = '<option value="">Todas as empresas</option>' + v2200Empresas.map(e =>
+    `<option value="${autoEsc(e.id)}">${autoEsc(e.apelido || e.nome)}</option>`).join('');
+  sel.value = v2200EmpresaId || '';
+  sel.style.display = '';
+}
+function v2200Trocar(v) {
+  v2200EmpresaId = v || null;
+  try { if (v) localStorage.setItem(v2200LS(), v); else localStorage.removeItem(v2200LS()); } catch (e) {}
+  const t = V22_TELAS[v22AtivoId()];
+  if (t) t.ir(); else abrirDashboard();   // recarrega a tela atual com o filtro novo
+}
+
+/* ── tela Sistema → Empresas do grupo ── */
+async function abrirEmpresas() {
+  ocultarTodosPaineis();
+  document.getElementById('cardEmpresas').style.display = 'block';
+  document.getElementById('navEmpresas').classList.add('active');
+  for (let i = 1; i <= 5; i++) document.getElementById('nav' + i).classList.remove('active');
+  v2200FecharForm();
+  await v2200ListarEmpresas();
+}
+function fecharEmpresas() {
+  document.getElementById('cardEmpresas').style.display = 'none';
+  document.getElementById('navEmpresas').classList.remove('active');
+  mostrarPasso(1);
+}
+async function v2200ListarEmpresas() {
+  const corpo = document.querySelector('#tabEmpresas tbody');
+  if (MODO_TESTE) { corpo.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px;">Indisponível no modo simulado.</td></tr>'; return; }
+  const { data, error } = await supabaseClient.from('cob_empresas').select('*')
+    .eq('tenant_id', tenantIdAtual).order('padrao', { ascending: false }).order('nome');
+  if (error) { corpo.innerHTML = `<tr><td colspan="7" style="color:var(--err);padding:18px;">Rode a <code>migration_v2_19_0_multiempresa.sql</code> — ${autoEsc(error.message)}</td></tr>`; return; }
+  v2200Cadastro = data || [];
+  if (!v2200Cadastro.length) { corpo.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px;">Nenhuma empresa — rode a migration v2.19.0 (ela cria a empresa padrão).</td></tr>'; return; }
+  corpo.innerHTML = v2200Cadastro.map((e, i) => {
+    const cor = /^#[0-9a-fA-F]{3,8}$/.test(e.cor || '') ? e.cor : '#6b7a8d';
+    return `<tr>
+      <td style="font-weight:600;"><i style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${cor};margin-right:6px;"></i>${autoEsc(e.nome)}${e.padrao ? ' <span class="badge info" title="Recebe tudo que o app grava sem indicar empresa">padrão</span>' : ''}</td>
+      <td style="white-space:nowrap;">${autoEsc(e.cnpj || '—')}</td>
+      <td>${autoEsc(e.apelido || '—')}</td>
+      <td style="font-size:12px;">${autoEsc(e.assinatura || '—')}</td>
+      <td style="white-space:nowrap;">${autoEsc(e.questor_cnpj || '—')}</td>
+      <td>${e.ativo ? '<span class="badge ok">ativa</span>' : '<span class="badge grey">inativa</span>'}</td>
+      <td><button class="btn sm" onclick="v2200EditarEmpresa(${i})">✏️ Editar</button></td>
+    </tr>`;
+  }).join('');
+}
+function v2200NovaEmpresa() {
+  if (!v259SoDiretor('Cadastrar empresa')) return;
+  v2200EditId = null;
+  document.getElementById('v2200FormTitulo').textContent = 'Nova empresa';
+  ['v2200Nome', 'v2200Cnpj', 'v2200Apelido', 'v2200Ass', 'v2200QuestorCnpj'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('v2200Cor').value = '#2e86ab';
+  document.getElementById('v2200Ativo').checked = true;
+  document.getElementById('v2200Erro').style.display = 'none';
+  document.getElementById('v2200Form').style.display = 'block';
+  document.getElementById('v2200Nome').focus();
+}
+function v2200EditarEmpresa(i) {
+  if (!v259SoDiretor('Alterar empresa')) return;
+  const e = v2200Cadastro[i]; if (!e) return;
+  v2200EditId = e.id;
+  document.getElementById('v2200FormTitulo').textContent = 'Alterar: ' + (e.apelido || e.nome);
+  document.getElementById('v2200Nome').value = e.nome || '';
+  document.getElementById('v2200Cnpj').value = e.cnpj || '';
+  document.getElementById('v2200Apelido').value = e.apelido || '';
+  document.getElementById('v2200Ass').value = e.assinatura || '';
+  document.getElementById('v2200Cor').value = /^#[0-9a-fA-F]{6}$/.test(e.cor || '') ? e.cor : '#2e86ab';
+  document.getElementById('v2200QuestorCnpj').value = e.questor_cnpj || '';
+  document.getElementById('v2200Ativo').checked = e.ativo !== false;
+  document.getElementById('v2200Erro').style.display = 'none';
+  document.getElementById('v2200Form').style.display = 'block';
+}
+function v2200FecharForm() { v2200EditId = null; const f = document.getElementById('v2200Form'); if (f) f.style.display = 'none'; }
+async function v2200SalvarEmpresa() {
+  if (!v259SoDiretor('Salvar empresa')) return;
+  const erroEl = document.getElementById('v2200Erro');
+  const mostrarErro = m => { erroEl.textContent = '⚠️ ' + m; erroEl.style.display = 'flex'; };
+  const nome = document.getElementById('v2200Nome').value.trim();
+  if (nome.length < 3) { mostrarErro('Informe o nome da empresa (mínimo 3 caracteres).'); return; }
+  const emp = {
+    nome,
+    cnpj: document.getElementById('v2200Cnpj').value.trim() || null,
+    apelido: document.getElementById('v2200Apelido').value.trim() || null,
+    assinatura: document.getElementById('v2200Ass').value.trim() || null,
+    cor: document.getElementById('v2200Cor').value || null,
+    questor_cnpj: document.getElementById('v2200QuestorCnpj').value.trim() || null,
+    ativo: document.getElementById('v2200Ativo').checked,
+  };
+  const btn = document.getElementById('v2200BtnSalvar'); btn.disabled = true;
+  try {
+    let r;
+    if (v2200EditId) r = await supabaseClient.from('cob_empresas').update(emp).eq('id', v2200EditId).eq('tenant_id', tenantIdAtual);
+    else r = await supabaseClient.from('cob_empresas').insert({ ...emp, tenant_id: tenantIdAtual });
+    if (r.error) throw r.error;
+    mostrarToast('✅ Empresa salva.');
+    v2200FecharForm();
+    await v2200ListarEmpresas();
+    await v2200Iniciar();   // atualiza o seletor e as etiquetas
+  } catch (e) {
+    mostrarErro(/duplicate key/i.test(e.message || '') && /questor/i.test(e.message || '') ? 'Este CNPJ do Questor já pertence a outra empresa.' :
+      /row-level security/i.test(e.message || '') ? 'Só o diretor pode salvar empresas.' : (e.message || String(e)));
+  } finally { btn.disabled = false; }
+}
+
+/* ============================================================
    CADASTRO DE CLIENTES
    ============================================================ */
 let clientesLista = [];
@@ -6912,12 +7112,12 @@ let clientesLista = [];
 function ocultarTodosPaineis() {
   ['cardConciliar','cardResultado','cardPasso3','cardLigar','cardPasso5',
    'cardImportarRemessa','cardBoletos','cardConfronto','cardDashboard','cardClientes',
-   'cardNotificacoes','cardParcelas','cardConfig','cardVersoes','cardAutomacao','cardRelatorios','cardErros'].forEach(id => {
+   'cardNotificacoes','cardParcelas','cardConfig','cardVersoes','cardAutomacao','cardRelatorios','cardErros','cardEmpresas'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
   });
   ['navDash','navClientes','navNotif','navParcelas','navConfig','navVersoes',
-   'navConfronto','navBoletos','navAutomacao','navRelatorios','navErros'].forEach(id => {
+   'navConfronto','navBoletos','navAutomacao','navRelatorios','navErros','navEmpresas'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.classList.remove('active');
   });
@@ -7826,6 +8026,8 @@ async function carregarDashboard() {
   try { d = MODO_TESTE ? v23Simulado() : await v23Dados(); }
   catch (e) { at.textContent = 'Não foi possível carregar: ' + (e.message || e); return; }
   v23Desenhar(d);
+  // v2.20.0: lembrete do filtro — robô e filas de envio/ligação ainda mostram todas as empresas
+  if (v2200EmpresaId) { const e = v2200PorId(v2200EmpresaId); if (e) at.textContent += ' · Empresa: ' + (e.apelido || e.nome) + ' (robô e filas: todas)'; }
 }
 
 /* ============================================================
@@ -7871,6 +8073,7 @@ async function v23Dados() {
     abertas = await v23Paginar(() => { let q = supabaseClient.from('cob_parcelas_abertas_com_encargos')
       .select('id, cliente_id, razao_social, valor_original, data_vencimento, dias_atraso, valor_atualizado')
       .eq('tenant_id', t).lte('data_vencimento', fimPer);
+      q = v2200F(q);   // v2.20.0: empresa escolhida no seletor (a view precisa da migration v2.20.0)
       if (per.de) q = q.gte('data_vencimento', per.de);   // v2.13.0: carteira vencida dentro do período
       return q.order('data_vencimento'); });
   } catch (e) {
@@ -7878,6 +8081,7 @@ async function v23Dados() {
     const bruto = await v23Paginar(() => { let q = supabaseClient.from('cob_parcelas')
       .select('id, cliente_id, valor_original, data_vencimento, cob_clientes(razao_social)')
       .eq('tenant_id', t).eq('status', 'aberta').lt('data_vencimento', hojeISO).lte('data_vencimento', fimPer);
+      q = v2200F(q);   // v2.20.0
       if (per.de) q = q.gte('data_vencimento', per.de);
       return q.order('data_vencimento'); });
     abertas = bruto.map(p => ({ ...p, razao_social: p.cob_clientes?.razao_social,
@@ -7885,17 +8089,17 @@ async function v23Dados() {
   }
 
   const [pagamentos, execs, pendentes, filaEnvio, filaLigar, enviadosHoje] = await Promise.all([
-    v23Seguro(() => v23Paginar(() => supabaseClient.from('cob_pagamentos')
+    v23Seguro(() => v23Paginar(() => v2200F(supabaseClient.from('cob_pagamentos')
       .select('valor_recebido, data_recebimento, criado_em, cob_parcelas(data_vencimento)')
-      .eq('tenant_id', t).gte('data_recebimento', desdePag))),
+      .eq('tenant_id', t).gte('data_recebimento', desdePag)))),   // v2.20.0: filtro por empresa
     v23Seguro(async () => { const { data, error } = await supabaseClient.from('cob_automacao_execucoes').select('*')
       .eq('tenant_id', t).gte('iniciado_em', meiaNoite.toISOString()).order('iniciado_em', { ascending: false }).limit(50); if (error) throw error; return data; }),
     v23Seguro(async () => { const { count, error } = await supabaseClient.from('cob_conciliacao_itens').select('id', { count: 'exact', head: true })
       .eq('tenant_id', t).in('status', ['divergente', 'nao_identificada']); if (error) throw error; return count; }),
     v23Seguro(async () => { const f = await dataFetchFilaDisparos(); return Array.isArray(f) ? f.filter(x => x.statusEnvio === 'pendente').length : null; }),
     v23Seguro(async () => { const [c, p] = await Promise.all([dataFetchFilaContato(), dataFetchPoliticas()]); return avaliarFilaContato(c, p, new Date()).fila; }),
-    v23Seguro(async () => { const { count, error } = await supabaseClient.from('cob_eventos').select('id', { count: 'exact', head: true })
-      .eq('tenant_id', t).in('tipo', ['email_enviado', 'whatsapp_enviado']).gte('criado_em', meiaNoite.toISOString()); if (error) throw error; return count; })
+    v23Seguro(async () => { const { count, error } = await v2200F(supabaseClient.from('cob_eventos').select('id', { count: 'exact', head: true })
+      .eq('tenant_id', t).in('tipo', ['email_enviado', 'whatsapp_enviado']).gte('criado_em', meiaNoite.toISOString())); if (error) throw error; return count; })   // v2.20.0
   ]);
   const remessa = await v23Seguro(async () => {
     for (const col of ['criado_em', 'created_at']) {
@@ -9423,6 +9627,7 @@ async function iniciar() {
   iniciarEventosRemessa();
   iniciarEventosConfronto();
   await v26CarregarTeste();   // v2.6.0: modo de teste de envio (faixa no topo)
+  await v2200Iniciar();       // v2.20.0: empresas do grupo e seletor no topo
   abrirDashboard();
   // v2.5.6: conta criada pelo Portal Artecon com senha provisória — troca obrigatória no 1º acesso
   if (session.user && session.user.user_metadata && session.user.user_metadata.trocar_senha) v256TrocarSenha(true);
@@ -11288,13 +11493,14 @@ const V22_TELAS = {
   navErros:     { t: 'Erros e diferenças',       g: 'Análise',       sec: 'erros',    ir: () => abrirErros(), d: 'Importações, falhas e diferenças Questor × app' },   // v2.12.0
   navAutomacao: { t: 'Robô e automação',         g: 'Sistema',       sec: 'robo',     ir: () => abrirAutomacao() },
   navConfig:    { t: 'Configurações',            g: 'Sistema',       sec: 'sistema',  ir: () => abrirConfig() },
+  navEmpresas:  { t: 'Empresas do grupo',        g: 'Sistema',       sec: 'sistema',  ir: () => abrirEmpresas(), d: 'Multiempresa — cadastro, cores e assinaturas' },   // v2.20.0
   navVersoes:   { t: 'Versões',                  g: 'Sistema',       sec: 'sistema',  ir: () => abrirVersoes() }
 };
 const V22_SECOES = {
   rotina:   { t: 'Rotina do dia', d: 'O que fazer hoje, na ordem', itens: ['nav1', 'nav2', 'nav3', 'nav4', 'nav5'], passos: true },
   conferir: { t: 'Conferência',   d: 'Parcelas, confronto e boletos', itens: ['navParcelas', 'navConfronto', 'navBoletos'] },
   clientes: { t: 'Cadastros',     d: 'Clientes e mensagens',          itens: ['navClientes', 'navNotif'] },
-  sistema:  { t: 'Sistema',       d: 'Regras do app e histórico',     itens: ['navConfig', 'navVersoes'], sair: true }
+  sistema:  { t: 'Sistema',       d: 'Regras do app e histórico',     itens: ['navConfig', 'navEmpresas', 'navVersoes'], sair: true }   // v2.20.0: Empresas
 };
 const V22_ICO = {
   importar: 'M12 3v12M7 10l5 5 5-5M5 21h14', exportar: 'M12 21V9M7 14l5-5 5 5M5 3h14',
