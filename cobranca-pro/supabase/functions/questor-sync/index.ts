@@ -1,7 +1,9 @@
 // ============================================================
-// COBRANÇA PRO — Edge Function: questor-sync  (v1.2 · app v2.23.0)
+// COBRANÇA PRO — Edge Function: questor-sync  (v1.3 · app v2.23.0)
 // v1.2 (21/11): casamento pelo núcleo do nosso número Sicredi (o app guarda
 // AA+NNNNNN+DV, a API devolve só NNNNNN) e contador so_app no paralelo.
+// v1.3 (21/11): leitura do banco PAGINADA (o PostgREST corta em 1.000 linhas —
+// as parcelas mais novas ficavam fora e viravam "só na API" por engano).
 // Integração com a API do Questor Negócio em dois modos:
 // 'paralelo' (padrão): só lê, compara com o app e registra em
 // cob_automacao_execucoes (origem 'questor_api');
@@ -71,6 +73,17 @@ async function restServico(caminho: string): Promise<unknown[]> {
   const r = await fetch(`${SB_URL}/rest/v1/${caminho}`, { headers: { apikey: SB_SRK, Authorization: `Bearer ${SB_SRK}` } });
   if (!r.ok) throw new Error(`consulta falhou: ${caminho.split("?")[0]} ${r.status}`);
   return await r.json();
+}
+// v1.3: o PostgREST devolve no máximo 1.000 linhas por consulta — pagina até o fim
+// (sem isto, as parcelas mais novas ficavam fora da comparação e viravam "só na API").
+async function restServicoTudo(caminho: string): Promise<unknown[]> {
+  const tudo: unknown[] = [];
+  for (let de = 0; de < 100000; de += 1000) {
+    const lote = await restServico(`${caminho}&limit=1000&offset=${de}&order=id`);
+    tudo.push(...(Array.isArray(lote) ? lote : []));
+    if (!Array.isArray(lote) || lote.length < 1000) break;
+  }
+  return tudo;
 }
 async function restServicoEscrever(metodo: string, caminho: string, body: unknown): Promise<unknown[]> {
   const r = await fetch(`${SB_URL}/rest/v1/${caminho}`, {
@@ -163,9 +176,9 @@ async function compararEmpresa(qn: QN, tenantId: string, emp: { id: string; apel
     (d) => (d.BaixaContasReceber as unknown[]) || []) as Record<string, unknown>[];
 
   // 3) parcelas do app desta empresa (sem as canceladas)
-  const parcelas = await restServico(
+  const parcelas = await restServicoTudo(
     `cob_parcelas?select=id,nosso_numero,documento,status,valor_original,data_vencimento` +
-    `&tenant_id=eq.${tenantId}&empresa_id=eq.${emp.id}&status=neq.cancelada&limit=20000`) as Record<string, unknown>[];
+    `&tenant_id=eq.${tenantId}&empresa_id=eq.${emp.id}&status=neq.cancelada`) as Record<string, unknown>[];   // v1.3: paginado
   const porChave = new Map<string, Record<string, unknown>>();
   for (const p of parcelas) {
     for (const k of [...nucleos(p.nosso_numero), ...nucleos(p.documento)]) if (k && !porChave.has(k)) porChave.set(k, p);   // v1.2
@@ -173,9 +186,9 @@ async function compararEmpresa(qn: QN, tenantId: string, emp: { id: string; apel
   const appAbertas = parcelas.filter((p) => p.status === "aberta").length;
 
   // 4) pagamentos do app no mesmo período das baixas
-  const pags = await restServico(
+  const pags = await restServicoTudo(
     `cob_pagamentos?select=id&tenant_id=eq.${tenantId}&empresa_id=eq.${emp.id}` +
-    `&data_recebimento=gte.${bIni}&estornado_em=is.null&limit=10000`) as unknown[];
+    `&data_recebimento=gte.${bIni}&estornado_em=is.null`) as unknown[];   // v1.3: paginado
 
   // 5) cruzamento
   let apiAbertos = 0, soApi = 0, liquidadaAppAberta = 0, divergenciaValor = 0, casados = 0;
@@ -226,19 +239,19 @@ async function sincronizarEmpresa(qn: QN, tenantId: string, emp: { id: string; a
     `/api/v1/ContaReceber/ConsultarContasReceber?EstabelecimentosInscricaoFederal=${cnpjQ}&DataVencimentoInicial=${vIni}&DataVencimentoFinal=${vFim}`,
     (d) => (d.ContaReceber as unknown[]) || []) as Record<string, unknown>[];
 
-  const parcelas = await restServico(
+  const parcelas = await restServicoTudo(
     `cob_parcelas?select=id,cliente_id,status,valor_original,nosso_numero,documento,questor_id` +
-    `&tenant_id=eq.${tenantId}&empresa_id=eq.${emp.id}&status=neq.cancelada&limit=20000`) as Record<string, unknown>[];
+    `&tenant_id=eq.${tenantId}&empresa_id=eq.${emp.id}&status=neq.cancelada`) as Record<string, unknown>[];   // v1.3: paginado
   const porQid = new Map<string, Record<string, unknown>>();
   const porChave = new Map<string, Record<string, unknown>>();
   for (const p of parcelas) {
     if (p.questor_id) porQid.set(String(p.questor_id), p);
     for (const k of [...nucleos(p.nosso_numero), ...nucleos(p.documento)]) if (k && !porChave.has(k)) porChave.set(k, p);   // v1.2
   }
-  const estornadas = new Set(((await restServico(
-    `cob_pagamentos?select=parcela_id&tenant_id=eq.${tenantId}&empresa_id=eq.${emp.id}&estornado_em=not.is.null&limit=10000`)) as Record<string, unknown>[])
-    .map((x) => String(x.parcela_id)));
-  const clientes = await restServico(`cob_clientes?select=id,cnpj&tenant_id=eq.${tenantId}&limit=20000`) as Record<string, unknown>[];
+  const estornadas = new Set(((await restServicoTudo(
+    `cob_pagamentos?select=parcela_id&tenant_id=eq.${tenantId}&empresa_id=eq.${emp.id}&estornado_em=not.is.null`)) as Record<string, unknown>[])
+    .map((x) => String(x.parcela_id)));   // v1.3: paginado
+  const clientes = await restServicoTudo(`cob_clientes?select=id,cnpj&tenant_id=eq.${tenantId}`) as Record<string, unknown>[];   // v1.3: paginado
   const porCnpj = new Map<string, string>();
   for (const c of clientes) { const d = digitos(c.cnpj); if (d && !porCnpj.has(d)) porCnpj.set(d, String(c.id)); }
 
