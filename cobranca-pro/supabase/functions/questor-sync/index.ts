@@ -1,5 +1,7 @@
 // ============================================================
-// COBRANÇA PRO — Edge Function: questor-sync  (v1.1 · app v2.23.0)
+// COBRANÇA PRO — Edge Function: questor-sync  (v1.2 · app v2.23.0)
+// v1.2 (21/11): casamento pelo núcleo do nosso número Sicredi (o app guarda
+// AA+NNNNNN+DV, a API devolve só NNNNNN) e contador so_app no paralelo.
 // Integração com a API do Questor Negócio em dois modos:
 // 'paralelo' (padrão): só lê, compara com o app e registra em
 // cob_automacao_execucoes (origem 'questor_api');
@@ -129,6 +131,18 @@ async function qnPaginas(qn: QN, caminho: string, extrair: (d: Record<string, un
 
 const soData = (d: Date) => d.toISOString().slice(0, 10);
 const chaveNum = (v: unknown) => String(v ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "").replace(/^0+(?=.)/, "");
+// v1.2: o app guarda o nosso número Sicredi completo (AA+NNNNNN+DV, ex.: 262201897) e a API
+// devolve só o núcleo (ex.: 220189) — gera as duas formas para o casamento acertar dos dois lados.
+function nucleos(v: unknown): string[] {
+  const out: string[] = [];
+  const bruto = String(v ?? "");
+  for (const parte of [bruto, bruto.split("-")[0]]) {   // "262108269-S1" também casa pelo trecho antes do hífen
+    const k = chaveNum(parte); if (k && !out.includes(k)) out.push(k);
+    const d = parte.replace(/[^0-9]/g, "");
+    if (d.length === 9) { const n = d.slice(2, 8); if (!out.includes(n)) out.push(n); }
+  }
+  return out;
+}
 
 // ── comparação de uma empresa (modo paralelo) ──
 async function compararEmpresa(qn: QN, tenantId: string, emp: { id: string; apelido: string; questor_cnpj: string }) {
@@ -150,11 +164,11 @@ async function compararEmpresa(qn: QN, tenantId: string, emp: { id: string; apel
 
   // 3) parcelas do app desta empresa (sem as canceladas)
   const parcelas = await restServico(
-    `cob_parcelas?select=nosso_numero,documento,status,valor_original,data_vencimento` +
+    `cob_parcelas?select=id,nosso_numero,documento,status,valor_original,data_vencimento` +
     `&tenant_id=eq.${tenantId}&empresa_id=eq.${emp.id}&status=neq.cancelada&limit=20000`) as Record<string, unknown>[];
   const porChave = new Map<string, Record<string, unknown>>();
   for (const p of parcelas) {
-    for (const k of [chaveNum(p.nosso_numero), chaveNum(p.documento)]) if (k && !porChave.has(k)) porChave.set(k, p);
+    for (const k of [...nucleos(p.nosso_numero), ...nucleos(p.documento)]) if (k && !porChave.has(k)) porChave.set(k, p);   // v1.2
   }
   const appAbertas = parcelas.filter((p) => p.status === "aberta").length;
 
@@ -166,16 +180,18 @@ async function compararEmpresa(qn: QN, tenantId: string, emp: { id: string; apel
   // 5) cruzamento
   let apiAbertos = 0, soApi = 0, liquidadaAppAberta = 0, divergenciaValor = 0, casados = 0;
   const exSoApi: string[] = [], exLiquidada: string[] = [];
+  const casadasIds = new Set<string>();   // v1.2: para contar o "só no app"
   for (const t of titulos) {
     const restante = Number(t.ValorRestante) || 0;
     const situacao = Number(t.SituacaoBoleto);
     const rotulo = String(t.NossoNumeroRetorno || t.NossoNumeroGeracao || t.DocumentoFiscal || t.Id || "?");
-    const chaves = [chaveNum(t.NossoNumeroRetorno), chaveNum(t.NossoNumeroGeracao),
-      chaveNum(t.DocumentoFiscal), "U" + chaveNum(t.DocumentoFiscal)].filter(Boolean);
+    const chaves = [...nucleos(t.NossoNumeroRetorno), ...nucleos(t.NossoNumeroGeracao),
+      chaveNum(t.DocumentoFiscal), "U" + chaveNum(t.DocumentoFiscal)].filter(Boolean);   // v1.2
     const par = chaves.map((k) => porChave.get(k)).find(Boolean);
     if (restante > 0.004) apiAbertos++;
     if (par) {
       casados++;
+      casadasIds.add(String(par.id));   // v1.2
       const aberta = par.status === "aberta";
       if (aberta && (restante <= 0.004 || situacao === 5 || situacao === 6)) {
         liquidadaAppAberta++; if (exLiquidada.length < 5) exLiquidada.push(rotulo);
@@ -191,7 +207,8 @@ async function compararEmpresa(qn: QN, tenantId: string, emp: { id: string; apel
     empresa: emp.apelido, questor_cnpj: emp.questor_cnpj,
     janela: { vencimento: [vIni, vFim], baixas: [bIni, soData(hoje)] },
     api_titulos: titulos.length, api_abertos: apiAbertos, app_abertas: appAbertas, casados,
-    so_api: soApi, api_liquidada_app_aberta: liquidadaAppAberta, divergencia_valor: divergenciaValor,
+    so_api: soApi, so_app: parcelas.filter((p) => p.status === "aberta" && !casadasIds.has(String(p.id))).length,   // v1.2: abertas no app que a API não conhece (fora da janela ou numeração antiga)
+    api_liquidada_app_aberta: liquidadaAppAberta, divergencia_valor: divergenciaValor,
     baixas_api: baixas.length, pagamentos_app: (pags || []).length,
     exemplos: { so_api: exSoApi, liquidada_app_aberta: exLiquidada },
   };
@@ -216,7 +233,7 @@ async function sincronizarEmpresa(qn: QN, tenantId: string, emp: { id: string; a
   const porChave = new Map<string, Record<string, unknown>>();
   for (const p of parcelas) {
     if (p.questor_id) porQid.set(String(p.questor_id), p);
-    for (const k of [chaveNum(p.nosso_numero), chaveNum(p.documento)]) if (k && !porChave.has(k)) porChave.set(k, p);
+    for (const k of [...nucleos(p.nosso_numero), ...nucleos(p.documento)]) if (k && !porChave.has(k)) porChave.set(k, p);   // v1.2
   }
   const estornadas = new Set(((await restServico(
     `cob_pagamentos?select=parcela_id&tenant_id=eq.${tenantId}&empresa_id=eq.${emp.id}&estornado_em=not.is.null&limit=10000`)) as Record<string, unknown>[])
@@ -233,8 +250,8 @@ async function sincronizarEmpresa(qn: QN, tenantId: string, emp: { id: string; a
       const situacao = Number(t.SituacaoBoleto);
       const liquidada = restante <= 0.004 || situacao === 5 || situacao === 6;
       const qid = String(t.Id ?? "") || null;
-      const chaves = [chaveNum(t.NossoNumeroRetorno), chaveNum(t.NossoNumeroGeracao),
-        chaveNum(t.DocumentoFiscal), "U" + chaveNum(t.DocumentoFiscal)].filter(Boolean);
+      const chaves = [...nucleos(t.NossoNumeroRetorno), ...nucleos(t.NossoNumeroGeracao),
+        chaveNum(t.DocumentoFiscal), "U" + chaveNum(t.DocumentoFiscal)].filter(Boolean);   // v1.2
       let par = (qid && porQid.get(qid)) || chaves.map((k) => porChave.get(k)).find(Boolean) || null;
 
       if (par) {
