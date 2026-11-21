@@ -1,5 +1,7 @@
 // ============================================================
-// COBRANÇA PRO — Edge Function: questor-sync  (v1.4 · app v2.23.1)
+// COBRANÇA PRO — Edge Function: questor-sync  (v1.5 · app v2.23.2)
+// v1.5 (21/11): horários do usuário — capturas às 10:00/16:00 SEM e-mail; ação nova
+// 'alertar' (agenda das 10:30) lê a última captura e só envia e-mail se houver risco.
 // v1.4 (21/11): captura AGENDADA (pg_cron manda o token interno 'questor_cron_token'
 // do cofre; por esse caminho só a ação 'capturar' é aceita — a fonte única continua
 // exclusiva do diretor logado) e ALERTA POR E-MAIL (cob_automacao_config.
@@ -353,7 +355,7 @@ Deno.serve(async (req) => {
     if (cronToken) {   // v1.4: chamada da agenda do banco
       const esperado = await segredo("questor_cron_token");
       if (!esperado || cronToken !== esperado) return resposta({ ok: false, erro: "token da agenda inválido" }, 401);
-      if (acao !== "capturar") return resposta({ ok: false, erro: "a agenda só executa a captura (modo paralelo)" }, 403);
+      if (acao !== "capturar" && acao !== "alertar") return resposta({ ok: false, erro: "a agenda só executa a captura e o alerta — nada de gravação" }, 403);
       emailUsuario = "agenda";
     } else {
       const u = await fetch(`${SB_URL}/auth/v1/user`, { headers: { apikey: SB_ANON, Authorization: `Bearer ${token}` } });
@@ -364,6 +366,22 @@ Deno.serve(async (req) => {
         `cob_usuarios_tenants?select=perfil&tenant_id=eq.${tenantId}&usuario_id=eq.${usuario.id}&ativo=eq.true&limit=1`);
       if (!Array.isArray(vinc) || !vinc.length) return resposta({ ok: false, erro: "sem acesso a este tenant" }, 403);
       perfil = String((vinc[0] as Record<string, unknown>).perfil || "");
+    }
+
+    if (acao === "alertar") {   // v1.5: alerta diário — lê a última captura e avisa se houver risco (não consulta o Questor)
+      const ult = await restServico(`cob_automacao_execucoes?select=iniciado_em,status,resumo&tenant_id=eq.${tenantId}&etapa=eq.questor_api&order=iniciado_em.desc&limit=1`) as Record<string, unknown>[];
+      const ex = ult[0];
+      if (!ex) return resposta({ ok: true, aviso: "sem capturas registradas" });
+      const pe = (((ex.resumo ?? {}) as Record<string, unknown>).por_empresa as Record<string, unknown>[]) || [];
+      const comRisco = pe.filter((r) => Number(r.api_liquidada_app_aberta) > 0 || Number(r.divergencia_valor) > 0);
+      if (String(ex.status) !== "erro" && !comRisco.length) return resposta({ ok: true, aviso: "sem pontos de atenção" });
+      const linhas = comRisco.map((r) =>
+        `<tr><td>${r.empresa}</td><td align="right">${r.api_liquidada_app_aberta}</td><td align="right">${r.divergencia_valor}</td><td align="right">${r.so_api}</td></tr>`).join("");
+      await alertarEmail(tenantId, "Cobrança Pro · Questor Negócio: resumo diário (atenção)",
+        `<p>Última captura: ${new Date(String(ex.iniciado_em)).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })} · situação: ${String(ex.status)}</p>` +
+        (linhas ? `<table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse"><tr><th>Empresa</th><th>Liquidada no banco × aberta no app</th><th>Divergência de valor</th><th>Só na API</th></tr>${linhas}</table>` : "") +
+        `<p>Detalhes no app: Sistema → Empresas → Integração Questor Negócio.</p>`);
+      return resposta({ ok: true, alerta_enviado: true });
     }
 
     // 2) entra na API (a chave sai do cofre; nunca é devolvida)
@@ -400,7 +418,7 @@ Deno.serve(async (req) => {
       await registrarExecucao(tenantId, atencao ? "atencao" : "ok", resumo, null, emailUsuario, iniciadoEm);
       // v1.4: alerta por e-mail quando há risco acionável (cobrança indevida em potencial)
       const comRisco = porEmpresa.filter((r) => r.api_liquidada_app_aberta > 0 || r.divergencia_valor > 0);
-      if (comRisco.length) {
+      if (comRisco.length && emailUsuario !== "agenda") {   // v1.5: a agenda não envia e-mail aqui — o alerta diário das 10:30 cuida disso
         const linhas = comRisco.map((r) =>
           `<tr><td>${r.empresa}</td><td align="right">${r.api_liquidada_app_aberta}</td><td align="right">${r.divergencia_valor}</td><td align="right">${r.so_api}</td></tr>`).join("");
         await alertarEmail(tenantId, "Cobrança Pro · Questor Negócio: atenção na captura",
