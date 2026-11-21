@@ -1,5 +1,10 @@
 // ============================================================
-// COBRANÇA PRO — Edge Function: questor-sync  (v1.3 · app v2.23.0)
+// COBRANÇA PRO — Edge Function: questor-sync  (v1.4 · app v2.23.1)
+// v1.4 (21/11): captura AGENDADA (pg_cron manda o token interno 'questor_cron_token'
+// do cofre; por esse caminho só a ação 'capturar' é aceita — a fonte única continua
+// exclusiva do diretor logado) e ALERTA POR E-MAIL (cob_automacao_config.
+// questor_alerta_email, só @artecon.cnt.br) quando a captura encontra
+// "liquidada no banco × aberta no app", divergência de valor ou erro.
 // v1.2 (21/11): casamento pelo núcleo do nosso número Sicredi (o app guarda
 // AA+NNNNNN+DV, a API devolve só NNNNNN) e contador so_app no paralelo.
 // v1.3 (21/11): leitura do banco PAGINADA (o PostgREST corta em 1.000 linhas —
@@ -43,7 +48,7 @@ const JANELA_BAIXAS_DIAS = 7;
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-cron-token",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 function resposta(obj: unknown, status = 200): Response {
@@ -102,6 +107,21 @@ async function registrarExecucao(tenantId: string, status: string, resumo: unkno
       resumo, erro, usuario_email: email, iniciado_em: iniciadoEm, concluido_em: new Date().toISOString() }),
   });
   if (!r.ok) console.warn("execução não registrada:", r.status, await r.text().catch(() => ""));
+}
+
+// ── v1.4: alerta interno por e-mail (central Artecon Mail, chave do cofre; só @artecon.cnt.br) ──
+const MAIL_SEND_URL = "https://tjnqloycikukvvnconqn.supabase.co/functions/v1/mail-send";
+async function alertarEmail(tenantId: string, assunto: string, html: string) {
+  try {
+    const cfg = await restServico(`cob_automacao_config?select=questor_alerta_email&tenant_id=eq.${tenantId}&limit=1`) as Record<string, unknown>[];
+    const dest = String(cfg[0]?.questor_alerta_email || "").trim().toLowerCase();
+    if (!dest || !dest.endsWith("@artecon.cnt.br")) return;
+    const chave = await segredo("mail_hub_key_cobranca");
+    if (!chave) return;
+    await fetch(MAIL_SEND_URL, { method: "POST", signal: AbortSignal.timeout(20000),
+      headers: { "Content-Type": "application/json", "x-api-key": chave },
+      body: JSON.stringify({ app: "cobranca-pro", to: dest, assunto, html }) });
+  } catch (e) { console.warn("alerta não enviado:", String(e)); }
 }
 
 // ── API do Questor Negócio ──
@@ -319,21 +339,32 @@ Deno.serve(async (req) => {
   const iniciadoEm = new Date().toISOString();
   let tenantId = "", emailUsuario = "";
   try {
-    // 1) usuário logado e com vínculo ativo no tenant (conferido sob o RLS do próprio usuário)
+    // 1) quem chama: um usuário logado com vínculo no tenant, OU a agenda do banco
+    //    (v1.4: header x-cron-token = segredo 'questor_cron_token'; a agenda SÓ captura)
     const token = (req.headers.get("Authorization") ?? "").replace(/^Bearer\s+/i, "");
     if (!token) return resposta({ ok: false, erro: "sem token" }, 401);
-    const u = await fetch(`${SB_URL}/auth/v1/user`, { headers: { apikey: SB_ANON, Authorization: `Bearer ${token}` } });
-    if (!u.ok) return resposta({ ok: false, erro: "usuário não autenticado" }, 401);
-    const usuario = await u.json();
-    emailUsuario = String(usuario?.email || "").trim().toLowerCase();
-
     const p = await req.json().catch(() => ({}));
     const acao = String(p.acao || "");
     tenantId = String(p.tenant_id || "");
     if (!/^[0-9a-f-]{36}$/.test(tenantId)) return resposta({ ok: false, erro: "tenant inválido" }, 400);
-    const vinc = await restUsuario(token,
-      `cob_usuarios_tenants?select=perfil&tenant_id=eq.${tenantId}&usuario_id=eq.${usuario.id}&ativo=eq.true&limit=1`);
-    if (!Array.isArray(vinc) || !vinc.length) return resposta({ ok: false, erro: "sem acesso a este tenant" }, 403);
+
+    const cronToken = req.headers.get("x-cron-token") || "";
+    let perfil = "";
+    if (cronToken) {   // v1.4: chamada da agenda do banco
+      const esperado = await segredo("questor_cron_token");
+      if (!esperado || cronToken !== esperado) return resposta({ ok: false, erro: "token da agenda inválido" }, 401);
+      if (acao !== "capturar") return resposta({ ok: false, erro: "a agenda só executa a captura (modo paralelo)" }, 403);
+      emailUsuario = "agenda";
+    } else {
+      const u = await fetch(`${SB_URL}/auth/v1/user`, { headers: { apikey: SB_ANON, Authorization: `Bearer ${token}` } });
+      if (!u.ok) return resposta({ ok: false, erro: "usuário não autenticado" }, 401);
+      const usuario = await u.json();
+      emailUsuario = String(usuario?.email || "").trim().toLowerCase();
+      const vinc = await restUsuario(token,
+        `cob_usuarios_tenants?select=perfil&tenant_id=eq.${tenantId}&usuario_id=eq.${usuario.id}&ativo=eq.true&limit=1`);
+      if (!Array.isArray(vinc) || !vinc.length) return resposta({ ok: false, erro: "sem acesso a este tenant" }, 403);
+      perfil = String((vinc[0] as Record<string, unknown>).perfil || "");
+    }
 
     // 2) entra na API (a chave sai do cofre; nunca é devolvida)
     const qn = await qnEntrar();
@@ -367,11 +398,20 @@ Deno.serve(async (req) => {
       const atencao = porEmpresa.some((r) => r.so_api > 0 || r.api_liquidada_app_aberta > 0 || r.divergencia_valor > 0);
       const resumo = { modo: "paralelo (só leitura — nada foi gravado em parcelas)", por_empresa: porEmpresa };
       await registrarExecucao(tenantId, atencao ? "atencao" : "ok", resumo, null, emailUsuario, iniciadoEm);
+      // v1.4: alerta por e-mail quando há risco acionável (cobrança indevida em potencial)
+      const comRisco = porEmpresa.filter((r) => r.api_liquidada_app_aberta > 0 || r.divergencia_valor > 0);
+      if (comRisco.length) {
+        const linhas = comRisco.map((r) =>
+          `<tr><td>${r.empresa}</td><td align="right">${r.api_liquidada_app_aberta}</td><td align="right">${r.divergencia_valor}</td><td align="right">${r.so_api}</td></tr>`).join("");
+        await alertarEmail(tenantId, "Cobrança Pro · Questor Negócio: atenção na captura",
+          `<p>A captura paralela (origem: ${emailUsuario}) encontrou pontos de atenção:</p>` +
+          `<table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse"><tr><th>Empresa</th><th>Liquidada no banco × aberta no app</th><th>Divergência de valor</th><th>Só na API</th></tr>${linhas}</table>` +
+          `<p>Detalhes no app: Sistema → Empresas → Integração Questor Negócio. Nada foi gravado (modo paralelo).</p>`);
+      }
       return resposta({ ok: true, resumo });
     }
 
     if (acao === "sincronizar") {   // v2.23.0 — FONTE ÚNICA: grava títulos e aplica baixas
-      const perfil = String((vinc[0] as Record<string, unknown>).perfil || "");
       if (perfil !== "diretor") return resposta({ ok: false, erro: "sincronizar (fonte única) é permitido só ao diretor" }, 403);
       const cfg = await restServico(`cob_automacao_config?select=questor_api_modo&tenant_id=eq.${tenantId}&limit=1`) as Record<string, unknown>[];
       const modo = String(cfg[0]?.questor_api_modo || "paralelo");
@@ -419,7 +459,11 @@ Deno.serve(async (req) => {
     return resposta({ ok: false, erro: "ação desconhecida" }, 400);
   } catch (e) {
     const msg = String((e as Error)?.message || e);
-    if (tenantId) await registrarExecucao(tenantId, "erro", null, msg, emailUsuario, iniciadoEm).catch(() => {});
+    if (tenantId) {
+      await registrarExecucao(tenantId, "erro", null, msg, emailUsuario, iniciadoEm).catch(() => {});
+      await alertarEmail(tenantId, "Cobrança Pro · Questor Negócio: ERRO na execução",
+        `<p>A execução (origem: ${emailUsuario || "?"}) falhou:</p><p><b>${msg.replace(/</g, "&lt;")}</b></p>`);   // v1.4
+    }
     return resposta({ ok: false, erro: msg }, 500);
   }
 });
