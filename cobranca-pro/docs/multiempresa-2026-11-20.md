@@ -1,5 +1,13 @@
 # Multiempresa + integração Questor Negócio — plano aprovado (20/11/2026)
 
+> **CORTE CONCLUÍDO em 21/11/2026, 14:27 — fonte única LIGADA e primeira sincronização validada:**
+> 25 baixas aplicadas (R$ 17.622,24; incluía 2 títulos vencidos já pagos no banco), 42 títulos novos
+> importados (R$ 65.397,96), 15 clientes novos, 228 títulos adotaram o id da API, 0 erros. Validado
+> também: captura agendada (07:35/13:35, pg_cron) funcionando, alerta por e-mail funcionando, e a agenda
+> NÃO consegue acionar a fonte única (403 — só o diretor pelo app). O .CRT e o relatório do Questor
+> instalado agora são contingência. Pendência operacional: as baixas contínuas dependem do diretor clicar
+> "Sincronizar agora" — avaliar estender a agenda para sincronizar quando o modo for 'fonte'.
+
 **Status (20/11/2026, madrugada): v2.19.0 → v2.21.0 CONCLUÍDAS E PUBLICADAS.** v2.20.0 (PR #17) e
 v2.21.0 (PR #18) mescladas na main; GitHub Pages conferido servindo a v2.21.0. Todas as migrations aplicadas
 no banco na ordem segura: v2.19.0, v2.20.0 (view), v2.21.0 parte A (antes do merge) e parte B
